@@ -17,11 +17,12 @@ class Doc:
     metadata from this doc.
     """
 
-    def __init__(self, raw, language=None):
+    def __init__(self, raw, language=None, pref_language='en'):
         """
         Args:
         raw: incoming, unedited text
         _language: 2-letter code for the language of the text
+        _pref_language: language you expect your text to be
         is_detected_language: a boolean indicating if the language was known
             beforehand or detected
         _spacy_nlps: dictionary containing a spacy language module
@@ -32,6 +33,7 @@ class Doc:
 
         self.raw = raw
         self._language = language
+        self._pref_language = pref_language
         self.is_detected_language = language is None
         self._spacy_nlps = {}
         self._spacy_doc = {}
@@ -42,16 +44,15 @@ class Doc:
     def language(self):
         """Detect the language of a text if no language was provided along with the text
 
-        >>> doc = Doc('Test sentence for RTL', language='en')
+        >>> doc = Doc('Test sentence for testing text', language='en')
         >>> doc.language
         'en'
-        >>> doc = Doc('Test sentence for RTL')
+        >>> doc = Doc('Test sentence for testing text')
         >>> doc.language
         'en'
-
         """
         if not self._language:
-            _, _, best_guesses = detect(self.clean_text, hintLanguage='nl', bestEffort=True)
+            _, _, best_guesses = detect(self.clean_text, hintLanguage=self._pref_language, bestEffort=True)
             self._language = best_guesses[0][1]
         return self._language
 
@@ -59,16 +60,17 @@ class Doc:
     def spacy_doc(self):
         """Create a spacy doc and load the language module
 
-        >>> doc = Doc('Test sentence for RTL')
+        >>> doc = Doc('Test sentence for testing text')
         >>> type(doc.spacy_doc)
         <class 'spacy.tokens.doc.Doc'>
 
         """
         if not self._spacy_doc:
-            if self.language not in self._spacy_nlps:
-                temp_lang = '_core_web_sm' if self.language == 'en' else '_core_news_sm'
-                self._spacy_nlps[self.language] = spacy.load(self.language + temp_lang)
-            nlp = self._spacy_nlps[self.language]
+            lang = self._pref_language if self.language == 'un' else self.language
+            if lang not in self._spacy_nlps:
+                temp_lang = '_core_web_sm' if lang == 'en' else '_core_news_sm'
+                self._spacy_nlps[lang] = spacy.load(lang + temp_lang)
+            nlp = self._spacy_nlps[lang]
             self._spacy_doc = nlp(self.clean_text)
         return self._spacy_doc
 
