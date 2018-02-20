@@ -1,9 +1,9 @@
 # textpipe: clean and extract metadata from text
 
-`textpipe` is a Python package for making raw text in to clean and readable and 
-extracting metadata of that text. Its functionalities include transforming 
-raw text into readable and clear text by removing `HTML` tags and extracting 
-metadata such as the number of words and named entities from the text. 
+`textpipe` is a Python package for converting raw text in to clean, readable text and
+extracting metadata from that text. Its functionalities include transforming
+raw text into readable text by removing HTML tags and extracting
+metadata such as the number of words and named entities from the text.
 
 
 ## Features

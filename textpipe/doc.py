@@ -17,28 +17,28 @@ class Doc:
     metadata from this doc.
     """
 
-    def __init__(self, raw, language=None, pref_language='en'):
+    def __init__(self, raw, language=None, hint_language='en'):
         """
         Args:
         raw: incoming, unedited text
+        is_detected_language: a boolean indicating if the language was specified
+                              beforehand or detected
         _language: 2-letter code for the language of the text
-        _pref_language: language you expect your text to be
-        is_detected_language: a boolean indicating if the language was known
-            beforehand or detected
+        _hint_language: language you expect your text to be
+        _clean_text: string containing the cleaned text
         _spacy_nlps: dictionary containing a spacy language module
         _spacy_doc: dictionary containing an instance of a spacy doc
         _text_stats: dictionary containing an instance of textacy textstats
-        _clean_text: string containing the cleaned text
         """
 
         self.raw = raw
-        self._language = language
-        self._pref_language = pref_language
         self.is_detected_language = language is None
+        self._language = language
+        self._hint_language = hint_language
+        self._clean_text = None
         self._spacy_nlps = {}
         self._spacy_doc = {}
         self._text_stats = {}
-        self._clean_text = ''
 
     @property
     def language(self):
@@ -52,7 +52,8 @@ class Doc:
         'en'
         """
         if not self._language:
-            _, _, best_guesses = detect(self.clean_text, hintLanguage=self._pref_language, bestEffort=True)
+            _, _, best_guesses = detect(self.clean_text, hintLanguage=self._pref_language,
+                                        bestEffort=True)
             self._language = best_guesses[0][1]
         return self._language
 
@@ -63,10 +64,9 @@ class Doc:
         >>> doc = Doc('Test sentence for testing text')
         >>> type(doc.spacy_doc)
         <class 'spacy.tokens.doc.Doc'>
-
         """
         if not self._spacy_doc:
-            lang = self._pref_language if self.language == 'un' else self.language
+            lang = self._hint_language if self.language == 'un' else self.language
             if lang not in self._spacy_nlps:
                 temp_lang = '_core_web_sm' if lang == 'en' else '_core_news_sm'
                 self._spacy_nlps[lang] = spacy.load(lang + temp_lang)
@@ -82,7 +82,7 @@ class Doc:
         >>> doc.clean_text
         '"Please clean this piece... of text"'
         """
-        if not self._clean_text:
+        if self._clean_text is None:
             if self.raw is not None:
                 text = BeautifulSoup(self.raw, 'html.parser').get_text()  # remove HTML
                 # Three regexes below adapted from Blendle cleaner.py
@@ -104,7 +104,7 @@ class Doc:
         >>> doc.ents
         ['Google']
         """
-        return list(map(str,self.spacy_doc.ents))
+        return list(map(str, self.spacy_doc.ents))
 
 
     @property
@@ -141,8 +141,7 @@ class Doc:
             self._text_stats = textacy.TextStats(self.spacy_doc)
         if self._text_stats.n_syllables == 0:
             return 100
-        else:
-            return self._text_stats.flesch_readability_ease
+        return self._text_stats.flesch_readability_ease
 
 
 if __name__ == "__main__":

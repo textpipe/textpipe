@@ -56,6 +56,6 @@ def test_clean_text():
 
 
 def test_language():
-    assert 'en' == DOC_1.language
-    assert 'nl' == DOC_2.language
-    assert 'un' == DOC_3.language
+    assert DOC_1.language == 'en'
+    assert DOC_2.language == 'nl'
+    assert DOC_3.language == 'un'
