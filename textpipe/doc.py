@@ -113,7 +113,7 @@ class Doc:
 
         >>> doc = Doc('Test sentence for testing text.')
         >>> doc.nsents
-        2
+        1
         """
         return len(list(self.spacy_doc.sents))
 
