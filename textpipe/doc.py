@@ -100,17 +100,18 @@ class Doc:
     def ents(self):
         """Extract a list of the named entities in text
 
-        >>> doc = Doc('Sentence for testing RTL text')
+        >>> doc = Doc('Sentence for testing Google text')
         >>> doc.ents
-        (RTL,)
+        ['Google']
         """
-        return self.spacy_doc.ents
+        return list(map(str,self.spacy_doc.ents))
+
 
     @property
     def nsents(self):
         """Extract the number of sentences from text
 
-        >>> doc = Doc('Test sentence. For RTL.')
+        >>> doc = Doc('Test sentence for testing text.')
         >>> doc.nsents
         2
         """
@@ -120,7 +121,7 @@ class Doc:
     def nwords(self):
         """Extract the number of words from text
 
-        >>> doc = Doc('Sentence for testing RTL text')
+        >>> doc = Doc('Test sentence for testing text')
         >>> doc.nwords
         5
         """
@@ -132,13 +133,16 @@ class Doc:
         reading ease test ranging from 0.0 - 100.0 with 0.0
         being the most difficult to read.
 
-        >>> doc = Doc('Sentence for testing RTL text')
+        >>> doc = Doc('Test sentence for testing text')
         >>> doc.complexity
         83.32000000000002
         """
         if not self._text_stats:
             self._text_stats = textacy.TextStats(self.spacy_doc)
-        return self._text_stats.flesch_readability_ease
+        if self._text_stats.n_syllables == 0:
+            return 100
+        else:
+            return self._text_stats.flesch_readability_ease
 
 
 if __name__ == "__main__":
