@@ -1,0 +1,18 @@
+# compiled code
+*.py[co]
+__pycache__/
+
+# Unit test
+.cache
+
+# macOS
+.DS_Store
+
+# IDE project files
+*.idea
+.vscode
+
+# distribution / packaging
+build/
+dist/
+*.egg-info/
