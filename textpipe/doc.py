@@ -3,9 +3,8 @@ Clean text, make it readable and obtain metadata from it.
 """
 
 import re
-import doctest
 from bs4 import BeautifulSoup
-from cld2 import detect
+import cld2
 import spacy
 import textacy
 import textacy.text_utils
@@ -52,8 +51,8 @@ class Doc:
         'en'
         """
         if not self._language:
-            _, _, best_guesses = detect(self.clean_text, hintLanguage=self._pref_language,
-                                        bestEffort=True)
+            _, _, best_guesses = cld2.detect(self.clean_text, hintLanguage=self._hint_language,
+                                             bestEffort=True)
             self._language = best_guesses[0][1]
         return self._language
 
