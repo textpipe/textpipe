@@ -142,7 +142,3 @@ class Doc:
         if self._text_stats.n_syllables == 0:
             return 100
         return self._text_stats.flesch_readability_ease
-
-
-if __name__ == "__main__":
-    doctest.testmod()
