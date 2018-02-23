@@ -67,8 +67,9 @@ class Doc:
         if not self._spacy_doc:
             lang = self._hint_language if self.language == 'un' else self.language
             if lang not in self._spacy_nlps:
-                temp_lang = '_core_web_sm' if lang == 'en' else '_core_news_sm'
-                self._spacy_nlps[lang] = spacy.load(lang + temp_lang)
+                # loading models with two letter language codes doesn't work for windows due
+                self._spacy_nlps[lang] = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang
+                                                                           == 'en' else 'news'))
             nlp = self._spacy_nlps[lang]
             self._spacy_doc = nlp(self.clean_text)
         return self._spacy_doc
@@ -91,6 +92,7 @@ class Doc:
                 text = re.sub('[„“]|(\'\')|(,,)', '"', text)
                 self._clean_text = ' '.join([word for word in text.split()
                                              if len(word) > 1])  # remove 1 letter words
+                self._clean_text = text.replace('\n', '')
             else:
                 self._clean_text = ''
         return self._clean_text
