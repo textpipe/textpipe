@@ -1,7 +1,7 @@
 """
 Obtain elements from a textpipe doc, by specifying a pipeline, in a dictionary.
 """
-import doctest
+
 from textpipe.textpipe.doc import Doc
 
 
@@ -33,7 +33,3 @@ class Pipeline:
         doc = Doc(raw)
         result_dict = dict(zip(self.pipeline, [doc.__getattribute__(x) for x in self.pipeline]))
         return result_dict
-
-
-if __name__ == '__main__':
-    doctest.testmod()
