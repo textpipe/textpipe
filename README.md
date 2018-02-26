@@ -26,4 +26,8 @@ metadata such as the number of words and named entities from the text.
 'en'
 >>> print(doc.nwords)
 2
+
+>>> pipe = Pipeline(['clean_text', 'language', 'nwords'])
+>>> print(pipe(sample_text))
+("clean_text":'Sample text!', "language": 'en', "nwords": 2)
 ```
