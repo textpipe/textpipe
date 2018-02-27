@@ -46,7 +46,7 @@ def test_entities():
 
 def test_complexity():
     assert DOC_1.complexity == 25.50742977528091
-    assert DOC_2.complexity == 0.43250000000003297
+    assert DOC_2.complexity == 18.89611111111111
     assert DOC_3.complexity == 100
 
 

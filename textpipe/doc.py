@@ -135,10 +135,10 @@ class Doc:
 
         >>> doc = Doc('Test sentence for testing text')
         >>> doc.complexity
-        83.32000000000002
+        83.32000000000004
         """
         if not self._text_stats:
             self._text_stats = textacy.TextStats(self.spacy_doc)
         if self._text_stats.n_syllables == 0:
             return 100
-        return self._text_stats.flesch_readability_ease
+        return self._text_stats.flesch_reading_ease
