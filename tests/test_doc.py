@@ -1,7 +1,7 @@
 """
 Testing for textpipe doc.py
 """
-from textpipe.textpipe.doc import Doc
+from textpipe.doc import Doc
 
 TEXT_1 = """<p><b>Text mining</b>, also referred to as <i><b>text data mining</b></i>, roughly equivalent
 to <b>text analytics</b>, is the process of deriving high-quality <a href="/wiki/Information"
@@ -46,7 +46,7 @@ def test_entities():
 
 def test_complexity():
     assert DOC_1.complexity == 25.50742977528091
-    assert DOC_2.complexity == 0.43250000000003297
+    assert DOC_2.complexity == 18.89611111111111
     assert DOC_3.complexity == 100
 
 

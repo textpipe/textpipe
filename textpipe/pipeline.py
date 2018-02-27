@@ -2,7 +2,7 @@
 Obtain elements from a textpipe doc, by specifying a pipeline, in a dictionary.
 """
 
-from textpipe.textpipe.doc import Doc
+from textpipe.doc import Doc
 
 
 class Pipeline:
@@ -10,8 +10,8 @@ class Pipeline:
     Create a pipeline instance based on the elements you would want from your text
 
     >>> pipe = Pipeline(['raw', 'nwords', 'clean_text'])
-    >>> pipe('Test sentence <a=>')
-    {'raw': 'Test sentence <a=>', 'nwords': 2, 'clean_text': 'Test sentence '}
+    >>> sorted(pipe('Test sentence <a=>').items())
+    [('clean_text', 'Test sentence '), ('nwords', 2), ('raw', 'Test sentence <a=>')]
     """
     def __init__(self, pipeline):
         """

@@ -16,3 +16,10 @@ __pycache__/
 build/
 dist/
 *.egg-info/
+
+# Testing output
+pytest.xml
+.coverage
+coverage.xml
+nosetests.xml
+pylint.out
