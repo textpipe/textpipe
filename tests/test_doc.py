@@ -1,7 +1,7 @@
 """
 Testing for textpipe doc.py
 """
-from textpipe.textpipe.doc import Doc
+from textpipe.doc import Doc
 
 TEXT_1 = """<p><b>Text mining</b>, also referred to as <i><b>text data mining</b></i>, roughly equivalent
 to <b>text analytics</b>, is the process of deriving high-quality <a href="/wiki/Information"

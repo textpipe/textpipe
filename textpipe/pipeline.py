@@ -2,7 +2,7 @@
 Obtain elements from a textpipe doc, by specifying a pipeline, in a dictionary.
 """
 
-from textpipe.textpipe.doc import Doc
+from textpipe.doc import Doc
 
 
 class Pipeline:
