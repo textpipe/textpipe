@@ -41,7 +41,8 @@ class Doc:
 
     @property
     def language(self):
-        """Detect the language of a text if no language was provided along with the text
+        """
+        Detect the language of a text if no language was provided along with the text
 
         >>> doc = Doc('Test sentence for testing text', language='en')
         >>> doc.language
@@ -58,7 +59,8 @@ class Doc:
 
     @property
     def spacy_doc(self):
-        """Create a spacy doc and load the language module
+        """
+        Create a spacy doc and load the language module
 
         >>> doc = Doc('Test sentence for testing text')
         >>> type(doc.spacy_doc)
@@ -76,7 +78,8 @@ class Doc:
 
     @property
     def clean_text(self):
-        """Clean HTML and normalise punctuation.
+        """
+        Clean HTML and normalise punctuation.
 
         >>> doc = Doc('“Please clean this piece… of text</b>„')
         >>> doc.clean_text
@@ -98,7 +101,8 @@ class Doc:
 
     @property
     def ents(self):
-        """Extract a list of the named entities in text
+        """
+        Extract a list of the named entities in text
 
         >>> doc = Doc('Sentence for testing Google text')
         >>> doc.ents
@@ -109,7 +113,8 @@ class Doc:
 
     @property
     def nsents(self):
-        """Extract the number of sentences from text
+        """
+        Extract the number of sentences from text
 
         >>> doc = Doc('Test sentence for testing text.')
         >>> doc.nsents
@@ -119,7 +124,8 @@ class Doc:
 
     @property
     def nwords(self):
-        """Extract the number of words from text
+        """
+        Extract the number of words from text
 
         >>> doc = Doc('Test sentence for testing text')
         >>> doc.nwords
@@ -129,7 +135,8 @@ class Doc:
 
     @property
     def complexity(self):
-        """Determine the complexity of text using the Flesch
+        """
+        Determine the complexity of text using the Flesch
         reading ease test ranging from 0.0 - 100.0 with 0.0
         being the most difficult to read.
 
