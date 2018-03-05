@@ -14,4 +14,3 @@ def test_return_dict():
     The returned dictionary should have the same length as the pipeline
     """
     assert len(PIPE(TEXT)) == len(PIPELINE)
-
