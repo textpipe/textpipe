@@ -19,6 +19,8 @@ class Pipeline:
 
         Args:
         pipeline: list of elements to obtain from a textpipe doc
+        language: 2-letter code for the language of the text
+        hint_language: language you expect your text to be
         """
         self.pipeline = pipeline
         self.language = language
