@@ -13,7 +13,7 @@ class Pipeline:
     >>> sorted(pipe('Test sentence <a=>').items())
     [('clean_text', 'Test sentence '), ('nwords', 2), ('raw', 'Test sentence <a=>')]
     """
-    def __init__(self, pipeline, hint_language='en'):
+    def __init__(self, pipeline, language=None, hint_language='en'):
         """
         Initialize a Pipeline instance
 
@@ -21,6 +21,7 @@ class Pipeline:
         pipeline: list of elements to obtain from a textpipe doc
         """
         self.pipeline = pipeline
+        self.language = language
         self.hint_language = hint_language
 
     def __call__(self, raw):
@@ -31,6 +32,6 @@ class Pipeline:
         Args:
         raw: incoming, unedited text
         """
-        doc = Doc(raw, self.hint_language)
+        doc = Doc(raw, language=self.language, hint_language=self.hint_language)
         result_dict = dict(zip(self.pipeline, [doc.__getattribute__(x) for x in self.pipeline]))
         return result_dict
