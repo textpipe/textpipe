@@ -108,7 +108,7 @@ class Doc:
         >>> doc.ents
         ['Google']
         """
-        return list(map(str, self.spacy_doc.ents))
+        return list(set(map(str, self.spacy_doc.ents)))
 
 
     @property
