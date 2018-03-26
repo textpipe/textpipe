@@ -4,7 +4,7 @@ Testing for textpipe doc.py
 from textpipe.doc import Doc
 
 TEXT_1 = """<p><b>Text mining</b>, also referred to as <i><b>text data mining</b></i>, roughly
-equivalentto <b>text analytics</b>, is the process of deriving high-quality <a href="/wiki/Information"
+equivalent to <b>text analytics</b>, is the process of deriving high-quality <a href="/wiki/Information"
 title="Information">information</a> from <a href="/wiki/Plain_text" title="Plain text">text</a>.
 High-quality information is typically derived through the devising of patterns and trends through means
 such as <a href="/wiki/Pattern_recognition" title="Pattern recognition">statistical pattern learning</a>.
@@ -31,7 +31,7 @@ DOC_3 = Doc(TEXT_3)
 
 
 def test_nwords_nsents():
-    assert DOC_1.nwords == 86
+    assert DOC_1.nwords == 87
     assert DOC_2.nwords == 53
     assert DOC_3.nwords == 0
     assert DOC_1.nsents == 4
@@ -46,7 +46,7 @@ def test_entities():
 
 
 def test_complexity():
-    assert DOC_1.complexity == 25.137500000000017
+    assert DOC_1.complexity == 26.629464285714306
     assert DOC_2.complexity == 14.61833333333334
     assert DOC_3.complexity == 100
 
