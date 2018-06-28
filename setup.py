@@ -17,11 +17,10 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/textpipe/textpipe",
     packages=setuptools.find_packages(),
-    classifiers=(
+    classifiers=[
         "Programming Language :: Python :: 3.6",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-    ),
-    license='MIT',
+    ],
     install_requires=requirements,
 )
