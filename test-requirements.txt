@@ -1,0 +1,3 @@
+nosexcover~=1.0.11
+pylint~=1.9.2
+pytest~=3.6.2
