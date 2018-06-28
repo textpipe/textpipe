@@ -2,22 +2,20 @@
 
 set -e
 
-# Install cld2-cffi package with an additional CFLAG
-CFLAGS="-Wno-narrowing" pip3 install --quiet cld2-cffi
+script/bootstrap
 
-# Install requirements and test requirements
-pip3 install --quiet --requirement requirements.txt
-pip3 install --quiet --requirement test-requirements.txt
+# Install test requirements
+pip install --quiet --requirement test-requirements.txt
 
 # Run linting
-python3 -m pylint -f parseable textpipe | tee pylint.out
+python -m pylint -f parseable textpipe | tee pylint.out
 
 # Download languages needed for testing
-python3 -m spacy download nl > /dev/null
-python3 -m spacy download en > /dev/null
+python -m spacy download nl > /dev/null
+python -m spacy download en > /dev/null
 
 # Run test with pytest, including doctests
-python3 -m pytest --doctest-modules --junit-xml=pytest.xml
+python -m pytest --doctest-modules --junit-xml=pytest.xml
 
 # Run unit tests again, but with nose for coverage report
-python3 -m nose --with-doctest --with-xcoverage --with-xunit --cover-package=textpipe --cover-erase 2> /dev/null
+python -m nose --with-doctest --with-xcoverage --with-xunit --cover-package=textpipe --cover-erase 2> /dev/null
