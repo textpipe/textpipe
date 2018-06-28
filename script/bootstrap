@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Install requirements
+pip install --quiet --requirement requirements.txt
