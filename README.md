@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/textpipe/textpipe.svg?branch=master)](https://travis-ci.com/textpipe/textpipe)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/486c205789b7457f8665a8e4c7cb6246)](https://www.codacy.com/app/textpipe/textpipe?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=textpipe/textpipe&amp;utm_campaign=Badge_Grade)
+
 # textpipe: clean and extract metadata from text
 
 `textpipe` is a Python package for converting raw text in to clean, readable text and
