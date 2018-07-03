@@ -34,3 +34,7 @@ metadata such as the number of words and named entities from the text.
 >>> print(pipe(sample_text))
 ("clean_text":'Sample text!', "language": 'en', "nwords": 2)
 ```
+
+
+## Contributing
+See [CONTRIBUTING](CONTRIBUTING) for guidelines for contributers.
