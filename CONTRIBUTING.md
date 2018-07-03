@@ -73,7 +73,7 @@ Steps:
 6. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request. 
    Make sure you add reviewers to your PR. Your code should be reviewed by at least 1 person and by everyone you know could have an opinion on your change.
    
-7. Use [Slack](https://textpipe.slack.com/signup) to advertise your PR.
+7. Optionally use [Slack](https://textpipe.slack.com/signup) to advertise your PR.
  
 8. Once your PR is approved and passes all tests, use the `rebase and merge` option.
    
