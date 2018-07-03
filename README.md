@@ -37,4 +37,4 @@ metadata such as the number of words and named entities from the text.
 
 
 ## Contributing
-See [CONTRIBUTING](CONTRIBUTING) for guidelines for contributers.
+See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributers.
