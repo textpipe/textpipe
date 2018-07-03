@@ -50,7 +50,10 @@ Steps:
    Always use a ``feature`` branch. It's good practice to never work on the ``master`` branch!
 
 3. Develop the feature on your feature branch. 
-   Add changed files using ``git add`` and then ``git commit`` files:
+
+4. Add yourself to the list of [contributers](CONTRIBUTERS.md).
+
+5. Add changed files using ``git add`` and then ``git commit`` files:
 
    ```bash
    $ git add modified_files
@@ -66,12 +69,13 @@ Steps:
    * **Be descriptive in your commit messages.**
    * **Commit changes that belong together.**
 
-4. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request. 
+
+6. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request. 
    Make sure you add reviewers to your PR. Your code should be reviewed by at least 1 person and by everyone you know could have an opinion on your change.
    
-5. Use [Slack](https://textpipe.slack.com/signup) to advertise your PR.
+7. Use [Slack](https://textpipe.slack.com/signup) to advertise your PR.
  
-6. Once your PR is approved and passes all tests, use the `rebase and merge` option.
+8. Once your PR is approved and passes all tests, use the `rebase and merge` option.
    
 
 
