@@ -25,6 +25,9 @@ This needs to pass before a PR can be merged to master.
 
 Our Continues Deployment (CD) setup publishes our changes to [PyPi](https://pypi.org/project/textpipe/).
 
+### Communication
+We use [Slack](https://textpipe.slack.com/signup) for communication. 
+
 ## How to contribute
 
 The preferred workflow for contributing to textpipe is to clone the
@@ -64,9 +67,11 @@ Steps:
    * **Commit changes that belong together.**
 
 4. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request. 
-   Make sure you add reviewers to your PR. Your code should be reveiwed by at least 1 person and by everyone you know could have an opinion on your change.
+   Make sure you add reviewers to your PR. Your code should be reviewed by at least 1 person and by everyone you know could have an opinion on your change.
    
-5. Once your PR is approved and passes all tests, use the `rebase and merge` option.
+5. Use [Slack](https://textpipe.slack.com/signup) to advertise your PR.
+ 
+6. Once your PR is approved and passes all tests, use the `rebase and merge` option.
    
 
 
