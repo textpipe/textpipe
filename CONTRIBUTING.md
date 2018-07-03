@@ -4,11 +4,11 @@ But please follow the guidelines below.
 
 ## Guidelines
 ### Code of conduct
-Please follow our [code our conduct](Contributor Covenant Code of Conduct).
+Please follow our [code our conduct](CODE_OF_CONDUCT.md).
 
 ### Coding Conventions
 All code (except for deployment scripts) is in Python 3.6.
-We follow the [Google Python Style Guide](https://github.com/google/styleguide/blob/gh-pages/pyguide.md) which means that we use `pylint`.
+We follow the [Google Python Style Guide](https://github.com/google/styleguide/blob/gh-pages/pyguide.md) which means that we check for style using `pylint` and enforce compliance without warnings and errors.
 We use Codacy to check Pull Requests (PRs). PRs need to pass checks before they can be merged to master.
 
 ### Testing
@@ -20,7 +20,7 @@ All PRs are reviewed by at least one reviewer.
 If you know that someone may have an opinion on your change, make sure this person reviewed your code before merging.
 
 ### CI/CD
-We run a Continues Integration (CI) pipeline on Travis. Travis runs `script/test`, which in turn runs all tests in the `tests` folder and all `doctests`.
+We run a Continues Integration (CI) pipeline on [Travis](Travis). Travis continuesly runs `script/test`, which in turn runs all tests in the `tests` folder and all `doctests`.
 This needs to pass before a PR can be merged to master.
 
 Our Continues Deployment (CD) setup publishes our changes to [PyPi](https://pypi.org/project/textpipe/).
