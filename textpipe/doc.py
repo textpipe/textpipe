@@ -149,3 +149,7 @@ class Doc:
         if self._text_stats.n_syllables == 0:
             return 100
         return self._text_stats.flesch_reading_ease
+
+    @property
+    def geotags(self):
+        pass
