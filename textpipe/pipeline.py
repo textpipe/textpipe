@@ -48,8 +48,8 @@ class Pipeline:
 
         >>> filename = "test.json"
         >>> Pipeline(['n_sents', 'clean_text']).save(filename)
-        >>> open(filename).read()
-        '{"pipeline": ["n_sents", "clean_text"], "language": null, "hint_language": null}'
+        >>> sorted(json.load(open(filename)).items())
+        [('hint_language', None), ('language', None), ('pipeline', ['n_sents', 'clean_text'])]
         """
 
         with open(filename, 'w') as json_file:
