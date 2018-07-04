@@ -70,5 +70,5 @@ class Pipeline:
         {'pipeline': ['n_sents', 'clean_text'], 'language': None, 'hint_language': None}
         """
 
-        with open(filename, 'r') as json_file:  # initialize
+        with open(filename, 'r') as json_file:
             return Pipeline(**json.load(json_file))
