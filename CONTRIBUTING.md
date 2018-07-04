@@ -35,6 +35,8 @@ The preferred workflow for contributing to textpipe is to clone the
 
 Steps:
 
+0. Create an issue of what you are going to do: https://github.com/textpipe/textpipe/issues
+
 1. Clone the [repository](https://github.com/textpipe/textpipe)
    ```bash
    $ git clone git@github.com:textpipe/textpipe.git
@@ -44,7 +46,7 @@ Steps:
 2. Create a ``feature`` branch to hold your development changes:
 
    ```bash
-   $ git checkout -b my-feature
+   $ git checkout -b feature/<ISSUEID>/my-branch
    ```
 
    Always use a ``feature`` branch. It's good practice to never work on the ``master`` branch!
