@@ -7,16 +7,9 @@ script/bootstrap
 # Install test requirements
 pip install --quiet --requirement test-requirements.txt
 
-# Run linting
-python -m pylint -f parseable textpipe | tee pylint.out
 
-# Fail build if Pylint returns fatal (1) | error (2)
-if [ $(($rc & 3)) -ne 0 ]; then
-    echo "Pylint failed"
-    exit 1
-else
-    echo "Pylint passed"
-    exit 0
+if [[ -z "$CI" ]]; then
+    python -m pylint -f parseable textpipe | tee pylint.out
 fi
 
 # Download languages needed for testing
