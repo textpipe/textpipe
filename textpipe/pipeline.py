@@ -14,7 +14,7 @@ class Pipeline:
     >>> sorted(pipe('Test sentence <a=>').items())
     [('clean_text', 'Test sentence '), ('nwords', 2), ('raw', 'Test sentence <a=>')]
     """
-    def __init__(self, **kwargs):
+    def __init__(self, pipeline=None, **kwargs):
         """
         Initialize a Pipeline instance
 
@@ -23,11 +23,9 @@ class Pipeline:
         language: 2-letter code for the language of the text
         hint_language: language you expect your text to be
         """
-        self.pipeline = kwargs.get('pipeline', None)
+        self.pipeline = pipeline or kwargs.get('pipeline', None)
         self.language = kwargs.get('language', None)
         self.hint_language = kwargs.get('hint_language', None)
-
-
 
     def __call__(self, raw):
         """
@@ -43,10 +41,15 @@ class Pipeline:
 
     def save(self, filename):
         """
-        Serializes the pipeline to file (using pickle)
+        Serializes the pipeline to file (using json)
 
         Args:
         filename: location of where to serialize pipeline
+
+        >>> filename = "test.json"
+        >>> Pipeline(['n_sents', 'clean_text']).save(filename)
+        >>> open(filename).read()
+        '{"pipeline": ["n_sents", "clean_text"], "language": null, "hint_language": null}'
         """
 
         with open(filename, 'w') as json_file:
@@ -58,7 +61,13 @@ class Pipeline:
         Loads pipeline from serialized file
 
         Args:
-        filename: location of pickled Pipeline object
+        filename: location of serialized Pipeline object
+
+        >>> filename = "test.json"
+        >>> Pipeline(['n_sents', 'clean_text']).save(filename)
+        >>> p = Pipeline.load(filename)
+        >>> p.__dict__
+        {'pipeline': ['n_sents', 'clean_text'], 'language': None, 'hint_language': None}
         """
 
         with open(filename, 'r') as json_file:  # initialize
