@@ -1,4 +1,4 @@
-# Contributers
+# Contributors
 
 * Tanja Crijns (RTL)
 * Daan Odijk (RTL)

@@ -1,5 +1,5 @@
 # Contributing
-Textpipe is open source, everyone is free to contribute. 
+Textpipe is open source, everyone is free to contribute.
 But please follow the guidelines below.
 
 ## Guidelines
@@ -15,23 +15,23 @@ We use Codacy to check Pull Requests (PRs). PRs need to pass checks before they 
 All (new) methods and functions have to be unittested using Python `doctests`.
 
 ### Reviewing
-All changes (not matter how minor) to master are made through Pull Requests (PRs). 
-All PRs are reviewed by at least one reviewer. 
+All changes (not matter how minor) to master are made through Pull Requests (PRs).
+All PRs are reviewed by at least one reviewer.
 If you know that someone may have an opinion on your change, make sure this person reviewed your code before merging.
 
 ### CI/CD
-We run a Continues Integration (CI) pipeline on [Travis](Travis). Travis continuesly runs `script/test`, which in turn runs all tests in the `tests` folder and all `doctests`.
+We run a Continues Integration (CI) pipeline on [Travis](Travis). Travis continuously runs `script/test`, which in turn runs all tests in the `tests` folder and all `doctests`.
 This needs to pass before a PR can be merged to master.
 
 Our Continues Deployment (CD) setup publishes our changes to [PyPi](https://pypi.org/project/textpipe/).
 
 ### Communication
-We use [Slack](https://textpipe.slack.com/signup) for communication. 
+We use [Slack](https://textpipe.slack.com/signup) for communication.
 
 ## How to contribute
 
 The preferred workflow for contributing to textpipe is to clone the
-[GitHub repository](https://github.com/textpipe/textpipe), develop on a branch and make a Pull Request. 
+[GitHub repository](https://github.com/textpipe/textpipe), develop on a branch and make a Pull Request.
 
 Steps:
 
@@ -49,9 +49,9 @@ Steps:
 
    Always use a ``feature`` branch. It's good practice to never work on the ``master`` branch!
 
-3. Develop the feature on your feature branch. 
+3. Develop the feature on your feature branch.
 
-4. Add yourself to the list of [contributers](CONTRIBUTERS.md).
+4. Add yourself to the list of [contributors](CONTRIBUTORS.md).
 
 5. Add changed files using ``git add`` and then ``git commit`` files:
 
@@ -70,13 +70,13 @@ Steps:
    * **Commit changes that belong together.**
 
 
-6. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request. 
+6. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request.
    Make sure you add reviewers to your PR. Your code should be reviewed by at least 1 person and by everyone you know could have an opinion on your change.
-   
+
 7. Optionally use [Slack](https://textpipe.slack.com/signup) to advertise your PR.
- 
+
 8. Once your PR is approved and passes all tests, use the `rebase and merge` option.
-   
+
 
 
 (If any of the above seems like magic to you, please look up the
