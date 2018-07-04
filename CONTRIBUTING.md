@@ -14,6 +14,9 @@ We use Codacy to check Pull Requests (PRs). PRs need to pass checks before they 
 ### Testing
 All (new) methods and functions have to be unittested using Python `doctests`.
 
+### Branching Conventions
+We use the git flow convention: `feature/<id>/<small-description>`. 
+
 ### Reviewing
 All changes (not matter how minor) to master are made through Pull Requests (PRs).
 All PRs are reviewed by at least one reviewer.
@@ -35,6 +38,8 @@ The preferred workflow for contributing to textpipe is to clone the
 
 Steps:
 
+0. Create an issue of what you are going to do: https://github.com/textpipe/textpipe/issues
+
 1. Clone the [repository](https://github.com/textpipe/textpipe)
    ```bash
    $ git clone git@github.com:textpipe/textpipe.git
@@ -44,7 +49,7 @@ Steps:
 2. Create a ``feature`` branch to hold your development changes:
 
    ```bash
-   $ git checkout -b my-feature
+   $ git checkout -b feature/<ISSUEID>/my-branch
    ```
 
    Always use a ``feature`` branch. It's good practice to never work on the ``master`` branch!
