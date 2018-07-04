@@ -30,7 +30,7 @@ metadata such as the number of words and named entities from the text.
 >>> print(document.nwords)
 2
 :
->>> pipe = pipeline.Pipeline(['clean_text', 'language', 'nwords', ('word2vec', {'model': ''})])
+>>> pipe = pipeline.Pipeline(['clean_text', 'language', 'nwords'])
 >>> print(pipe(sample_text))
 ("clean_text":'Sample text!', "language": 'en', "nwords": 2)
 ```
