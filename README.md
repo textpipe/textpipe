@@ -9,6 +9,14 @@ raw text into readable text by removing HTML tags and extracting
 metadata such as the number of words and named entities from the text.
 
 
+## Vision: the zen of textpipe
+
+- Designed for use in production pipelines without adult supervision.
+- Rechargeable batteries included: provide sane defaults and clear examples to adapt.
+- A uniform interface with thin wrappers around state-of-the-art NLP packages.
+- As language-agnostic as possible.
+- Bring your own models.
+
 ## Features
 
 - Clean raw text by removing `HTML` and other unreadable constructs
