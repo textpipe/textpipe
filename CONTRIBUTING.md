@@ -49,7 +49,7 @@ Steps:
 2. Create a ``feature`` branch to hold your development changes:
 
    ```bash
-   $ git checkout -b {feature|issue}/<issue-id>/<feature-name>
+   $ git checkout -b {feature|fix}/<issue-id>/<feature-name>
    ```
 
    Always use a ``feature`` branch. It's good practice to never work on the ``master`` branch!
@@ -67,7 +67,7 @@ Steps:
    to record your changes in Git, then push the changes to your GitHub account with:
 
    ```bash
-   $ git push -u origin {feature|issue}/<issue-id>/<feature-name>
+   $ git push -u origin {feature|fix}/<issue-id>/<feature-name>
    ```
 
    * **Be descriptive in your commit messages. Start with a verb in the present tense.**
