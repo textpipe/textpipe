@@ -8,8 +8,9 @@ script/bootstrap
 pip install --quiet --requirement test-requirements.txt
 
 
+# Run pylint, only locally
 if [[ -z "$CI" ]]; then
-    python -m pylint -f parseable textpipe | tee pylint.out
+    python -m pylint textpipe
 fi
 
 # Download languages needed for testing
