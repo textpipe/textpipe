@@ -20,7 +20,7 @@ metadata such as the number of words and named entities from the text.
 ## Usage example
 
 ```python
->>> import textpipe 
+>>> import textpipe
 >>> sample_text = 'Sample text! <!DOCTYPE>'
 >>> doc = textpipe.Doc(sample_text)
 >>> print(doc.clean_text)
@@ -37,4 +37,4 @@ metadata such as the number of words and named entities from the text.
 
 
 ## Contributing
-See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributers.
+See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
