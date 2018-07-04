@@ -12,7 +12,7 @@ We follow the [Google Python Style Guide](https://github.com/google/styleguide/b
 We use Codacy to check Pull Requests (PRs). PRs need to pass checks before they can be merged to master.
 
 ### Testing
-All (new) methods and functions have to be unittested using Python `doctests`.
+All (new) methods and functions have to be unittested using Python `doctests`. Integration tests can be added in the `tests` folder. Current tests use `pytest`.
 
 ### Branching Conventions
 We use the git flow convention: `feature/<id>/<small-description>`. 
@@ -49,7 +49,7 @@ Steps:
 2. Create a ``feature`` branch to hold your development changes:
 
    ```bash
-   $ git checkout -b feature/<ISSUEID>/my-branch
+   $ git checkout -b {feature|fix}/<issue-id>/<feature-name>
    ```
 
    Always use a ``feature`` branch. It's good practice to never work on the ``master`` branch!
@@ -64,20 +64,18 @@ Steps:
    $ git add modified_files
    $ git commit
    ```
-
    to record your changes in Git, then push the changes to your GitHub account with:
 
    ```bash
-   $ git push -u origin my-feature
+   $ git push -u origin {feature|fix}/<issue-id>/<feature-name>
    ```
 
-   * **Be descriptive in your commit messages.**
-   * **Commit changes that belong together.**
+   * **Be descriptive in your commit messages. Start with a verb in the present tense.**
+   * **Group commit changes that belong together.**
 
-
-6. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request.
-   Make sure you add reviewers to your PR. Your code should be reviewed by at least 1 person and by everyone you know could have an opinion on your change.
-
+6. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request. 
+   Make sure you add reviewers to your PR. Your code should be reviewed by at least 1 person and by everyone in the wider contributing team  you know could have an opinion on your change.
+   
 7. Optionally use [Slack](https://textpipe.slack.com/signup) to advertise your PR.
 
 8. Once your PR is approved and passes all tests, use the `rebase and merge` option.
