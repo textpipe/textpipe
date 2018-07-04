@@ -14,6 +14,9 @@ We use Codacy to check Pull Requests (PRs). PRs need to pass checks before they 
 ### Testing
 All (new) methods and functions have to be unittested using Python `doctests`.
 
+### Branching Conventions
+We use the git flow convention: `feature/<id>/<small-description>`. 
+
 ### Reviewing
 All changes (not matter how minor) to master are made through Pull Requests (PRs).
 All PRs are reviewed by at least one reviewer.
