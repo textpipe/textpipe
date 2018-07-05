@@ -5,7 +5,7 @@ Testing for textpipe pipeline.py
 from textpipe.pipeline import Pipeline
 
 TEXT = 'Test sentence for testing'
-PIPELINE = ['raw', 'nwords', 'complexity', 'clean_text']
+PIPELINE = ['Raw', 'Nwords', 'Complexity', 'CleanText']
 PIPE = Pipeline(PIPELINE)
 
 

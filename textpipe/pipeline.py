@@ -4,16 +4,17 @@ Obtain elements from a textpipe doc, by specifying a pipeline, in a dictionary.
 
 from textpipe.doc import Doc
 
+import textpipe.operation
 
 class Pipeline:
     """
     Create a pipeline instance based on the elements you would want from your text
 
-    >>> pipe = Pipeline(['raw', 'nwords', 'clean_text'])
+    >>> pipe = Pipeline(['Raw', 'Nwords', 'CleanText'])
     >>> sorted(pipe('Test sentence <a=>').items())
-    [('clean_text', 'Test sentence '), ('nwords', 2), ('raw', 'Test sentence <a=>')]
+    [('CleanText', 'Test sentence '), ('Nwords', 2), ('Raw', 'Test sentence <a=>')]
     """
-    def __init__(self, pipeline, language=None, hint_language='en'):
+    def __init__(self, operations, language=None, hint_language='en'):
         """
         Initialize a Pipeline instance
 
@@ -22,7 +23,12 @@ class Pipeline:
         language: 2-letter code for the language of the text
         hint_language: language you expect your text to be
         """
-        self.pipeline = pipeline
+        self.operations = []
+        # loop over pipeline operations and instantiate operation classes.
+        for operation_name in operations:
+            oper_cls = getattr(textpipe.operation, operation_name)
+            # TODO: pass in config to operation constructor, i.e., oper_cls(config)
+            self.operations.append(oper_cls())
         self.language = language
         self.hint_language = hint_language
 
@@ -35,5 +41,5 @@ class Pipeline:
         raw: incoming, unedited text
         """
         doc = Doc(raw, language=self.language, hint_language=self.hint_language)
-        result_dict = dict(zip(self.pipeline, [doc.__getattribute__(x) for x in self.pipeline]))
+        result_dict = dict([(oper.__class__.__name__, oper(doc)) for oper in self.operations])
         return result_dict
