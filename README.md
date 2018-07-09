@@ -9,6 +9,14 @@ raw text into readable text by removing HTML tags and extracting
 metadata such as the number of words and named entities from the text.
 
 
+## Vision: the zen of textpipe
+
+- Designed for use in production pipelines without adult supervision.
+- Rechargeable batteries included: provide sane defaults and clear examples to adapt.
+- A uniform interface with thin wrappers around state-of-the-art NLP packages.
+- As language-agnostic as possible.
+- Bring your own models.
+
 ## Features
 
 - Clean raw text by removing `HTML` and other unreadable constructs
@@ -20,17 +28,17 @@ metadata such as the number of words and named entities from the text.
 ## Usage example
 
 ```python
->>> import textpipe
+>>> from textpipe import doc, pipeline
 >>> sample_text = 'Sample text! <!DOCTYPE>'
->>> doc = textpipe.Doc(sample_text)
->>> print(doc.clean_text)
+>>> document = doc.Doc(sample_text)
+>>> print(document.clean_text)
 'Sample text!'
->>> print(doc.language)
+>>> print(document.language)
 'en'
->>> print(doc.nwords)
+>>> print(document.nwords)
 2
 
->>> pipe = Pipeline(['clean_text', 'language', 'nwords'])
+>>> pipe = pipeline.Pipeline(['clean_text', 'language', 'nwords'])
 >>> print(pipe(sample_text))
 ("clean_text":'Sample text!', "language": 'en', "nwords": 2)
 ```

@@ -1,8 +1,8 @@
 """
-Operation classes must be defined in this module. 
+Operation classes must be defined in this module.
 
 In a future version we might consider adding support for fully qualified paths
-when creating a Pipeline, e.g.: 
+when creating a Pipeline, e.g.:
 Pipeline['CleanText', 'my.org.package.OperationClass'])
 
 so that users do not have to put their Operation classes inside of this module.
@@ -55,7 +55,7 @@ class Nwords(Operation):
 
 
 class Complexity(Operation):
-    """ 
+    """
     Determine the complexity of text using the Flesch
     reading ease test ranging from 0.0 - 100.0 with 0.0
     being the most difficult to read.
