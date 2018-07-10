@@ -91,7 +91,7 @@ class Ents(Operation):
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Sentence for testing Google text')
     >>> Ents()(doc)
-    ['Google']
+    [('Google', 'ORG')]
     """
     def __call__(self, doc):
         return doc.ents
