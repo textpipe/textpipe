@@ -80,4 +80,23 @@ class Pipeline:
         [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['Nsents', 'CleanText'])]
         """
         with open(filename, 'r') as json_file:
-            return Pipeline(**json.load(json_file))
+            dict_representation = json.load(json_file)
+            return Pipeline.from_dict(dict_representation)
+
+    @staticmethod
+    def from_dict(dict_representation):
+        """
+        Loads pipeline from dictionary
+
+        Args:
+        dict_representation: A dictionary used to instantiate a pipeline object
+        >>> d = {'operations': ['Nsents', 'CleanText'], 'language': 'it', 'hint_language': None, 'kwargs': {'other': 'args'}}
+        >>> p = Pipeline.from_dict(d)
+        >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
+        >>> sorted(public_flds.items())
+        [('hint_language', None), ('kwargs', {'other': 'args'}), ('language', 'it'), ('operations', ['Nsents', 'CleanText'])]
+        """
+        kwargs = dict_representation.pop('kwargs', None)
+        if kwargs:
+            dict_representation.update(**kwargs)
+        return Pipeline(**dict_representation)
