@@ -1,3 +1,4 @@
+# pylint: disable=too-few-public-methods
 """
 Operation classes must be defined in this module.
 

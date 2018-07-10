@@ -15,7 +15,7 @@ class Pipeline:
     >>> sorted(pipe('Test sentence <a=>').items())
     [('CleanText', 'Test sentence '), ('Nwords', 2), ('Raw', 'Test sentence <a=>')]
     """
-    def __init__(self, operations, language=None, hint_language=None):
+    def __init__(self, operations, language=None, hint_language=None, **kwargs):
         """
         Initialize a Pipeline instance
 
@@ -27,11 +27,12 @@ class Pipeline:
         self.operations = operations
         self.language = language
         self.hint_language = hint_language
+        self.kwargs = kwargs
         self._operations = []
         # loop over pipeline operations and instantiate operation classes.
         for operation_name in operations:
             oper_cls = getattr(textpipe.operation, operation_name)
-            # TODO: pass in config to operation constructor, i.e., oper_cls(config)
+            # todo: pass in config to operation constructor, i.e., oper_cls(config)
             self._operations.append(oper_cls())
 
     def __call__(self, raw):
@@ -56,7 +57,7 @@ class Pipeline:
         >>> filename = "test.json"
         >>> Pipeline(['Nsents', 'CleanText']).save(filename)
         >>> sorted(json.load(open(filename)).items())
-        [('hint_language', None), ('language', None), ('operations', ['Nsents', 'CleanText'])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['Nsents', 'CleanText'])]
         """
         with open(filename, 'w') as json_file:
             # serialize all public attrs
@@ -76,8 +77,7 @@ class Pipeline:
         >>> p = Pipeline.load(filename)
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('hint_language', None), ('language', None), ('operations', ['Nsents', 'CleanText'])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['Nsents', 'CleanText'])]
         """
         with open(filename, 'r') as json_file:
             return Pipeline(**json.load(json_file))
-
