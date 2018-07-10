@@ -107,9 +107,9 @@ class Doc:
 
         >>> doc = Doc('Sentence for testing Google text')
         >>> doc.ents
-        ['Google']
+        [('Google', 'ORG')]
         """
-        return list(set(map(str, self.spacy_doc.ents)))
+        return list(set([(ent.text, ent.label_) for ent in self.spacy_doc.ents]))
 
 
     @property
