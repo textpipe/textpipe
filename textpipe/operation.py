@@ -9,11 +9,13 @@ Pipeline['CleanText', 'my.org.package.OperationClass'])
 so that users do not have to put their Operation classes inside of this module.
 """
 
+
 class Operation:
     """
     Base class for pipeline operations.
     """
-    pass
+    def __call__(self, doc):
+        raise NotImplementedError()
 
 
 class CleanText(Operation):
@@ -42,13 +44,13 @@ class Raw(Operation):
         return doc.raw
 
 
-class Nwords(Operation):
+class NWords(Operation):
     """
     Extract the number of words from text
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> Nwords()(doc)
+    >>> NWords()(doc)
     5
     """
     def __call__(self, doc):
@@ -71,26 +73,26 @@ class Complexity(Operation):
         return doc.complexity
 
 
-class Nsents(Operation):
+class NSentences(Operation):
     """
     Extract the number of sentences from text
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> Nsents()(doc)
+    >>> NSentences()(doc)
     1
     """
     def __call__(self, doc):
         return doc.nsents
 
 
-class Ents(Operation):
+class Entities(Operation):
     """
     Extract a list of the named entities in text
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Sentence for testing Google text')
-    >>> Ents()(doc)
+    >>> Entities()(doc)
     [('Google', 'ORG')]
     """
     def __call__(self, doc):
