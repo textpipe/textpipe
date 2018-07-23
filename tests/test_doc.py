@@ -25,7 +25,7 @@ interpreteren. Philips is een bedrijf genaamd Philips.</p>
 
 TEXT_3 = ''
 
-TEXT_4 = """this is a paragraph
+TEXT_4 = """this is a paragraph 
 this is a paragraph
 """
 
