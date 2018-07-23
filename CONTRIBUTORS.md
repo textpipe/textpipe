@@ -5,3 +5,4 @@
 * Anne Schuth (De Persgroep)
 * David Graus (FDMG)
 * Lucas de Haas (De Persgroep)
+* Vasco Visser (De Persgroep)

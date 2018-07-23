@@ -1,3 +1,4 @@
+# pylint: disable=too-many-instance-attributes
 """
 Clean text, make it readable and obtain metadata from it.
 """
