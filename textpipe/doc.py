@@ -94,8 +94,7 @@ class Doc:
                 text = re.sub('…', '...', text)
                 text = re.sub('[`‘’‛⸂⸃⸌⸍⸜⸝]', "'", text)
                 text = re.sub('[„“]|(\'\')|(,,)', '"', text)
-                text = re.sub(' +', ' ', text)
-                text = text.replace('\n', ' ')
+                text = re.sub('\s+', ' ', text)
                 self._clean_text = text.strip()
             else:
                 self._clean_text = ''
