@@ -25,14 +25,19 @@ interpreteren. Philips is een bedrijf genaamd Philips.</p>
 
 TEXT_3 = ''
 
+TEXT_4 = """this is a paragraph
+this is a paragraph
+"""
+
 DOC_1 = Doc(TEXT_1)
 DOC_2 = Doc(TEXT_2)
 DOC_3 = Doc(TEXT_3)
+DOC_4 = Doc(TEXT_4)
 
 
 def test_nwords_nsents():
-    assert DOC_1.nwords == 87
-    assert DOC_2.nwords == 53
+    assert DOC_1.nwords == 95
+    assert DOC_2.nwords == 54
     assert DOC_3.nwords == 0
     assert DOC_1.nsents == 4
     assert DOC_2.nsents == 4
@@ -46,8 +51,8 @@ def test_entities():
 
 
 def test_complexity():
-    assert DOC_1.complexity == 26.629464285714306
-    assert DOC_2.complexity == 14.61833333333334
+    assert DOC_1.complexity == 30.464548969072155
+    assert DOC_2.complexity == 17.652500000000003
     assert DOC_3.complexity == 100
 
 
@@ -55,6 +60,10 @@ def test_clean_text():
     assert len(TEXT_1) >= len(DOC_1.clean_text)
     assert len(TEXT_2) >= len(DOC_2.clean_text)
     assert len(TEXT_3) >= len(DOC_3.clean_text)
+
+
+def test_clean_text_newlines():
+    assert ' '.join(TEXT_4.split()) == DOC_4.clean_text
 
 
 def test_language():

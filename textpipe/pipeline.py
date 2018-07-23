@@ -13,7 +13,7 @@ class Pipeline:
 
     >>> pipe = Pipeline(['Raw', 'NWords', 'CleanText'])
     >>> sorted(pipe('Test sentence <a=>').items())
-    [('CleanText', 'Test sentence '), ('NWords', 2), ('Raw', 'Test sentence <a=>')]
+    [('CleanText', 'Test sentence'), ('NWords', 2), ('Raw', 'Test sentence <a=>')]
     """
     def __init__(self, operations, language=None, hint_language=None, **kwargs):
         """
