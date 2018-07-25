@@ -6,3 +6,5 @@
 * David Graus (FDMG)
 * Lucas de Haas (De Persgroep)
 * Vasco Visser (De Persgroep)
+* Ioannis Charitopoulos (RTL)
+* Bahadir Cambel (FDMG)
