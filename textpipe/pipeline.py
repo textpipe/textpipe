@@ -35,7 +35,6 @@ class Pipeline:
             oper_name = oper_tuple[0]
             oper_kwargs = oper_tuple[1] if len(oper_tuple) > 1 else {}
             oper_cls = getattr(textpipe.operation, oper_name)
-            # todo: pass in config to operation constructor, i.e., oper_cls(config)
             self._operations.append(oper_cls(**oper_kwargs))
 
     def __call__(self, raw):
