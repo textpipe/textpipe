@@ -60,7 +60,7 @@ class Pipeline:
         >>> filename = "test.json"
         >>> Pipeline([('NSentences',), ('CleanText',)]).save(filename)
         >>> sorted(json.load(open(filename)).items())
-        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', [('NSentences',), ('CleanText',)])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', [['NSentences'], ['CleanText']])]
         """
         with open(filename, 'w') as json_file:
             # serialize all public attrs
@@ -80,7 +80,7 @@ class Pipeline:
         >>> p = Pipeline.load(filename)
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', [('NSentences',), ('CleanText',)])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', [['NSentences'], ['CleanText']])]
         """
         with open(filename, 'r') as json_file:
             dict_representation = json.load(json_file)
@@ -102,4 +102,5 @@ class Pipeline:
         kwargs = dict_representation.pop('kwargs', None)
         if kwargs:
             dict_representation.update(**kwargs)
+
         return Pipeline(**dict_representation)
