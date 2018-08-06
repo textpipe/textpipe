@@ -41,7 +41,7 @@ class Doc:
         self._text_stats = {}
 
     @property
-    def language(self):
+    def language(self, **kwargs):
         """
         Detect the language of a text if no language was provided along with the text
 
@@ -59,7 +59,7 @@ class Doc:
         return self._language
 
     @property
-    def spacy_doc(self):
+    def spacy_doc(self, **kwargs):
         """
         Create a spacy doc and load the language module
 
@@ -78,7 +78,7 @@ class Doc:
         return self._spacy_doc
 
     @property
-    def clean_text(self):
+    def clean_text(self, **kwargs):
         """
         Clean HTML and normalise punctuation.
 
@@ -101,7 +101,7 @@ class Doc:
         return self._clean_text
 
     @property
-    def ents(self):
+    def ents(self, **kwargs):
         """
         Extract a list of the named entities in text
 
@@ -113,7 +113,7 @@ class Doc:
 
 
     @property
-    def nsents(self):
+    def nsents(self, **kwargs):
         """
         Extract the number of sentences from text
 
@@ -124,7 +124,7 @@ class Doc:
         return len(list(self.spacy_doc.sents))
 
     @property
-    def nwords(self):
+    def nwords(self, **kwargs):
         """
         Extract the number of words from text
 
@@ -135,7 +135,7 @@ class Doc:
         return len(self.clean_text.split())
 
     @property
-    def complexity(self):
+    def complexity(self, **kwargs):
         """
         Determine the complexity of text using the Flesch
         reading ease test ranging from 0.0 - 100.0 with 0.0

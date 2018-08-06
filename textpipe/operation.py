@@ -24,9 +24,12 @@ class CleanText(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('“Please clean this piece… of text</b>„')
-    >>> CleanText()(doc)
+    >>> CleanText(**{})(doc)
     '"Please clean this piece... of text"'
     """
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
     def __call__(self, doc):
         return doc.clean_text
 
@@ -37,9 +40,12 @@ class Raw(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> Raw()(doc)
+    >>> Raw(**{})(doc)
     'Test sentence for testing text'
     """
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
     def __call__(self, doc):
         return doc.raw
 
@@ -50,9 +56,12 @@ class NWords(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> NWords()(doc)
+    >>> NWords(**{})(doc)
     5
     """
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
     def __call__(self, doc):
         return doc.nwords
 
@@ -65,9 +74,11 @@ class Complexity(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> Complexity()(doc)
+    >>> Complexity(**{})(doc)
     83.32000000000004
     """
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
     def __call__(self, doc):
         return doc.complexity
@@ -79,9 +90,12 @@ class NSentences(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> NSentences()(doc)
+    >>> NSentences(**{})(doc)
     1
     """
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
     def __call__(self, doc):
         return doc.nsents
 
@@ -92,8 +106,11 @@ class Entities(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Sentence for testing Google text')
-    >>> Entities()(doc)
+    >>> Entities(**{})(doc)
     [('Google', 'ORG')]
     """
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
     def __call__(self, doc):
         return doc.ents
