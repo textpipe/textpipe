@@ -24,7 +24,7 @@ class CleanText(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('“Please clean this piece… of text</b>„')
-    >>> CleanText(**{})(doc)
+    >>> CleanText()(doc)
     '"Please clean this piece... of text"'
     """
     def __init__(self, **kwargs):
@@ -40,7 +40,7 @@ class Raw(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> Raw(**{})(doc)
+    >>> Raw()(doc)
     'Test sentence for testing text'
     """
     def __init__(self, **kwargs):
@@ -56,7 +56,7 @@ class NWords(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> NWords(**{})(doc)
+    >>> NWords()(doc)
     5
     """
     def __init__(self, **kwargs):
@@ -74,7 +74,7 @@ class Complexity(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> Complexity(**{})(doc)
+    >>> Complexity()(doc)
     83.32000000000004
     """
     def __init__(self, **kwargs):
@@ -90,7 +90,7 @@ class NSentences(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
-    >>> NSentences(**{})(doc)
+    >>> NSentences()(doc)
     1
     """
     def __init__(self, **kwargs):
@@ -106,7 +106,7 @@ class Entities(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Sentence for testing Google text')
-    >>> Entities(**{})(doc)
+    >>> Entities()(doc)
     [('Google', 'ORG')]
     """
     def __init__(self, **kwargs):
