@@ -8,6 +8,10 @@ __pycache__/
 # macOS
 .DS_Store
 
+# venv
+venv/
+.python-version
+
 # IDE project files
 *.idea
 .vscode
@@ -18,6 +22,7 @@ dist/
 *.egg-info/
 
 # Testing output
+.pytest_cache
 pytest.xml
 .coverage
 coverage.xml
