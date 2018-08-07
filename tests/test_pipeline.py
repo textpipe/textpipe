@@ -2,6 +2,8 @@
 Testing for textpipe pipeline.py
 """
 
+import tempfile
+
 from textpipe.pipeline import Pipeline
 
 TEXT = 'Test sentence for testing'
@@ -20,10 +22,10 @@ def test_load_save():
     """
     The property of saves model should be the same as the loaded model after serialization.
     """
+    with tempfile.NamedTemporaryFile() as fp:
+        PIPE.language = 'it'
+        PIPE.save(fp.name)
 
-    PIPE.language = 'it'
-    PIPE.save('test.pkl')
-
-    p = Pipeline.load('test.pkl')
+        p = Pipeline.load(fp.name)
 
     assert p.language == PIPE.language
