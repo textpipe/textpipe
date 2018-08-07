@@ -57,10 +57,12 @@ class Pipeline:
         Args:
         filename: location of where to serialize pipeline
 
-        >>> filename = "test.json"
-        >>> Pipeline(['NSentences', ('CleanText', {'some': 'arg'})]).save(filename)
-        >>> sorted(json.load(open(filename)).items())
+        >>> import tempfile
+        >>> fp = tempfile.NamedTemporaryFile()
+        >>> Pipeline(['NSentences', ('CleanText', {'some': 'arg'})]).save(fp.name)
+        >>> sorted(json.load(fp).items())
         [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
+        >>> fp.close()
         """
         with open(filename, 'w') as json_file:
             # serialize all public attrs
@@ -75,9 +77,11 @@ class Pipeline:
         Args:
         filename: location of serialized Pipeline object
 
-        >>> filename = "test.json"
-        >>> Pipeline(['NSentences', ('CleanText', {'some': 'arg'})]).save(filename)
-        >>> p = Pipeline.load(filename)
+        >>> import tempfile
+        >>> fp = tempfile.NamedTemporaryFile()
+        >>> Pipeline(['NSentences', ('CleanText', {'some': 'arg'})]).save(fp.name)
+        >>> p = Pipeline.load(fp.name)
+        >>> fp.close()
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
         [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
