@@ -11,7 +11,7 @@ class Pipeline:
     """
     Create a pipeline instance based on the elements you would want from your text
 
-    >>> pipe = Pipeline([('Raw',), ('NWords',), ('CleanText',)])
+    >>> pipe = Pipeline(['Raw', ('NWords',), ('CleanText',)])
     >>> sorted(pipe('Test sentence <a=>').items())
     [('CleanText', 'Test sentence'), ('NWords', 2), ('Raw', 'Test sentence <a=>')]
     """
@@ -20,7 +20,7 @@ class Pipeline:
         Initialize a Pipeline instance
 
         Args:
-        operations: list of (operation_name, operation_kwargs)-tuples
+        operations: list with strings and/or (operation_name, operation_kwargs)-tuples
         pipeline: list of elements to obtain from a textpipe doc
         language: 2-letter code for the language of the text
         hint_language: language you expect your text to be
@@ -31,9 +31,10 @@ class Pipeline:
         self.kwargs = kwargs
         self._operations = []
         # loop over pipeline operations and instantiate operation classes.
-        for oper_tuple in operations:
-            oper_name = oper_tuple[0]
-            oper_kwargs = oper_tuple[1] if len(oper_tuple) > 1 else {}
+        for oper in operations:
+            oper = (oper,) if isinstance(oper, str) else oper
+            oper_name = oper[0]
+            oper_kwargs = oper[1] if len(oper) > 1 else {}
             oper_cls = getattr(textpipe.operation, oper_name)
             self._operations.append(oper_cls(**oper_kwargs))
 
@@ -57,9 +58,9 @@ class Pipeline:
         filename: location of where to serialize pipeline
 
         >>> filename = "test.json"
-        >>> Pipeline([('NSentences',), ('CleanText',)]).save(filename)
+        >>> Pipeline(['NSentences', ('CleanText', {'some': 'arg'})]).save(filename)
         >>> sorted(json.load(open(filename)).items())
-        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', [['NSentences'], ['CleanText']])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
         """
         with open(filename, 'w') as json_file:
             # serialize all public attrs
@@ -75,11 +76,11 @@ class Pipeline:
         filename: location of serialized Pipeline object
 
         >>> filename = "test.json"
-        >>> Pipeline([('NSentences',), ('CleanText',)]).save(filename)
+        >>> Pipeline(['NSentences', ('CleanText', {'some': 'arg'})]).save(filename)
         >>> p = Pipeline.load(filename)
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', [['NSentences'], ['CleanText']])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
         """
         with open(filename, 'r') as json_file:
             dict_representation = json.load(json_file)
@@ -92,11 +93,11 @@ class Pipeline:
 
         Args:
         dict_representation: A dictionary used to instantiate a pipeline object
-        >>> d = {'operations': [('NSentences',), ('CleanText',)], 'language': 'it', 'hint_language': None, 'kwargs': {'other': 'args'}}
+        >>> d = {'operations': ['NSentences', ('CleanText', {'some': 'arg'})], 'language': 'it', 'hint_language': None, 'kwargs': {'other': 'args'}}
         >>> p = Pipeline.from_dict(d)
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('hint_language', None), ('kwargs', {'other': 'args'}), ('language', 'it'), ('operations', [('NSentences',), ('CleanText',)])]
+        [('hint_language', None), ('kwargs', {'other': 'args'}), ('language', 'it'), ('operations', ['NSentences', ('CleanText', {'some': 'arg'})])]
         """
         kwargs = dict_representation.pop('kwargs', None)
         if kwargs:
