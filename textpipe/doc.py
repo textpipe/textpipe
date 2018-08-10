@@ -25,10 +25,6 @@ class Doc:
     is_detected_language: a boolean indicating if the language was specified
                             beforehand or detected
     hint_language: language you expect your text to be
-
-    _spacy_nlps: dictionary containing a spacy language module
-    _spacy_doc: dictionary containing an instance of a spacy doc
-    _text_stats: dictionary containing an instance of textacy textstats
     """
 
     def __init__(self, raw, language=None, hint_language='en'):
@@ -36,8 +32,7 @@ class Doc:
         self.is_detected_language = language is None
         self.hint_language = hint_language
         self._language = language
-        self._spacy_nlps = {}
-        self._spacy_doc = {}
+
         self._text_stats = {}
 
     @property
@@ -88,15 +83,14 @@ class Doc:
         >>> type(doc.spacy_doc)
         <class 'spacy.tokens.doc.Doc'>
         """
-        if not self._spacy_doc:
-            lang = self.hint_language if self.language == 'un' else self.language
-            if lang not in self._spacy_nlps:
-                # loading models with two letter language codes doesn't work for windows due
-                self._spacy_nlps[lang] = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang
-                                                                           == 'en' else 'news'))
-            nlp = self._spacy_nlps[lang]
-            self._spacy_doc = nlp(self.clean)
-        return self._spacy_doc
+        return self.spacy_nlp()
+
+    @functools.lru_cache()
+    def spacy_nlp(self):
+        lang = self.language if self.language != 'un' else self.hint_language
+        # loading models with two letter language codes doesn't work for windows
+        spacy_nlp = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
+        return spacy_nlp(self.clean)
 
     @property
     def clean(self):
@@ -145,7 +139,6 @@ class Doc:
         [('Google', 'ORG')]
         """
         return list({(ent.text, ent.label_) for ent in self.spacy_doc.ents})
-
 
     @property
     def nsents(self):
