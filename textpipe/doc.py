@@ -4,6 +4,8 @@ Clean text, make it readable and obtain metadata from it.
 """
 
 import re
+import functools
+
 from bs4 import BeautifulSoup
 import cld2
 import spacy
@@ -35,7 +37,6 @@ class Doc:
         self.is_detected_language = language is None
         self._language = language
         self._hint_language = hint_language
-        self._clean = None
         self._spacy_nlps = {}
         self._spacy_doc = {}
         self._text_stats = {}
@@ -80,25 +81,39 @@ class Doc:
     @property
     def clean(self):
         """
-        Clean HTML and normalise punctuation.
+        Cleaned text with sensible defaults.
 
         >>> doc = Doc('“Please clean this piece… of text</b>„')
         >>> doc.clean
         '"Please clean this piece... of text"'
         """
-        if self._clean is None:
-            if self.raw is not None:
-                text = BeautifulSoup(self.raw, 'html.parser').get_text()  # remove HTML
-                # Three regexes below adapted from Blendle cleaner.py
-                # https://github.com/blendle/research-summarization/blob/master/enrichers/cleaner.py#L29
-                text = re.sub('…', '...', text)
-                text = re.sub('[`‘’‛⸂⸃⸌⸍⸜⸝]', "'", text)
-                text = re.sub('[„“]|(\'\')|(,,)', '"', text)
-                text = re.sub('\s+', ' ', text)
-                self._clean = text.strip()
-            else:
-                self._clean = ''
-        return self._clean
+        return self.clean_text()
+
+    @functools.lru_cache()
+    def clean_text(self, remove_html=True, clean_dots=True, clean_quotes=True,
+                   clean_whitespace=True):
+        """
+        Clean HTML and normalise punctuation.
+
+        >>> doc = Doc('“Please clean this piece… of text</b>„')
+        >>> doc.clean_text(False, False, False, False) == doc.raw
+        True
+        """
+        text = self.raw
+        if remove_html:
+            text = BeautifulSoup(text, 'html.parser').get_text()  # remove HTML
+
+        # Three regexes below adapted from Blendle cleaner.py
+        # https://github.com/blendle/research-summarization/blob/master/enrichers/cleaner.py#L29
+        if clean_dots:
+            text = re.sub(r'…', '...', text)
+        if clean_quotes:
+            text = re.sub(r'[`‘’‛⸂⸃⸌⸍⸜⸝]', "'", text)
+            text = re.sub(r'[„“]|(\'\')|(,,)', '"', text)
+        if clean_whitespace:
+            text = re.sub(r'\s+', ' ', text).strip()
+
+        return text
 
     @property
     def ents(self):
