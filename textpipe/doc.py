@@ -17,26 +17,25 @@ class Doc:
     """
     Create a doc instance of text, obtain cleaned, readable text and
     metadata from this doc.
+
+    Properties:
+    raw: incoming, unedited text
+    clean: string containing the cleaned text
+    language: 2-letter code for the language of the text
+    is_detected_language: a boolean indicating if the language was specified
+                            beforehand or detected
+    hint_language: language you expect your text to be
+
+    _spacy_nlps: dictionary containing a spacy language module
+    _spacy_doc: dictionary containing an instance of a spacy doc
+    _text_stats: dictionary containing an instance of textacy textstats
     """
 
     def __init__(self, raw, language=None, hint_language='en'):
-        """
-        Args:
-        raw: incoming, unedited text
-        is_detected_language: a boolean indicating if the language was specified
-                              beforehand or detected
-        _language: 2-letter code for the language of the text
-        _hint_language: language you expect your text to be
-        _clean: string containing the cleaned text
-        _spacy_nlps: dictionary containing a spacy language module
-        _spacy_doc: dictionary containing an instance of a spacy doc
-        _text_stats: dictionary containing an instance of textacy textstats
-        """
-
         self.raw = raw
         self.is_detected_language = language is None
+        self.hint_language = hint_language
         self._language = language
-        self._hint_language = hint_language
         self._spacy_nlps = {}
         self._spacy_doc = {}
         self._text_stats = {}
@@ -44,20 +43,41 @@ class Doc:
     @property
     def language(self):
         """
-        Detect the language of a text if no language was provided along with the text
+        Provided or detected language of a text
 
-        >>> doc = Doc('Test sentence for testing text', language='en')
-        >>> doc.language
+        >>> from textpipe.doc import Doc
+        >>> Doc('Test sentence for testing text').language
         'en'
-        >>> doc = Doc('Test sentence for testing text')
-        >>> doc.language
+        >>> Doc('Test sentence for testing text', language='en').language
         'en'
+        >>> Doc('Test', hint_language='nl').language
+        'nl'
         """
         if not self._language:
-            _, _, best_guesses = cld2.detect(self.clean, hintLanguage=self._hint_language,
-                                             bestEffort=True)
-            self._language = best_guesses[0][1]
+            self._language = self.detect_language(self.hint_language)
         return self._language
+
+    @functools.lru_cache()
+    def detect_language(self, hint_language=None):
+        """
+        Detected the language of a text if no language was provided along with the text
+
+        Args:
+        hint_language: language you expect your text to be
+
+        Returns:
+        language: 2-letter code for the language of the text
+
+        >>> from textpipe.doc import Doc
+        >>> doc = Doc('Test')
+        >>> doc.language
+        'en'
+        >>> doc.detect_language('nl')
+        'nl'
+        """
+        _, _, best_guesses = cld2.detect(self.clean, hintLanguage=hint_language,
+                                         bestEffort=True)
+        return best_guesses[0][1]
 
     @property
     def spacy_doc(self):
@@ -69,7 +89,7 @@ class Doc:
         <class 'spacy.tokens.doc.Doc'>
         """
         if not self._spacy_doc:
-            lang = self._hint_language if self.language == 'un' else self.language
+            lang = self.hint_language if self.language == 'un' else self.language
             if lang not in self._spacy_nlps:
                 # loading models with two letter language codes doesn't work for windows due
                 self._spacy_nlps[lang] = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang
