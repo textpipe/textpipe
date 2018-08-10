@@ -13,27 +13,42 @@ import textacy
 import textacy.text_utils
 
 
-class Doc:
+class TextpipeMissingModelException(Exception):
+    """Raised when the requested model is missing"""
+    pass
+
+
+class TextpipeLanguageNotSupportedException(Exception):
+    """Raised when the requested language is not in the list of allowed languages"""
+    pass
+
+
+class Doc:  # pylint: disable=too-many-arguments
     """
     Create a doc instance of text, obtain cleaned, readable text and
     metadata from this doc.
 
     Properties:
     raw: incoming, unedited text
-    clean: string containing the cleaned text
     language: 2-letter code for the language of the text
-    is_detected_language: a boolean indicating if the language was specified
-                            beforehand or detected
     hint_language: language you expect your text to be
+    spacy_nlps: dictionary containing loaded spacy language modules
+    allowed_languages: a tuple with language codes that are allowed in the current pipeline
     """
 
-    def __init__(self, raw, language=None, hint_language='en'):
+    def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None,
+                 allowed_languages=('nl', 'en')):
         self.raw = raw
         self.is_detected_language = language is None
         self.hint_language = hint_language
         self._language = language
-
+        self.allowed_languages = allowed_languages
+        self.spacy_nlps = spacy_nlps or dict()
+        self._spacy_docs = {}
         self._text_stats = {}
+
+        # Set the spacy default language modules:
+        self._set_spacy_defaults()
 
     @property
     def language(self):
@@ -74,23 +89,28 @@ class Doc:
                                          bestEffort=True)
         return best_guesses[0][1]
 
-    @property
-    def spacy_doc(self):
+    def spacy_doc(self, model_name=None):
         """
-        Create a spacy doc and load the language module
+        Loads a spacy doc or creates one if necessary
 
         >>> doc = Doc('Test sentence for testing text')
-        >>> type(doc.spacy_doc)
+        >>> type(doc.spacy_doc())
         <class 'spacy.tokens.doc.Doc'>
         """
-        return self.spacy_nlp()
-
-    @functools.lru_cache()
-    def spacy_nlp(self):
-        lang = self.language if self.language != 'un' else self.hint_language
-        # loading models with two letter language codes doesn't work for windows
-        spacy_nlp = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
-        return spacy_nlp(self.clean)
+        lang = self.hint_language if self.language == 'un' else self.language
+        if lang not in self.allowed_languages:
+            raise TextpipeLanguageNotSupportedException(f'The language {lang} is not passed '
+                                                        f'to the pipeline as allowed_language')
+        if model_name in self._spacy_docs:
+            doc = self._spacy_docs[model_name]
+        else:
+            if model_name not in self.spacy_nlps[lang]:
+                raise TextpipeMissingModelException(f'Custom model {model_name} '
+                                                    f'is missing in the pipeline.')
+            else:
+                nlp = self.spacy_nlps[lang][model_name]
+                doc = self._spacy_docs[model_name] = nlp(self.clean_text())
+        return doc
 
     @property
     def clean(self):
@@ -132,13 +152,28 @@ class Doc:
     @property
     def ents(self):
         """
-        Extract a list of the named entities in text
+        A list of the named entities with sensible defaults.
 
         >>> doc = Doc('Sentence for testing Google text')
         >>> doc.ents
         [('Google', 'ORG')]
         """
-        return list({(ent.text, ent.label_) for ent in self.spacy_doc.ents})
+        return self.find_ents()
+
+    @functools.lru_cache()
+    def find_ents(self, model_mapping=None):
+        """
+        Extract a list of the named entities in text, with the possibility of using a custom model.
+        >>> doc = Doc('Sentence for testing Google text')
+        >>> doc.find_ents()
+        [('Google', 'ORG')]
+        """
+        lang = self.hint_language if self.language == 'un' else self.language
+        model_name = model_mapping.get(lang, None) if model_mapping else None
+        try:
+            return list({(ent.text, ent.label_) for ent in self.spacy_doc(model_name).ents})
+        except TextpipeMissingModelException:
+            return list({(ent.text, ent.label_) for ent in self.spacy_doc().ents})
 
     @property
     def nsents(self):
@@ -149,7 +184,7 @@ class Doc:
         >>> doc.nsents
         1
         """
-        return len(list(self.spacy_doc.sents))
+        return len(list(self.spacy_doc().sents))
 
     @property
     def nwords(self):
@@ -174,7 +209,19 @@ class Doc:
         83.32000000000004
         """
         if not self._text_stats:
-            self._text_stats = textacy.TextStats(self.spacy_doc)
+            self._text_stats = textacy.TextStats(self.spacy_doc())
         if self._text_stats.n_syllables == 0:
             return 100
         return self._text_stats.flesch_reading_ease
+
+    def _set_spacy_defaults(self):
+        """
+        Loads the spacy default language module for the Doc's language into the spacy_nlp object
+        """
+        lang = self.hint_language if self.language == 'un' else self.language
+        if lang not in self.allowed_languages:
+            raise TextpipeLanguageNotSupportedException
+        if lang not in self.spacy_nlps:
+            self.spacy_nlps[lang] = {}
+        model = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
+        self.spacy_nlps[lang][None] = model

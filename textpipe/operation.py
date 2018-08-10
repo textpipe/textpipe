@@ -109,8 +109,9 @@ class Entities(Operation):
     >>> Entities()(doc)
     [('Google', 'ORG')]
     """
-    def __init__(self, **kwargs):
+    def __init__(self, model_mapping=None, **kwargs):
         self.kwargs = kwargs
+        self.model_mapping = model_mapping
 
     def __call__(self, doc):
-        return doc.ents
+        return doc.find_ents(self.model_mapping) if self.model_mapping else doc.ents

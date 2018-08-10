@@ -3,11 +3,13 @@ Obtain elements from a textpipe doc, by specifying a pipeline, in a dictionary.
 """
 import json
 
+import spacy
+
 from textpipe.doc import Doc
 import textpipe.operation
 
 
-class Pipeline:
+class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-arguments,too-many-locals
     """
     Create a pipeline instance based on the elements you would want from your text
 
@@ -15,19 +17,24 @@ class Pipeline:
     >>> sorted(pipe('Test sentence <a=>').items())
     [('CleanText', 'Test sentence'), ('NWords', 2), ('Raw', 'Test sentence <a=>')]
     """
-    def __init__(self, operations, language=None, hint_language=None, **kwargs):
+    def __init__(self, operations, language=None, hint_language=None, models=None,
+                 allowed_languages=('en', 'nl'), **kwargs):
         """
         Initialize a Pipeline instance
 
         Args:
         operations: list with strings and/or (operation_name, operation_kwargs)-tuples
-        pipeline: list of elements to obtain from a textpipe doc
         language: 2-letter code for the language of the text
         hint_language: language you expect your text to be
+        models: list of (model_name, lang, model_path)-tuples to load custom spacy language modules
+        allowed_languages: a tuple with language codes that are allowed in the current pipeline
         """
         self.operations = operations
         self.language = language
+        self.allowed_languages = allowed_languages
         self.hint_language = hint_language
+        self.models = models
+        self._spacy_nlps = {}
         self.kwargs = kwargs
         self._operations = []
         # loop over pipeline operations and instantiate operation classes.
@@ -37,6 +44,13 @@ class Pipeline:
             oper_kwargs = oper[1] if len(oper) > 1 else {}
             oper_cls = getattr(textpipe.operation, oper_name)
             self._operations.append(oper_cls(**oper_kwargs))
+        # loop over model paths and load custom models into _spacy_nlp
+        if models:
+            for model_name, lang, model_path in models:
+                if lang not in self._spacy_nlps:
+                    self._spacy_nlps[lang] = {}
+                model = spacy.blank(lang).from_disk(model_path)
+                self._spacy_nlps[lang][model_name] = model
 
     def __call__(self, raw):
         """
@@ -46,7 +60,8 @@ class Pipeline:
         Args:
         raw: incoming, unedited text
         """
-        doc = Doc(raw, language=self.language, hint_language=self.hint_language)
+        doc = Doc(raw, language=self.language, hint_language=self.hint_language,
+                  spacy_nlps=self._spacy_nlps)
         result_dict = {oper.__class__.__name__: oper(doc) for oper in self._operations}
         return result_dict
 
@@ -61,7 +76,7 @@ class Pipeline:
         >>> fp = tempfile.NamedTemporaryFile()
         >>> Pipeline(['NSentences', ('CleanText', {'some': 'arg'})]).save(fp.name)
         >>> sorted(json.load(fp).items())
-        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
+        [('allowed_languages', ['en', 'nl']), ('hint_language', None), ('kwargs', {}), ('language', None), ('models', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
         >>> fp.close()
         """
         with open(filename, 'w') as json_file:
@@ -84,7 +99,7 @@ class Pipeline:
         >>> fp.close()
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
+        [('allowed_languages', ['en', 'nl']), ('hint_language', None), ('kwargs', {}), ('language', None), ('models', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
         """
         with open(filename, 'r') as json_file:
             dict_representation = json.load(json_file)
@@ -101,7 +116,7 @@ class Pipeline:
         >>> p = Pipeline.from_dict(d)
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('hint_language', None), ('kwargs', {'other': 'args'}), ('language', 'it'), ('operations', ['NSentences', ('CleanText', {'some': 'arg'})])]
+        [('allowed_languages', ('en', 'nl')), ('hint_language', None), ('kwargs', {'other': 'args'}), ('language', 'it'), ('models', None), ('operations', ['NSentences', ('CleanText', {'some': 'arg'})])]
         """
         kwargs = dict_representation.pop('kwargs', None)
         if kwargs:

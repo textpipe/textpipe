@@ -4,11 +4,30 @@ Testing for textpipe pipeline.py
 
 import tempfile
 
+import spacy
+
 from textpipe.pipeline import Pipeline
 
 TEXT = 'Test sentence for testing'
-PIPELINE = [('Raw',), ('NWords',), ('Complexity',), ('CleanText',)]
-PIPE = Pipeline(PIPELINE)
+ents_model_nl = spacy.blank('nl')
+ents_model_en = spacy.blank('en')
+model_path_nl = tempfile.mkdtemp()
+model_path_en = tempfile.mkdtemp()
+ents_model_nl.to_disk(model_path_nl)
+ents_model_en.to_disk(model_path_en)
+PIPELINE = [('Raw',), ('NWords',), ('Complexity',), ('CleanText',),
+            ('Entities', {'model_mapping': {'nl': 'ents', 'en': 'other_identifier'}})]
+PIPE = Pipeline(PIPELINE,
+                models=[('ents', 'nl', model_path_nl), ('other_identifier', 'en', model_path_en)],
+                allowed_languages=('en', 'nl'))
+
+
+def test_load_custom_model():
+    """
+    The custom spacy language modules should be correctly loaded into the pipeline.
+    """
+    assert PIPE._spacy_nlps['nl']['ents'].lang == 'nl' and \
+           PIPE._spacy_nlps['en']['other_identifier'].lang == 'en'
 
 
 def test_return_dict():
