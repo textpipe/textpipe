@@ -31,7 +31,7 @@ class CleanText(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc):
-        return doc.clean_text
+        return doc.clean
 
 
 class Raw(Operation):

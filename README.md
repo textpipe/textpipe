@@ -31,16 +31,16 @@ metadata such as the number of words and named entities from the text.
 >>> from textpipe import doc, pipeline
 >>> sample_text = 'Sample text! <!DOCTYPE>'
 >>> document = doc.Doc(sample_text)
->>> print(document.clean_text)
+>>> print(document.clean)
 'Sample text!'
 >>> print(document.language)
 'en'
 >>> print(document.nwords)
 2
 
->>> pipe = pipeline.Pipeline(['clean_text', 'language', 'nwords'])
+>>> pipe = pipeline.Pipeline(['CleanText', 'NWords'])
 >>> print(pipe(sample_text))
-("clean_text":'Sample text!', "language": 'en', "nwords": 2)
+{'CleanText': 'Sample text!', 'NWords': 2}
 ```
 
 

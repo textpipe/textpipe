@@ -56,14 +56,14 @@ def test_complexity():
     assert DOC_3.complexity == 100
 
 
-def test_clean_text():
-    assert len(TEXT_1) >= len(DOC_1.clean_text)
-    assert len(TEXT_2) >= len(DOC_2.clean_text)
-    assert len(TEXT_3) >= len(DOC_3.clean_text)
+def test_clean():
+    assert len(TEXT_1) >= len(DOC_1.clean)
+    assert len(TEXT_2) >= len(DOC_2.clean)
+    assert len(TEXT_3) >= len(DOC_3.clean)
 
 
-def test_clean_text_newlines():
-    assert ' '.join(TEXT_4.split()) == DOC_4.clean_text
+def test_clean_newlines():
+    assert ' '.join(TEXT_4.split()) == DOC_4.clean
 
 
 def test_language():

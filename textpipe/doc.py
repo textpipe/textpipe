@@ -25,7 +25,7 @@ class Doc:
                               beforehand or detected
         _language: 2-letter code for the language of the text
         _hint_language: language you expect your text to be
-        _clean_text: string containing the cleaned text
+        _clean: string containing the cleaned text
         _spacy_nlps: dictionary containing a spacy language module
         _spacy_doc: dictionary containing an instance of a spacy doc
         _text_stats: dictionary containing an instance of textacy textstats
@@ -35,7 +35,7 @@ class Doc:
         self.is_detected_language = language is None
         self._language = language
         self._hint_language = hint_language
-        self._clean_text = None
+        self._clean = None
         self._spacy_nlps = {}
         self._spacy_doc = {}
         self._text_stats = {}
@@ -53,7 +53,7 @@ class Doc:
         'en'
         """
         if not self._language:
-            _, _, best_guesses = cld2.detect(self.clean_text, hintLanguage=self._hint_language,
+            _, _, best_guesses = cld2.detect(self.clean, hintLanguage=self._hint_language,
                                              bestEffort=True)
             self._language = best_guesses[0][1]
         return self._language
@@ -74,19 +74,19 @@ class Doc:
                 self._spacy_nlps[lang] = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang
                                                                            == 'en' else 'news'))
             nlp = self._spacy_nlps[lang]
-            self._spacy_doc = nlp(self.clean_text)
+            self._spacy_doc = nlp(self.clean)
         return self._spacy_doc
 
     @property
-    def clean_text(self):
+    def clean(self):
         """
         Clean HTML and normalise punctuation.
 
         >>> doc = Doc('“Please clean this piece… of text</b>„')
-        >>> doc.clean_text
+        >>> doc.clean
         '"Please clean this piece... of text"'
         """
-        if self._clean_text is None:
+        if self._clean is None:
             if self.raw is not None:
                 text = BeautifulSoup(self.raw, 'html.parser').get_text()  # remove HTML
                 # Three regexes below adapted from Blendle cleaner.py
@@ -95,10 +95,10 @@ class Doc:
                 text = re.sub('[`‘’‛⸂⸃⸌⸍⸜⸝]', "'", text)
                 text = re.sub('[„“]|(\'\')|(,,)', '"', text)
                 text = re.sub('\s+', ' ', text)
-                self._clean_text = text.strip()
+                self._clean = text.strip()
             else:
-                self._clean_text = ''
-        return self._clean_text
+                self._clean = ''
+        return self._clean
 
     @property
     def ents(self):
@@ -132,7 +132,7 @@ class Doc:
         >>> doc.nwords
         5
         """
-        return len(self.clean_text.split())
+        return len(self.clean.split())
 
     @property
     def complexity(self):
