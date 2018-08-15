@@ -26,8 +26,8 @@ def test_load_custom_model():
     """
     The custom spacy language modules should be correctly loaded into the pipeline.
     """
-    assert PIPE._spacy_nlps['nl']['ents'].lang == 'nl' and \
-           PIPE._spacy_nlps['en']['other_identifier'].lang == 'en'
+    assert PIPE._spacy_nlps['nl']['ents'].lang == 'nl'
+    assert PIPE._spacy_nlps['en']['other_identifier'].lang == 'en'
 
 
 def test_return_dict():
