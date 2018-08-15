@@ -3,14 +3,16 @@
 Clean text, make it readable and obtain metadata from it.
 """
 
-import re
 import functools
+import re
 
-from bs4 import BeautifulSoup
 import cld2
 import spacy
 import textacy
 import textacy.text_utils
+from bs4 import BeautifulSoup
+
+from textpipe.utils import hash_dict
 
 
 class TextpipeMissingModelException(Exception):
@@ -160,6 +162,7 @@ class Doc:  # pylint: disable=too-many-arguments
         """
         return self.find_ents()
 
+    @hash_dict
     @functools.lru_cache()
     def find_ents(self, model_mapping=None):
         """
