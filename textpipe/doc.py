@@ -25,15 +25,20 @@ class Doc:
     Properties:
     raw: incoming, unedited text
     language: 2-letter code for the language of the text
+    is_detected_language: is the language detected or specified beforehand
+    is_reliable_language: is the language specified or was it reliably detected
     hint_language: language you expect your text to be
     _spacy_nlps: nested dictionary {lang: {model_id: model}} with loaded spacy language modules
     """
 
     def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None):
         self.raw = raw
-        self.is_detected_language = language is None
         self.hint_language = hint_language
         self._spacy_nlps = spacy_nlps or dict()
+        self.is_detected_language = language is None
+        self._language = language
+        self._is_reliable_language = True if language else None
+
         self._text_stats = {}
 
     @property
@@ -49,7 +54,24 @@ class Doc:
         >>> Doc('Test', hint_language='nl').language
         'nl'
         """
-        return self.detect_language(self.hint_language)
+        if not self._language:
+            self._is_reliable_language, self._language = self.detect_language(self.hint_language)
+        return self._language
+
+    @property
+    def is_reliable_language(self):
+        """
+        True if the language was specified or if was it reliably detected
+
+        >>> Doc('...').is_reliable_language
+        False
+        >>> Doc('Test', hint_language='nl').is_reliable_language
+        True
+        """
+        if self._is_reliable_language is None:
+            self._is_reliable_language, self._language = self.detect_language(self.hint_language)
+        return self._is_reliable_language
+
 
     @functools.lru_cache()
     def detect_language(self, hint_language=None):
@@ -60,18 +82,26 @@ class Doc:
         hint_language: language you expect your text to be
 
         Returns:
+        is_reliable: is the top language is much better than 2nd best language?
         language: 2-letter code for the language of the text
 
         >>> from textpipe.doc import Doc
         >>> doc = Doc('Test')
-        >>> doc.language
-        'en'
+        >>> doc.detect_language()
+        (True, 'en')
         >>> doc.detect_language('nl')
-        'nl'
+        (True, 'nl')
+        >>> Doc('...').detect_language()
+        (False, 'un')
         """
-        _, _, best_guesses = cld2.detect(self.clean, hintLanguage=hint_language,
-                                         bestEffort=True)
-        return best_guesses[0][1]
+        is_reliable, _, best_guesses = cld2.detect(self.clean,
+                                                   hintLanguage=hint_language,
+                                                   bestEffort=True)
+
+        if len(best_guesses) == 0 or len(best_guesses[0]) != 4:
+            return False, 'un'
+
+        return is_reliable, best_guesses[0][1]
 
     @property
     def _spacy_doc(self):
