@@ -8,6 +8,7 @@ from collections import Counter
 
 import cld2
 import spacy
+import spacy.matcher
 import textacy
 import textacy.keyterms
 import textacy.text_utils
@@ -17,6 +18,8 @@ from bs4 import BeautifulSoup
 class TextpipeMissingModelException(Exception):
     """Raised when the requested model is missing"""
     pass
+
+from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
 
 
 class Doc:
@@ -204,6 +207,22 @@ class Doc:
         """
         return [(self._spacy_doc[start:end].text, matcher.vocab.strings[match_id])
                 for match_id, start, end in matcher(self._spacy_doc)]
+
+    @property
+    def emojis(self):
+        """
+        Emojis detected using SpaCy matcher over the cleaned content, with unicode name and
+        sentiment score.
+
+        >>> Doc('Test with emoji 😀 😋 ').emojis
+        [('😀', 'GRINNING FACE', 0.571753986332574), ('😋', 'FACE SAVOURING DELICIOUS FOOD', 0.6335149863760218)]
+        """
+        matcher = spacy.matcher.Matcher(self._spacy_doc.vocab)
+        for emoji, unicode_name in emoji2unicode_name.items():
+            matcher.add(unicode_name, None, ({'ORTH': emoji},))
+
+        return [(emoji, unicode_name, emoji2sentiment[emoji])
+                for emoji, unicode_name in self.match(matcher)]
 
     @property
     def nsents(self):
