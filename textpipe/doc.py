@@ -161,6 +161,19 @@ class Doc:
         lang = self.hint_language if self.language == 'un' else self.language
         return list({(ent.text, ent.label_) for ent in self._load_spacy_doc(lang, model_name).ents})
 
+    def match(self, matcher):
+        """
+        Run a SpaCy matcher over the cleaned content
+
+        >>> import spacy.matcher
+        >>> matcher = spacy.matcher.Matcher(spacy.lang.en.English().vocab)
+        >>> matcher.add('HASHTAG', None, [{'ORTH': '#'}, {'IS_ASCII': True}])
+        >>> Doc('Test with #hashtag').match(matcher)
+        [('#hashtag', 'HASHTAG')]
+        """
+        return [(self._spacy_doc[start:end].text, matcher.vocab.strings[match_id])
+                for match_id, start, end in matcher(self._spacy_doc)]
+
     @property
     def nsents(self):
         """
