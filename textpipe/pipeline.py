@@ -17,8 +17,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
     >>> sorted(pipe('Test sentence <a=>').items())
     [('CleanText', 'Test sentence'), ('NWords', 2), ('Raw', 'Test sentence <a=>')]
     """
-    def __init__(self, operations, language=None, hint_language=None, models=None,
-                 allowed_languages=('en', 'nl'), **kwargs):
+    def __init__(self, operations, language=None, hint_language=None, models=None, **kwargs):
         """
         Initialize a Pipeline instance
 
@@ -27,11 +26,9 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         language: 2-letter code for the language of the text
         hint_language: language you expect your text to be
         models: list of (model_name, lang, model_path)-tuples to load custom spacy language modules
-        allowed_languages: a tuple with language codes that are allowed in the current pipeline
         """
         self.operations = operations
         self.language = language
-        self.allowed_languages = allowed_languages
         self.hint_language = hint_language
         self.models = models
         self._spacy_nlps = {}
@@ -76,7 +73,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         >>> fp = tempfile.NamedTemporaryFile()
         >>> Pipeline(['NSentences', ('CleanText', {'some': 'arg'})]).save(fp.name)
         >>> sorted(json.load(fp).items())
-        [('allowed_languages', ['en', 'nl']), ('hint_language', None), ('kwargs', {}), ('language', None), ('models', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('models', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
         >>> fp.close()
         """
         with open(filename, 'w') as json_file:
@@ -99,7 +96,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         >>> fp.close()
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('allowed_languages', ['en', 'nl']), ('hint_language', None), ('kwargs', {}), ('language', None), ('models', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('models', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
         """
         with open(filename, 'r') as json_file:
             dict_representation = json.load(json_file)
@@ -116,7 +113,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         >>> p = Pipeline.from_dict(d)
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('allowed_languages', ('en', 'nl')), ('hint_language', None), ('kwargs', {'other': 'args'}), ('language', 'it'), ('models', None), ('operations', ['NSentences', ('CleanText', {'some': 'arg'})])]
+        [('hint_language', None), ('kwargs', {'other': 'args'}), ('language', 'it'), ('models', None), ('operations', ['NSentences', ('CleanText', {'some': 'arg'})])]
         """
         kwargs = dict_representation.pop('kwargs', None)
         if kwargs:

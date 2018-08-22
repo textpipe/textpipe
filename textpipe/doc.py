@@ -20,11 +20,6 @@ class TextpipeMissingModelException(Exception):
     pass
 
 
-class TextpipeLanguageNotSupportedException(Exception):
-    """Raised when the requested language is not in the list of allowed languages"""
-    pass
-
-
 class Doc:  # pylint: disable=too-many-arguments
     """
     Create a doc instance of text, obtain cleaned, readable text and
@@ -34,22 +29,16 @@ class Doc:  # pylint: disable=too-many-arguments
     raw: incoming, unedited text
     language: 2-letter code for the language of the text
     hint_language: language you expect your text to be
-    spacy_nlps: dictionary containing loaded spacy language modules
-    allowed_languages: a tuple with language codes that are allowed
+    _spacy_nlps: dictionary containing loaded spacy language modules
     """
 
-    def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None,
-                 allowed_languages=('nl', 'en')):
+    def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None):
         self.raw = raw
         self.is_detected_language = language is None
         self.hint_language = hint_language
-        self.allowed_languages = allowed_languages
-        self.spacy_nlps = spacy_nlps or dict()
+        self._spacy_nlps = spacy_nlps or dict()
         self._spacy_docs = {}
         self._text_stats = {}
-
-        # Set the spacy default language modules:
-        self._set_spacy_defaults()
 
     @property
     def language(self):
@@ -88,26 +77,27 @@ class Doc:  # pylint: disable=too-many-arguments
                                          bestEffort=True)
         return best_guesses[0][1]
 
-    def spacy_doc(self, model_name=None):
+    def _spacy_doc(self, model_name=None):
         """
         Loads a spacy doc or creates one if necessary
 
         >>> doc = Doc('Test sentence for testing text')
-        >>> type(doc.spacy_doc())
+        >>> type(doc._spacy_doc())
         <class 'spacy.tokens.doc.Doc'>
         """
         lang = self.hint_language if self.language == 'un' else self.language
-        if lang not in self.allowed_languages:
-            raise TextpipeLanguageNotSupportedException(f'The language {lang} is not passed '
-                                                        f'as allowed_language')
+        # Load default spacy model if necessary, if not loaded already
+        if lang not in self._spacy_nlps or (model_name is None and
+                                            model_name not in self._spacy_nlps[lang]):
+            self._set_default_nlp(lang)
         if model_name in self._spacy_docs:
             doc = self._spacy_docs[model_name]
         else:
-            if model_name not in self.spacy_nlps[lang]:
+            if model_name not in self._spacy_nlps[lang] and model_name is not None:
                 raise TextpipeMissingModelException(f'Custom model {model_name} '
                                                     f'is missing.')
             else:
-                nlp = self.spacy_nlps[lang][model_name]
+                nlp = self._spacy_nlps[lang][model_name]
                 doc = self._spacy_docs[model_name] = nlp(self.clean_text())
         return doc
 
@@ -170,7 +160,7 @@ class Doc:  # pylint: disable=too-many-arguments
         """
         lang = self.hint_language if self.language == 'un' else self.language
         model_name = model_mapping.get(lang, None) if model_mapping else None
-        return list({(ent.text, ent.label_) for ent in self.spacy_doc(model_name).ents})
+        return list({(ent.text, ent.label_) for ent in self._spacy_doc(model_name).ents})
 
     @property
     def nsents(self):
@@ -181,7 +171,7 @@ class Doc:  # pylint: disable=too-many-arguments
         >>> doc.nsents
         1
         """
-        return len(list(self.spacy_doc().sents))
+        return len(list(self._spacy_doc().sents))
 
     @property
     def nwords(self):
@@ -206,19 +196,16 @@ class Doc:  # pylint: disable=too-many-arguments
         83.32000000000004
         """
         if not self._text_stats:
-            self._text_stats = textacy.TextStats(self.spacy_doc())
+            self._text_stats = textacy.TextStats(self._spacy_doc())
         if self._text_stats.n_syllables == 0:
             return 100
         return self._text_stats.flesch_reading_ease
 
-    def _set_spacy_defaults(self):
+    def _set_default_nlp(self, lang):
         """
-        Loads the spacy default language module for the Doc's language into the spacy_nlp object
+        Loads the spacy default language module for the Doc's language into the _spacy_nlps object
         """
-        lang = self.hint_language if self.language == 'un' else self.language
-        if lang not in self.allowed_languages:
-            raise TextpipeLanguageNotSupportedException
-        if lang not in self.spacy_nlps:
-            self.spacy_nlps[lang] = {}
+        if lang not in self._spacy_nlps:
+            self._spacy_nlps[lang] = {}
         model = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
-        self.spacy_nlps[lang][None] = model
+        self._spacy_nlps[lang][None] = model

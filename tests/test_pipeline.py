@@ -18,8 +18,7 @@ ents_model_en.to_disk(model_path_en)
 PIPELINE = [('Raw',), ('NWords',), ('Complexity',), ('CleanText',),
             ('Entities', {'model_mapping': {'nl': 'ents', 'en': 'other_identifier'}})]
 PIPE = Pipeline(PIPELINE,
-                models=[('ents', 'nl', model_path_nl), ('other_identifier', 'en', model_path_en)],
-                allowed_languages=('en', 'nl'))
+                models=[('ents', 'nl', model_path_nl), ('other_identifier', 'en', model_path_en)])
 
 
 def test_load_custom_model():
