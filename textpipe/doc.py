@@ -173,10 +173,7 @@ class Doc:  # pylint: disable=too-many-arguments
         """
         lang = self.hint_language if self.language == 'un' else self.language
         model_name = model_mapping.get(lang, None) if model_mapping else None
-        try:
-            return list({(ent.text, ent.label_) for ent in self.spacy_doc(model_name).ents})
-        except TextpipeMissingModelException:
-            return list({(ent.text, ent.label_) for ent in self.spacy_doc().ents})
+        return list({(ent.text, ent.label_) for ent in self.spacy_doc(model_name).ents})
 
     @property
     def nsents(self):
