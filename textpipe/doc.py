@@ -43,7 +43,6 @@ class Doc:  # pylint: disable=too-many-arguments
         self.raw = raw
         self.is_detected_language = language is None
         self.hint_language = hint_language
-        self._language = language
         self.allowed_languages = allowed_languages
         self.spacy_nlps = spacy_nlps or dict()
         self._spacy_docs = {}
@@ -65,9 +64,7 @@ class Doc:  # pylint: disable=too-many-arguments
         >>> Doc('Test', hint_language='nl').language
         'nl'
         """
-        if not self._language:
-            self._language = self.detect_language(self.hint_language)
-        return self._language
+        return self.detect_language(self.hint_language)
 
     @functools.lru_cache()
     def detect_language(self, hint_language=None):
