@@ -1,4 +1,3 @@
-# pylint: disable=too-many-instance-attributes
 """
 Clean text, make it readable and obtain metadata from it.
 """
@@ -20,7 +19,7 @@ class TextpipeMissingModelException(Exception):
     pass
 
 
-class Doc:  # pylint: disable=too-many-arguments
+class Doc:
     """
     Create a doc instance of text, obtain cleaned, readable text and
     metadata from this doc.
