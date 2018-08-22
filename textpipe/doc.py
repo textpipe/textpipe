@@ -35,7 +35,7 @@ class Doc:  # pylint: disable=too-many-arguments
     language: 2-letter code for the language of the text
     hint_language: language you expect your text to be
     spacy_nlps: dictionary containing loaded spacy language modules
-    allowed_languages: a tuple with language codes that are allowed in the current pipeline
+    allowed_languages: a tuple with language codes that are allowed
     """
 
     def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None,
@@ -102,13 +102,13 @@ class Doc:  # pylint: disable=too-many-arguments
         lang = self.hint_language if self.language == 'un' else self.language
         if lang not in self.allowed_languages:
             raise TextpipeLanguageNotSupportedException(f'The language {lang} is not passed '
-                                                        f'to the pipeline as allowed_language')
+                                                        f'as allowed_language')
         if model_name in self._spacy_docs:
             doc = self._spacy_docs[model_name]
         else:
             if model_name not in self.spacy_nlps[lang]:
                 raise TextpipeMissingModelException(f'Custom model {model_name} '
-                                                    f'is missing in the pipeline.')
+                                                    f'is missing.')
             else:
                 nlp = self.spacy_nlps[lang][model_name]
                 doc = self._spacy_docs[model_name] = nlp(self.clean_text())
