@@ -1,8 +1,6 @@
 """
 Testing for textpipe doc.py
 """
-import tempfile
-
 import spacy
 
 from textpipe.doc import Doc
