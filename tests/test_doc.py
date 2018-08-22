@@ -1,6 +1,10 @@
 """
 Testing for textpipe doc.py
 """
+import tempfile
+
+import spacy
+
 from textpipe.doc import Doc
 
 TEXT_1 = """<p><b>Text mining</b>, also referred to as <i><b>text data mining</b></i>, roughly
@@ -29,10 +33,25 @@ TEXT_4 = """this is a paragraph
 this is a paragraph
 """
 
+TEXT_5 = """Mark Zuckerberg is sinds de oprichting van Facebook de directeur van het bedrijf."""
+
+ents_model = spacy.blank('nl')
+custom_spacy_nlps = {'nl': {'ents': ents_model}}
+
 DOC_1 = Doc(TEXT_1)
 DOC_2 = Doc(TEXT_2)
 DOC_3 = Doc(TEXT_3)
 DOC_4 = Doc(TEXT_4)
+DOC_5 = Doc(TEXT_5, spacy_nlps=custom_spacy_nlps)
+
+
+def test_load_custom_model():
+    """
+    The custom spacy language modules should be correctly loaded into the doc.
+    """
+    assert DOC_5.language == 'nl'
+    assert sorted(DOC_5.find_ents()) == sorted([('Mark Zuckerberg', 'PER'), ('Facebook', 'MISC')])
+    assert DOC_5.find_ents({'nl': 'ents'}) == []
 
 
 def test_nwords_nsents():

@@ -28,7 +28,7 @@ class Doc:
     raw: incoming, unedited text
     language: 2-letter code for the language of the text
     hint_language: language you expect your text to be
-    _spacy_nlps: dictionary containing loaded spacy language modules
+    _spacy_nlps: nested dictionary {lang: {model_id: model}} with loaded spacy language modules
     """
 
     def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None):
