@@ -64,8 +64,9 @@ def test_nwords_nsents():
 
 
 def test_entities():
-    assert DOC_1.ents.sort() == ['Google'].sort()
-    assert DOC_2.ents.sort() == ['Textmining', 'Concreet', 'Philips'].sort()
+    assert sorted(DOC_1.ents) == sorted([('Google', 'ORG')])
+    assert sorted(DOC_2.ents) == sorted([('Concreet', 'LOC'), ('Textmining', 'PER'),
+                                         ('Philips', 'ORG'), ('allerhandeICT', 'PER')])
     assert DOC_3.ents == []
 
 
