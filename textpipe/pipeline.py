@@ -30,7 +30,6 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         self.operations = operations
         self.language = language
         self.hint_language = hint_language
-        self.models = models
         self._spacy_nlps = {}
         self.kwargs = kwargs
         self._operations = []
