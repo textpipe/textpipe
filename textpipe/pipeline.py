@@ -72,7 +72,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         >>> fp = tempfile.NamedTemporaryFile()
         >>> Pipeline(['NSentences', ('CleanText', {'some': 'arg'})]).save(fp.name)
         >>> sorted(json.load(fp).items())
-        [('hint_language', None), ('kwargs', {}), ('language', None), ('models', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
         >>> fp.close()
         """
         with open(filename, 'w') as json_file:
@@ -95,7 +95,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         >>> fp.close()
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('hint_language', None), ('kwargs', {}), ('language', None), ('models', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
+        [('hint_language', None), ('kwargs', {}), ('language', None), ('operations', ['NSentences', ['CleanText', {'some': 'arg'}]])]
         """
         with open(filename, 'r') as json_file:
             dict_representation = json.load(json_file)
@@ -112,7 +112,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         >>> p = Pipeline.from_dict(d)
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
-        [('hint_language', None), ('kwargs', {'other': 'args'}), ('language', 'it'), ('models', None), ('operations', ['NSentences', ('CleanText', {'some': 'arg'})])]
+        [('hint_language', None), ('kwargs', {'other': 'args'}), ('language', 'it'), ('operations', ['NSentences', ('CleanText', {'some': 'arg'})])]
         """
         kwargs = dict_representation.pop('kwargs', None)
         if kwargs:
