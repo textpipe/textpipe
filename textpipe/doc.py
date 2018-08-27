@@ -11,8 +11,6 @@ import textacy
 import textacy.text_utils
 from bs4 import BeautifulSoup
 
-from textpipe.utils import hash_dict
-
 
 class TextpipeMissingModelException(Exception):
     """Raised when the requested model is missing"""
@@ -152,9 +150,8 @@ class Doc:
         """
         return self.find_ents()
 
-    @hash_dict
     @functools.lru_cache()
-    def find_ents(self, model_mapping=None):
+    def find_ents(self, model_name=None):
         """
         Extract a list of the named entities in text, with the possibility of using a custom model.
         >>> doc = Doc('Sentence for testing Google text')
@@ -162,7 +159,6 @@ class Doc:
         [('Google', 'ORG')]
         """
         lang = self.hint_language if self.language == 'un' else self.language
-        model_name = model_mapping.get(lang, None) if model_mapping else None
         return list({(ent.text, ent.label_) for ent in self._load_spacy_doc(lang, model_name).ents})
 
     @property

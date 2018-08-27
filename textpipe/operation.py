@@ -114,4 +114,5 @@ class Entities(Operation):
         self.model_mapping = model_mapping
 
     def __call__(self, doc):
-        return doc.find_ents(self.model_mapping) if self.model_mapping else doc.ents
+        lang = doc.hint_language if doc.language == 'un' else doc.language
+        return doc.find_ents(self.model_mapping[lang]) if self.model_mapping else doc.ents
