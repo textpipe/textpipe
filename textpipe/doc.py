@@ -36,7 +36,6 @@ class Doc:
         self.is_detected_language = language is None
         self.hint_language = hint_language
         self._spacy_nlps = spacy_nlps or dict()
-        self._spacy_docs = {}
         self._text_stats = {}
 
     @property
@@ -76,28 +75,33 @@ class Doc:
                                          bestEffort=True)
         return best_guesses[0][1]
 
-    def _spacy_doc(self, model_name=None):
+    @property
+    def _spacy_doc(self):
         """
-        Loads a spacy doc or creates one if necessary
+        Loads the default spacy doc or creates one if necessary
 
         >>> doc = Doc('Test sentence for testing text')
-        >>> type(doc._spacy_doc())
+        >>> type(doc._spacy_doc)
         <class 'spacy.tokens.doc.Doc'>
         """
         lang = self.hint_language if self.language == 'un' else self.language
+
+        return self._load_spacy_doc(lang)
+
+    @functools.lru_cache()
+    def _load_spacy_doc(self, lang, model_name=None):
+        """
+        Loads a spacy doc or creates one if necessary
+        """
         # Load default spacy model if necessary, if not loaded already
         if lang not in self._spacy_nlps or (model_name is None and
                                             model_name not in self._spacy_nlps[lang]):
             self._set_default_nlp(lang)
-        if model_name in self._spacy_docs:
-            doc = self._spacy_docs[model_name]
-        else:
-            if model_name not in self._spacy_nlps[lang] and model_name is not None:
-                raise TextpipeMissingModelException(f'Custom model {model_name} '
-                                                    f'is missing.')
-            else:
-                nlp = self._spacy_nlps[lang][model_name]
-                doc = self._spacy_docs[model_name] = nlp(self.clean_text())
+        if model_name not in self._spacy_nlps[lang] and model_name is not None:
+            raise TextpipeMissingModelException(f'Custom model {model_name} '
+                                                f'is missing.')
+        nlp = self._spacy_nlps[lang][model_name]
+        doc = nlp(self.clean_text())
         return doc
 
     @property
@@ -159,7 +163,7 @@ class Doc:
         """
         lang = self.hint_language if self.language == 'un' else self.language
         model_name = model_mapping.get(lang, None) if model_mapping else None
-        return list({(ent.text, ent.label_) for ent in self._spacy_doc(model_name).ents})
+        return list({(ent.text, ent.label_) for ent in self._load_spacy_doc(lang, model_name).ents})
 
     @property
     def nsents(self):
@@ -170,7 +174,7 @@ class Doc:
         >>> doc.nsents
         1
         """
-        return len(list(self._spacy_doc().sents))
+        return len(list(self._spacy_doc.sents))
 
     @property
     def nwords(self):
@@ -195,7 +199,7 @@ class Doc:
         83.32000000000004
         """
         if not self._text_stats:
-            self._text_stats = textacy.TextStats(self._spacy_doc())
+            self._text_stats = textacy.TextStats(self._spacy_doc)
         if self._text_stats.n_syllables == 0:
             return 100
         return self._text_stats.flesch_reading_ease
