@@ -98,7 +98,7 @@ class Doc:
                                                    hintLanguage=hint_language,
                                                    bestEffort=True)
 
-        if len(best_guesses) == 0 or len(best_guesses[0]) != 4:
+        if len(best_guesses) == 0 or len(best_guesses[0]) != 4 or best_guesses[0][1] == 'un':
             return False, 'un'
 
         return is_reliable, best_guesses[0][1]
@@ -112,7 +112,7 @@ class Doc:
         >>> type(doc._spacy_doc)
         <class 'spacy.tokens.doc.Doc'>
         """
-        lang = self.hint_language if self.language == 'un' else self.language
+        lang = self.language if self.is_reliable_language else self.hint_language
 
         return self._load_spacy_doc(lang)
 
@@ -188,7 +188,7 @@ class Doc:
         >>> doc.find_ents()
         [('Google', 'ORG')]
         """
-        lang = self.hint_language if self.language == 'un' else self.language
+        lang = self.language if self.is_reliable_language else self.hint_language
         return list({(ent.text, ent.label_) for ent in self._load_spacy_doc(lang, model_name).ents})
 
     @property

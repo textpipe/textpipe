@@ -48,7 +48,7 @@ def test_load_custom_model():
     The custom spacy language modules should be correctly loaded into the doc.
     """
     model_mapping = {'nl': 'ents'}
-    lang = DOC_5.hint_language if DOC_5.language == 'un' else DOC_5.language
+    lang = DOC_5.language if DOC_5.is_reliable_language else DOC_5.hint_language
     assert lang == 'nl'
     assert sorted(DOC_5.find_ents()) == sorted([('Mark Zuckerberg', 'PER'), ('Facebook', 'MISC')])
     assert DOC_5.find_ents(model_mapping[lang]) == []
