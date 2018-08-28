@@ -1,12 +1,14 @@
 import setuptools
+from pathlib import Path
 
-with open("README.md", "r") as fh:
+
+with open(Path(__file__).resolve().parent.joinpath('README.md'), 'r') as fh:
     long_description = fh.read()
 
-with open("requirements.txt", "r") as fh:
+with open(Path(__file__).resolve().parent.joinpath('requirements.txt'), 'r') as fh:
     requirements = fh.read().split()
 
-with open("VERSION", "r") as fh:
+with open(Path(__file__).resolve().parent.joinpath('VERSION'), 'r') as fh:
     version = fh.read()
 
 setuptools.setup(
