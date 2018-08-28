@@ -18,16 +18,16 @@ finally evaluation and interpretation of the output. Google is a company named G
 """
 
 TEXT_2 = """<p><b>Textmining</b>, ook wel <i>textdatamining</i>, verwijst naar het proces om met
-allerhande<a href="/wiki/Informatietechnologie" title="Informatietechnologie">ICT</a>-technieken 
-waardevolle informatie te halen uit grote hoeveelheden tekstmateriaal. Met deze technieken wordt 
-gepoogd patronen en tendensen te ontwaren. Concreet gaat men teksten softwarematig structureren 
-en ontleden, transformeren, vervolgens inbrengen in databanken, en ten slotte evalueren en 
+allerhande<a href="/wiki/Informatietechnologie" title="Informatietechnologie">ICT</a>-technieken
+waardevolle informatie te halen uit grote hoeveelheden tekstmateriaal. Met deze technieken wordt
+gepoogd patronen en tendensen te ontwaren. Concreet gaat men teksten softwarematig structureren
+en ontleden, transformeren, vervolgens inbrengen in databanken, en ten slotte evalueren en
 interpreteren. Philips is een bedrijf genaamd Philips.</p>
 """
 
 TEXT_3 = ''
 
-TEXT_4 = """this is a paragraph 
+TEXT_4 = """this is a paragraph
 this is a paragraph
 """
 
