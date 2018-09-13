@@ -8,3 +8,4 @@
 * Vasco Visser (De Persgroep)
 * Ioannis Charitopoulos (RTL)
 * Bahadir Cambel (FDMG)
+* Maya Sappelli (FDMG)
