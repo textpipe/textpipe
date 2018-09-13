@@ -215,16 +215,16 @@ class Doc:
         return len(list(self._spacy_doc.sents))
 
     @property
-    def sents(self, model_name=None):
+    def sents(self):
         """
-        Extract the text and character offsets of sentences from text
+        Extract the text and character offset (begin) of sentences from text
 
         >>> doc = Doc('Test sentence for testing text. And another one with, some, punctuation! And stuff.')
         >>> doc.sents
-        [(0, 31, 'Test sentence for testing text.'), (32, 72, 'And another one with, some, punctuation!'), (73, 83, 'And stuff.')]
+        [('Test sentence for testing text.', 0), ('And another one with, some, punctuation!', 32), ('And stuff.', 73)]
         """
 
-        return [(span.start_char, span.end_char, span.text) for span in self._spacy_doc.sents]
+        return [(span.text, span.start_char) for span in self._spacy_doc.sents]
 
     @property
     def nwords(self):
@@ -235,19 +235,19 @@ class Doc:
         >>> doc.nwords
         5
         """
-        return len(self.clean.split())
+        return len(self.words)
 
     @property
-    def words(self, model_name=None):
+    def words(self):
         """
-        Extract the text and character offsets of words from text
+        Extract the text and character offset (begin) of words from text
 
         >>> doc = Doc('Test sentence for testing text.')
         >>> doc.words
-        [(0, 4, 'Test'), (5, 13, 'sentence'), (14, 17, 'for'), (18, 25, 'testing'), (26, 30, 'text'), (30, 31, '.')]
+        [('Test', 0), ('sentence', 5), ('for', 14), ('testing', 18), ('text', 26), ('.', 30)]
         """
 
-        return [(token.idx, token.idx+len(token.text), token.text) for token in self._spacy_doc]
+        return [(token.text, token.idx) for token in self._spacy_doc]
 
     @property
     def complexity(self):
