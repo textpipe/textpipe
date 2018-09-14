@@ -55,8 +55,8 @@ def test_load_custom_model():
 
 
 def test_nwords_nsents():
-    assert DOC_1.nwords == 95
-    assert DOC_2.nwords == 54
+    assert DOC_1.nwords == 112
+    assert DOC_2.nwords == 65
     assert DOC_3.nwords == 0
     assert DOC_1.nsents == 4
     assert DOC_2.nsents == 4
