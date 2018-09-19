@@ -278,9 +278,10 @@ class Doc:
     @functools.lru_cache()
     def sentiment(self, word_map={}):
         """
-        Determine the complexity of text using the Fsentimentlesch
-        reading ease test ranging from 0.0 - 100.0 with 0.0
-        being the most difficult to read.
+        Returns sentiment in -1 to 1 (-1 beeing negative and 1 beeing positive).
+
+        Expects a dictionary of annotated words with the same scores where word
+        is the key and sentiment score the value.
 
         >>> doc = Doc('Sentence for testing this very happy sentiment')
         >>> doc.sentiment()
