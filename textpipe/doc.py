@@ -274,3 +274,24 @@ class Doc:
             self._spacy_nlps[lang] = {}
         model = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
         self._spacy_nlps[lang][None] = model
+
+    @functools.lru_cache()
+    def sentiment(self, word_map={}):
+        """
+        Returns sentiment in -1 to 1 (-1 beeing negative and 1 beeing positive).
+
+        Expects a dictionary of annotated words with the same scores where word
+        is the key and sentiment score the value.
+
+        >>> doc = Doc('Sentence for testing this very happy sentiment')
+        >>> doc.sentiment()
+        0.0
+        """
+
+        sentiment_score = 0
+
+        for word in self.words:
+            sentiment_score += word_map.get(word, 0)
+
+        return sentiment_score / self.nwords
+
