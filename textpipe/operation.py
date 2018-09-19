@@ -116,3 +116,21 @@ class Entities(Operation):
     def __call__(self, doc):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
         return doc.find_ents(self.model_mapping[lang]) if self.model_mapping else doc.ents
+
+class Sentiment(Operation):
+    """
+    Returns sentiment in -1 to 1 (-1 beeing negative and 1 beeing positive).
+
+    Expects a dictionary of annotated words with the same scores where word
+    is the key and sentiment score the value.
+
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Sentence for testing')
+    >>> Sentiment()(doc)
+    0.0
+    """
+    def __init__(self, word_map={}):
+        self.word_map = word_map
+
+    def __call__(self, doc):
+        return doc.sentiment(self.wordt_map) if self.word_map else 0

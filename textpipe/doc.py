@@ -274,3 +274,23 @@ class Doc:
             self._spacy_nlps[lang] = {}
         model = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
         self._spacy_nlps[lang][None] = model
+
+    @functools.lru_cache()
+    def sentiment(self, word_map={}):
+        """
+        Determine the complexity of text using the Fsentimentlesch
+        reading ease test ranging from 0.0 - 100.0 with 0.0
+        being the most difficult to read.
+
+        >>> doc = Doc('Sentence for testing this very happy sentiment')
+        >>> doc.sentiment()
+        0.0
+        """
+
+        sentiment_score = 0
+
+        for word in self.words:
+            sentiment_score += word_map.get(word, 0)
+
+        return sentiment_score / self.nwords
+
