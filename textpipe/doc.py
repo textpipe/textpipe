@@ -276,7 +276,7 @@ class Doc:
         model = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
         self._spacy_nlps[lang][None] = model
 
-    @functools.lru_cache()
+    @property
     def sentiment(self):
         """
         Returns sentiment score (-1 to 1) and a confidence level (0 to 1)
@@ -284,7 +284,7 @@ class Doc:
         Currently only Dutch supported
 
         >>> doc = Doc('Een leuke test zin.')
-        >>> doc.sentiment()
+        >>> doc.sentiment
         (0.6, 0.9666666666666667)
         """
 
