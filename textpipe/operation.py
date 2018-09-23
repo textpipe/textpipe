@@ -141,4 +141,4 @@ class Sentiment(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc):
-        return doc.sentiment()
+        return doc.sentiment
