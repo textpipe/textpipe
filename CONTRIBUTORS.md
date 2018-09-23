@@ -9,3 +9,4 @@
 * Ioannis Charitopoulos (RTL)
 * Bahadir Cambel (FDMG)
 * Maya Sappelli (FDMG)
+* Jeroen Jannsze (De Persgroep)
