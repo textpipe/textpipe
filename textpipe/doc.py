@@ -277,18 +277,18 @@ class Doc:
         self._spacy_nlps[lang][None] = model
 
     @functools.lru_cache()
-    def sentiment(self, lang):
+    def sentiment(self):
         """
         Returns sentiment score (-1 to 1) and a confidence level (0 to 1)
 
         Currently only Dutch supported
 
         >>> doc = Doc('Een leuke test zin.')
-        >>> doc.sentiment('nl')
+        >>> doc.sentiment()
         (0.6, 0.9666666666666667)
         """
 
-        if lang == 'nl':
+        if self.language == 'nl':
             return sentiment(self.clean_text())
         else:
             return 0.0, 0.0

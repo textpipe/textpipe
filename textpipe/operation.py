@@ -141,5 +141,4 @@ class Sentiment(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc):
-        lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return doc.sentiment(lang)
+        return doc.sentiment()
