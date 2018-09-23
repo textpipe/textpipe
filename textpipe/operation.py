@@ -14,6 +14,7 @@ class Operation:
     """
     Base class for pipeline operations.
     """
+
     def __call__(self, doc):
         raise NotImplementedError()
 
@@ -27,6 +28,7 @@ class CleanText(Operation):
     >>> CleanText()(doc)
     '"Please clean this piece... of text"'
     """
+
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
@@ -43,6 +45,7 @@ class Raw(Operation):
     >>> Raw()(doc)
     'Test sentence for testing text'
     """
+
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
@@ -59,6 +62,7 @@ class NWords(Operation):
     >>> NWords()(doc)
     5
     """
+
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
@@ -77,6 +81,7 @@ class Complexity(Operation):
     >>> Complexity()(doc)
     83.32000000000004
     """
+
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
@@ -93,6 +98,7 @@ class NSentences(Operation):
     >>> NSentences()(doc)
     1
     """
+
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
@@ -109,6 +115,7 @@ class Entities(Operation):
     >>> Entities()(doc)
     [('Google', 'ORG')]
     """
+
     def __init__(self, model_mapping=None, **kwargs):
         self.kwargs = kwargs
         self.model_mapping = model_mapping
@@ -116,3 +123,23 @@ class Entities(Operation):
     def __call__(self, doc):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
         return doc.find_ents(self.model_mapping[lang]) if self.model_mapping else doc.ents
+
+
+class Sentiment(Operation):
+    """
+    Returns sentiment score (-1 to 1) and a confidence level (0 to 1)
+
+    Currently only Dutch supported
+
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Een hele leuke test zin.')
+    >>> Sentiment()(doc)
+    (0.9599999999999999, 1.0)
+    """
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc):
+        lang = doc.language if doc.is_reliable_language else doc.hint_language
+        return doc.sentiment(lang)

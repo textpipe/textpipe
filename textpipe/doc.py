@@ -10,6 +10,7 @@ import spacy
 import textacy
 import textacy.text_utils
 from bs4 import BeautifulSoup
+from pattern.text.nl import sentiment
 
 
 class TextpipeMissingModelException(Exception):
@@ -274,3 +275,20 @@ class Doc:
             self._spacy_nlps[lang] = {}
         model = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
         self._spacy_nlps[lang][None] = model
+
+    @functools.lru_cache()
+    def sentiment(self, lang):
+        """
+        Returns sentiment score (-1 to 1) and a confidence level (0 to 1)
+
+        Currently only Dutch supported
+
+        >>> doc = Doc('Een leuke test zin.')
+        >>> doc.sentiment('nl')
+        (0.6, 0.9666666666666667)
+        """
+
+        if lang == 'nl':
+            return sentiment(self.clean_text())
+        else:
+            return 0.0, 0.0
