@@ -298,5 +298,5 @@ class Doc:
             return sentiment_fr(self.clean)
         elif self.language == 'it':
             return sentiment_it(self.clean)
-        else:
-            raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
+
+        raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
