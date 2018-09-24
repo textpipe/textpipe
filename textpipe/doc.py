@@ -289,6 +289,6 @@ class Doc:
         """
 
         if self.language == 'nl':
-            return sentiment(self.clean_text())
+            return sentiment(self.clean)
         else:
             return 0.0, 0.0
