@@ -10,10 +10,7 @@ import spacy
 import textacy
 import textacy.text_utils
 from bs4 import BeautifulSoup
-from pattern.text.nl import sentiment as sentiment_nl
-from pattern.text.en import sentiment as sentiment_en
-from pattern.text.fr import sentiment as sentiment_fr
-from pattern.text.it import sentiment as sentiment_it
+
 
 class TextpipeMissingModelException(Exception):
     """Raised when the requested model is missing"""
@@ -291,12 +288,16 @@ class Doc:
         """
 
         if self.language == 'en':
+            from pattern.text.en import sentiment as sentiment_en
             return sentiment_en(self.clean)
         elif self.language == 'nl':
+            from pattern.text.nl import sentiment as sentiment_nl
             return sentiment_nl(self.clean)
         elif self.language == 'fr':
+            from pattern.text.fr import sentiment as sentiment_fr
             return sentiment_fr(self.clean)
         elif self.language == 'it':
+            from pattern.text.it import sentiment as sentiment_it
             return sentiment_it(self.clean)
 
         raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
