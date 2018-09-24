@@ -129,7 +129,7 @@ class Sentiment(Operation):
     """
     Returns polarity score (-1 to 1) and a subjectivity score (0 to 1)
 
-    Currently only Dutch supported
+    Currently only English, Dutch, French and Italian supported
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Een hele leuke test zin.')
