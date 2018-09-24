@@ -10,8 +10,10 @@ import spacy
 import textacy
 import textacy.text_utils
 from bs4 import BeautifulSoup
-from pattern.text.nl import sentiment
-
+from pattern.text.nl import sentiment as sentiment_nl
+from pattern.text.en import sentiment as sentiment_en
+from pattern.text.fr import sentiment as sentiment_fr
+from pattern.text.it import sentiment as sentiment_it
 
 class TextpipeMissingModelException(Exception):
     """Raised when the requested model is missing"""
@@ -281,14 +283,20 @@ class Doc:
         """
         Returns polarity score (-1 to 1) and a subjectivity score (0 to 1)
 
-        Currently only Dutch supported
+        Currently only English, Dutch, French and Italian supported
 
-        >>> doc = Doc('Een leuke test zin.')
+        >>> doc = Doc('Dit is een leuke zin.')
         >>> doc.sentiment
         (0.6, 0.9666666666666667)
         """
 
-        if self.language == 'nl':
-            return sentiment(self.clean)
+        if self.language == 'en':
+            return sentiment_en(self.clean)
+        elif self.language == 'nl':
+            return sentiment_nl(self.clean)
+        elif self.language == 'fr':
+            return sentiment_fr(self.clean)
+        elif self.language == 'it':
+            return sentiment_it(self.clean)
         else:
-            return 0.0, 0.0
+            raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
