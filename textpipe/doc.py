@@ -10,7 +10,7 @@ import spacy
 import textacy
 import textacy.text_utils
 from bs4 import BeautifulSoup
-import pattern.text
+from pattern.text.nl import sentiment
 
 
 class TextpipeMissingModelException(Exception):
@@ -288,15 +288,7 @@ class Doc:
         (0.6, 0.9666666666666667)
         """
 
-        sentiment = {l: getattr(pattern.text, l)
-                     for l in ('en', 'es', 'de', 'fr', 'it', 'nl')}
-
-        if self.language in sentiment:
-            return sentiment.get(self.language)(self.clean)
-
-        raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
-
-        # if self.language == 'nl':
-        #     return sentiment(self.clean_text())
-        # else:
-        #     return 0.0, 0.0
+        if self.language == 'nl':
+            return sentiment(self.clean_text())
+        else:
+            return 0.0, 0.0
