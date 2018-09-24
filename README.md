@@ -24,7 +24,7 @@ metadata such as the number of words and named entities from the text.
 - Extract the number of words, number of sentences, named entities from a text
 - Calculate the complexity of a text
 - Obtain text metadata by specifying a pipeline containing all desired elements
-- Obtain sentiment score
+- Obtain sentiment (polarity and a subjectivity score)
 
 ## Usage example
 

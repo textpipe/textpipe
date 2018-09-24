@@ -127,7 +127,7 @@ class Entities(Operation):
 
 class Sentiment(Operation):
     """
-    Returns sentiment score (-1 to 1) and a confidence level (0 to 1)
+    Returns polarity score (-1 to 1) and a subjectivity score (0 to 1)
 
     Currently only Dutch supported
 
