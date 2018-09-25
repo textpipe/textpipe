@@ -24,6 +24,5 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ],
-    install_requires=[r for r in requirements if not r.startswith('git+https://')],
-    dependency_links=[f'{r[4:-4]}/tarball/master#egg=package-1.0' for r in requirements if r.startswith('git+https://')],
+    install_requires=requirements,
 )
