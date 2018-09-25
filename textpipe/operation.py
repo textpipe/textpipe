@@ -70,6 +70,23 @@ class NWords(Operation):
         return doc.nwords
 
 
+class Words(Operation):
+    """
+    Extract the number of words from text
+
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Test sentence for testing text')
+    >>> Words()(doc)
+    [('Test', 0), ('sentence', 5), ('for', 14), ('testing', 18), ('text', 26)]
+    """
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc):
+        return doc.words
+
+
 class WordVector(Operation):
     """
     Extract the number of words from text
