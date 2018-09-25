@@ -72,7 +72,7 @@ class NWords(Operation):
 
 class Words(Operation):
     """
-    Extract the number of words from text
+    Extract words from text
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing text')
@@ -121,6 +121,23 @@ class Complexity(Operation):
 
     def __call__(self, doc):
         return doc.complexity
+
+
+class Sentences(Operation):
+    """
+    Extract sentences from text
+
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Test sentence for testing text. And another one with, some, punctuation! And stuff.')
+    >>> Sentences()(doc)
+    [('Test sentence for testing text.', 0), ('And another one with, some, punctuation!', 32), ('And stuff.', 73)]
+    """
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc):
+        return doc.sents
 
 
 class NSentences(Operation):
