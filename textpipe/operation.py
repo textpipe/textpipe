@@ -70,6 +70,23 @@ class NWords(Operation):
         return doc.nwords
 
 
+class WordVector(Operation):
+    """
+    Extract the number of words from text
+
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Test sentence for testing vectorisation of a sentence.')
+    >>> WordVector()(doc)
+    {'Test': 1, 'sentence': 2, 'for': 1, 'testing': 1, 'vectorisation': 1, 'of': 1, 'a': 1, '.': 1}
+    """
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc):
+        return doc.word_vector
+
+
 class Complexity(Operation):
     """
     Determine the complexity of text using the Flesch
