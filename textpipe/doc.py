@@ -251,12 +251,12 @@ class Doc:
         return [(token.text, token.idx) for token in self._spacy_doc]
 
     @property
-    def word_vector(self):
+    def word_counts(self):
         """
-        Extract a word vector
+        Extract words with their counts
 
         >>> doc = Doc('Test sentence for testing vectorisation of a sentence.')
-        >>> doc.word_vector
+        >>> doc.word_counts
         {'Test': 1, 'sentence': 2, 'for': 1, 'testing': 1, 'vectorisation': 1, 'of': 1, 'a': 1, '.': 1}
         """
 
