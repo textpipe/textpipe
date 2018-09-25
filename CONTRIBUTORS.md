@@ -10,3 +10,4 @@
 * Bahadir Cambel (FDMG)
 * Maya Sappelli (FDMG)
 * Jeroen Jansze (De Persgroep)
+* Bart de Goede
