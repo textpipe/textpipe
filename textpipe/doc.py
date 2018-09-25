@@ -4,6 +4,7 @@ Clean text, make it readable and obtain metadata from it.
 
 import functools
 import re
+from collections import Counter
 
 import cld2
 import spacy
@@ -248,6 +249,18 @@ class Doc:
         """
 
         return [(token.text, token.idx) for token in self._spacy_doc]
+
+    @property
+    def word_vector(self):
+        """
+        Extract a word vector
+
+        >>> doc = Doc('Test sentence for testing vectorisation of a sentence.')
+        >>> doc.word_vector
+        {'Test': 1, 'sentence': 2, 'for': 1, 'testing': 1, 'vectorisation': 1, 'of': 1, 'a': 1, '.': 1}
+        """
+
+        return dict(Counter(word for word, _ in self.words))
 
     @property
     def complexity(self):
