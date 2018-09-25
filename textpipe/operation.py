@@ -87,13 +87,13 @@ class Words(Operation):
         return doc.words
 
 
-class WordVector(Operation):
+class WordCounts(Operation):
     """
-    Extract the number of words from text
+    Extract words with their counts
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing vectorisation of a sentence.')
-    >>> WordVector()(doc)
+    >>> WordCounts()(doc)
     {'Test': 1, 'sentence': 2, 'for': 1, 'testing': 1, 'vectorisation': 1, 'of': 1, 'a': 1, '.': 1}
     """
 
@@ -101,7 +101,7 @@ class WordVector(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc):
-        return doc.word_vector
+        return doc.word_counts
 
 
 class Complexity(Operation):
