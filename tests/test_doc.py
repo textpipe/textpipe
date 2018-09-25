@@ -90,3 +90,8 @@ def test_language():
     assert DOC_1.language == 'en'
     assert DOC_2.language == 'nl'
     assert DOC_3.language == 'un'
+
+
+def test_keyphrases():
+    for document in [DOC_1, DOC_2, DOC_3]:
+        assert len(document.sents) == len(document.keyphrases)

@@ -6,6 +6,8 @@ import functools
 import re
 
 import cld2
+import networkx as nx
+from sklearn.feature_extraction.text import TfidfVectorizer
 import spacy
 import textacy
 import textacy.text_utils
@@ -246,7 +248,6 @@ class Doc:
         >>> doc.words
         [('Test', 0), ('sentence', 5), ('for', 14), ('testing', 18), ('text', 26), ('.', 30)]
         """
-
         return [(token.text, token.idx) for token in self._spacy_doc]
 
     @property
@@ -301,3 +302,28 @@ class Doc:
             return sentiment_it(self.clean)
 
         raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
+
+    @property
+    def keyphrases(self):
+        """
+        Ranks sentences based on co-occurring uni- and bigrams.
+
+        >>> doc = Doc('Keyphrase ranking using PageRank is cool. Using
+                       PageRank for ranking keyphrases from arbitrary text
+                       is cool, because it is unsupervised. Go PageRank!')
+        >>> doc.keyphrases
+        [('Keyphrase ranking using PageRank is cool.', 0.34559705085574055),
+         ('Using PageRank for ranking keyphrases from arbitrary text is cool,
+           because it is unsupervised.', 0.33807582075626075),
+         ('Go PageRank!', 0.3163271283879981)]
+        """
+        if not self.sents:
+            return []
+        sentences = [sent for sent, _ in self.sents]
+        vectorizer = TfidfVectorizer(ngram_range=(1, 2))
+        tfidf_matrix = vectorizer.fit_transform(sentences)
+        graph = nx.from_scipy_sparse_matrix(tfidf_matrix * tfidf_matrix.T)
+        scores = nx.pagerank_scipy(graph)
+        scored_sentences = [(s, scores[i]) for i, s in enumerate(sentences)]
+
+        return sorted(scored_sentences, key=lambda x: x[1], reverse=True)
