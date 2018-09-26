@@ -342,3 +342,14 @@ class Doc:
                              f'of {rankers}')
         ranking_fn = getattr(textacy.keyterms, ranker)
         return ranking_fn(self._spacy_doc, n_keyterms=n_terms, **kwargs)
+
+    @property
+    def keyphrases(self):
+        """
+        Return textranked keyphrases for the document.
+
+        >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
+        >>> doc.extract_keyphrases(n_terms=3)
+        [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('amsterdam', 0.17543839772251532)]
+        """
+        return self.extract_keyphrases()
