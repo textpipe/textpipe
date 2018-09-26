@@ -316,6 +316,7 @@ class Doc:
 
         raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
 
+    @functools.lru_cache()
     def extract_keyphrases(self, ranker='textrank', n_terms=10, **kwargs):
         """
         Extract and rank key terms in the document by proxying to
