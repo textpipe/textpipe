@@ -328,18 +328,11 @@ class Doc:
 
         >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
         >>> doc.extract_keyphrases(n_terms=3)
-        [('awesome', 0.32456160227748454),
-         ('capital', 0.32456160227748454),
-         ('amsterdam', 0.17543839772251532)]
+        [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('amsterdam', 0.17543839772251532)]
         >>> doc.extract_keyphrases(ranker='sgrank')
-        [('awesome capital', 0.5638711013322963),
-         ('netherlands', 0.22636566128805719),
-         ('amsterdam', 0.20976323737964653)]
+        [('awesome capital', 0.5638711013322963), ('netherlands', 0.22636566128805719), ('amsterdam', 0.20976323737964653)]
         >>> doc.extract_keyphrases(ranker='sgrank', ngrams=(1))
-        [('netherlands', 0.4020557546031188),
-         ('capital', 0.29395103364295216),
-         ('awesome', 0.18105611227666252),
-         ('amsterdam', 0.12293709947726655)]
+        [('netherlands', 0.4020557546031188), ('capital', 0.29395103364295216), ('awesome', 0.18105611227666252), ('amsterdam', 0.12293709947726655)]
         """
         if self.nwords < 1:
             return []

@@ -106,4 +106,4 @@ def test_extract_keyphrases():
     # works with empty documents
     assert DOC_3.extract_keyphrases() == []
     # works with other rankers
-    assert type(DOC_2.extract_keyphrases(ranker=random.choice(rankers))) == list
+    assert isinstance(DOC_2.extract_keyphrases(ranker=random.choice(rankers)), list)
