@@ -1,6 +1,8 @@
 """
 Testing for textpipe doc.py
 """
+import pytest
+import random
 import spacy
 
 from textpipe.doc import Doc
@@ -90,3 +92,18 @@ def test_language():
     assert DOC_1.language == 'en'
     assert DOC_2.language == 'nl'
     assert DOC_3.language == 'un'
+
+
+def test_extract_keyphrases():
+    non_ranker = 'bulthaup'
+    rankers = ['textrank', 'sgrank', 'singlerank']
+    with pytest.raises(ValueError, message=f'algorithm "{non_ranker}" not '
+                                           f'available; use one of {rankers}'):
+        DOC_1.extract_keyphrases(ranker=non_ranker)
+    assert len(DOC_1.extract_keyphrases()) == 10
+    # limits number of keyphrases
+    assert len(DOC_1.extract_keyphrases(n_terms=2)) == 2
+    # works with empty documents
+    assert DOC_3.extract_keyphrases() == []
+    # works with other rankers
+    assert type(DOC_2.extract_keyphrases(ranker=random.choice(rankers))) == list
