@@ -212,18 +212,18 @@ class Sentiment(Operation):
         return doc.sentiment
 
 
-class Keyphrases(Operation):
+class Keyterms(Operation):
     """
-    Returns a list of up to 10 key phrases extracted from the document. This
+    Returns a list of up to 10 key terms extracted from the document. This
     works on any language the Doc can tokenize.
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
-    >>> Keyphrases()(doc)
+    >>> Keyterms()(doc)
     [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('amsterdam', 0.17543839772251532), ('netherlands', 0.17543839772251532)]
-    >>> Keyphrases(n_terms=2)(doc)
+    >>> Keyterms(n_terms=2)(doc)
     [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454)]
-    >>> Keyphrases(ranker='sgrank')(doc)
+    >>> Keyterms(ranker='sgrank')(doc)
     [('awesome capital', 0.5638711013322963), ('netherlands', 0.22636566128805719), ('amsterdam', 0.20976323737964653)]
     """
 
@@ -231,4 +231,4 @@ class Keyphrases(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc):
-        return doc.extract_keyphrases(**self.kwargs)
+        return doc.extract_keyterms(**self.kwargs)
