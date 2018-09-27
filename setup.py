@@ -6,7 +6,7 @@ with open(Path(__file__).resolve().parent.joinpath('README.md'), 'r') as fh:
     long_description = fh.read()
 
 with open(Path(__file__).resolve().parent.joinpath('requirements.txt'), 'r') as fh:
-    requirements = [r.split('#', 1)[0].strip() for r in fh.read().split()]
+    requirements = [r.split('#', 1)[0].strip() for r in fh.read().split('\n')]
 
 with open(Path(__file__).resolve().parent.joinpath('VERSION'), 'r') as fh:
     version = fh.read()
