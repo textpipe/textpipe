@@ -3,4 +3,4 @@ cld2_cffi~=0.1
 spacy~=2.0
 textacy~=0.6
 textpipe-pattern==3.6
-msgpack-numpy==0.4.4
+msgpack-numpy==0.4.4 # pinning to avoid release 0.4.4.1 , can be removed with later releases.
