@@ -19,6 +19,23 @@ class Operation:
         raise NotImplementedError()
 
 
+class Language(Operation):
+    """
+    Extract the language from a text
+
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Test sentence for testing text')
+    >>> Language()(doc)
+    'en'
+    """
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc):
+        return doc.language
+
+
 class CleanText(Operation):
     """
     Clean HTML and normalise punctuation.
