@@ -317,7 +317,7 @@ class Doc:
         raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
 
     @functools.lru_cache()
-    def extract_keyphrases(self, ranker='textrank', n_terms=10, **kwargs):
+    def extract_keyterms(self, ranker='textrank', n_terms=10, **kwargs):
         """
         Extract and rank key terms in the document by proxying to
         `textacy.keyterms`. Returns a list of (term, score) tuples. Depending
@@ -327,11 +327,11 @@ class Doc:
         SGRank ('sgrank').
 
         >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
-        >>> doc.extract_keyphrases(n_terms=3)
+        >>> doc.extract_keyterms(n_terms=3)
         [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('amsterdam', 0.17543839772251532)]
-        >>> doc.extract_keyphrases(ranker='sgrank')
+        >>> doc.extract_keyterms(ranker='sgrank')
         [('awesome capital', 0.5638711013322963), ('netherlands', 0.22636566128805719), ('amsterdam', 0.20976323737964653)]
-        >>> doc.extract_keyphrases(ranker='sgrank', ngrams=(1))
+        >>> doc.extract_keyterms(ranker='sgrank', ngrams=(1))
         [('netherlands', 0.4020557546031188), ('capital', 0.29395103364295216), ('awesome', 0.18105611227666252), ('amsterdam', 0.12293709947726655)]
         """
         if self.nwords < 1:
@@ -344,12 +344,12 @@ class Doc:
         return ranking_fn(self._spacy_doc, n_keyterms=n_terms, **kwargs)
 
     @property
-    def keyphrases(self):
+    def keyterms(self):
         """
-        Return textranked keyphrases for the document.
+        Return textranked keyterms for the document.
 
         >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
-        >>> doc.extract_keyphrases(n_terms=3)
+        >>> doc.extract_keyterms(n_terms=3)
         [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('amsterdam', 0.17543839772251532)]
         """
-        return self.extract_keyphrases()
+        return self.extract_keyterms()

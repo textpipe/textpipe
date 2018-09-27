@@ -94,16 +94,16 @@ def test_language():
     assert DOC_3.language == 'un'
 
 
-def test_extract_keyphrases():
+def test_extract_keyterms():
     non_ranker = 'bulthaup'
     rankers = ['textrank', 'sgrank', 'singlerank']
     with pytest.raises(ValueError, message=f'algorithm "{non_ranker}" not '
                                            f'available; use one of {rankers}'):
-        DOC_1.extract_keyphrases(ranker=non_ranker)
-    assert len(DOC_1.extract_keyphrases()) == 10
-    # limits number of keyphrases
-    assert len(DOC_1.extract_keyphrases(n_terms=2)) == 2
+        DOC_1.extract_keyterms(ranker=non_ranker)
+    assert len(DOC_1.extract_keyterms()) == 10
+    # limits number of keyterms
+    assert len(DOC_1.extract_keyterms(n_terms=2)) == 2
     # works with empty documents
-    assert DOC_3.extract_keyphrases() == []
+    assert DOC_3.extract_keyterms() == []
     # works with other rankers
-    assert isinstance(DOC_2.extract_keyphrases(ranker=random.choice(rankers)), list)
+    assert isinstance(DOC_2.extract_keyterms(ranker=random.choice(rankers)), list)
