@@ -5,7 +5,7 @@ import pytest
 import random
 import spacy
 
-from textpipe.doc import Doc
+from textpipe.doc import Doc, MissingModelException
 
 TEXT_1 = """<p><b>Text mining</b>, also referred to as <i><b>text data mining</b></i>, roughly
 equivalent to <b>text analytics</b>, is the process of deriving high-quality <a href="/wiki/Information"
@@ -35,6 +35,16 @@ this is a paragraph
 
 TEXT_5 = """Mark Zuckerberg is sinds de oprichting van Facebook de directeur van het bedrijf."""
 
+TEXT_6 = """
+မြန်မာဘာသာစကားသည် တိဘက်-ဗမာနွယ် ဘာသာစကားများ အုပ်စုတွင် ပါဝင်သည်။ 
+တိဘက်-ဗမာနွယ် ဘာသာစကားများ အုပ်စုသည် တရုတ်-တိဗက်နွယ် ဘာသာစကားများ 
+မိသားစု ထဲတွင် ပါသည်။ မြန်မာဘာသာသည် တက်ကျသံရှိသော
+၊နိမ့်မြင့်အမှတ်အသားရှိ ဖြစ်သော၊ ဧကဝဏ္ဏစကားလုံး အလွန်များသော ဘာသာစကား 
+ဖြစ်သည်။ ကတ္တား-ကံ-တြိယာ စကားလုံးအစီအစဉ်ဖြင့် ရေးသော သရုပ်ခွဲဘာသာစကား 
+လည်းဖြစ်သည်။ မြန်မာအက္ခရာများသည် ဗြာဟ္မီအက္ခရာ သို့မဟုတ် ဗြာဟ္မီအက္ခရာမှ 
+ဆက်ခံထားသောမွန်အက္ခရာတို့မှ ဆင်းသက်လာသည်။
+"""
+
 ents_model = spacy.blank('nl')
 custom_spacy_nlps = {'nl': {'ents': ents_model}}
 
@@ -43,6 +53,7 @@ DOC_2 = Doc(TEXT_2)
 DOC_3 = Doc(TEXT_3)
 DOC_4 = Doc(TEXT_4)
 DOC_5 = Doc(TEXT_5, spacy_nlps=custom_spacy_nlps)
+DOC_6 = Doc(TEXT_6)
 
 
 def test_load_custom_model():
@@ -107,3 +118,7 @@ def test_extract_keyterms():
     assert DOC_3.extract_keyterms() == []
     # works with other rankers
     assert isinstance(DOC_2.extract_keyterms(ranker=random.choice(rankers)), list)
+
+def test_missing_language_model():
+    with pytest.raises(MissingModelException):
+        burmese_nwords = DOC_6.nwords

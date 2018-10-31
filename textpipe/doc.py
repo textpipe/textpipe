@@ -14,7 +14,7 @@ import textacy.text_utils
 from bs4 import BeautifulSoup
 
 
-class TextpipeMissingModelException(Exception):
+class MissingModelException(Exception):
     """Raised when the requested model is missing"""
     pass
 
@@ -127,7 +127,7 @@ class Doc:
                                             model_name not in self._spacy_nlps[lang]):
             self._set_default_nlp(lang)
         if model_name not in self._spacy_nlps[lang] and model_name is not None:
-            raise TextpipeMissingModelException(f'Custom model {model_name} '
+            raise MissingModelException(f'Custom model {model_name} '
                                                 f'is missing.')
         nlp = self._spacy_nlps[lang][model_name]
         doc = nlp(self.clean_text())
@@ -286,7 +286,10 @@ class Doc:
         """
         if lang not in self._spacy_nlps:
             self._spacy_nlps[lang] = {}
-        model = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
+        try:
+            model = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
+        except IOError:
+            raise MissingModelException(f'Default model for language "{lang}" is not available.')
         self._spacy_nlps[lang][None] = model
 
     @property
@@ -314,7 +317,7 @@ class Doc:
             from pattern.text.it import sentiment as sentiment_it
             return sentiment_it(self.clean)
 
-        raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
+        raise MissingModelException(f'No sentiment model for {self.language}')
 
     @functools.lru_cache()
     def extract_keyterms(self, ranker='textrank', n_terms=10, **kwargs):
