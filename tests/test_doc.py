@@ -119,6 +119,7 @@ def test_extract_keyterms():
     # works with other rankers
     assert isinstance(DOC_2.extract_keyterms(ranker=random.choice(rankers)), list)
 
+
 def test_missing_language_model():
     with pytest.raises(MissingModelException):
-        burmese_nwords = DOC_6.nwords
+        DOC_6.nwords
