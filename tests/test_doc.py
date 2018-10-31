@@ -5,7 +5,7 @@ import pytest
 import random
 import spacy
 
-from textpipe.doc import Doc, MissingModelException
+from textpipe.doc import Doc, TextpipeMissingModelException
 
 TEXT_1 = """<p><b>Text mining</b>, also referred to as <i><b>text data mining</b></i>, roughly
 equivalent to <b>text analytics</b>, is the process of deriving high-quality <a href="/wiki/Information"
@@ -121,5 +121,5 @@ def test_extract_keyterms():
 
 
 def test_missing_language_model():
-    with pytest.raises(MissingModelException):
+    with pytest.raises(TextpipeMissingModelException):
         DOC_6.nwords
