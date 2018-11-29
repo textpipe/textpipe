@@ -12,3 +12,4 @@
 * Jeroen Jansze (De Persgroep)
 * Bart de Goede
 * Joris Baan (UvA)
+* Rana Klein (RTL)
