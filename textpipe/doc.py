@@ -15,12 +15,12 @@ import textacy.text_utils
 from bs4 import BeautifulSoup
 from datasketch import MinHash
 
+from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
+
 
 class TextpipeMissingModelException(Exception):
     """Raised when the requested model is missing"""
     pass
-
-from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
 
 
 class Doc:
@@ -413,3 +413,33 @@ class Doc:
         else:
             raise NotImplementedError(f'Metric/hash method combination {metric}'
                                       f'/{hash_method} is not implemented as similarity metric')
+    def vectors(self):
+        """
+        Returns word embeddings for the words in the document.
+        The used spacy models don't have "true" word vectors
+        but only context-sensitive tensors that are within the document.
+
+        Returns:
+        A dictionary mapping words from the document to a 4-tuple with the
+        corresponding values of the following variables:
+
+        has vector: Does the token have a vector representation?
+        vector norm: The L2 norm of the token's vector (the square root of the
+                    sum of the values squared)
+        OOV: Out-of-vocabulary (This variable always gets the value True since
+                                there are no vectors included in the model)
+        vector: The vector representation of the word
+
+        >>> doc = Doc('Test sentence')
+        >>> doc.vectors['Test'][2]
+        True
+        >>> doc.vectors['Test'][3].shape[-1]
+        384
+        >>> doc.vectors['Test'][1] == doc.vectors['sentence'][1]
+        False
+        """
+        return {token.text: (token.has_vector,
+                             token.vector_norm,
+                             token.is_oov,
+                             token.vector)
+                for token in self._spacy_doc}
