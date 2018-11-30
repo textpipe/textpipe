@@ -1,6 +1,6 @@
 beautifulsoup4~=4.6
 cld2_cffi~=0.1
-spacy==2.0
+spacy==2.0.16
 textacy~=0.6
 textpipe-pattern==3.6
 msgpack-numpy<0.4.4  # pinning this lower, because of spacy and tinc requirements
