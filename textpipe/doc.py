@@ -13,6 +13,7 @@ import textacy
 import textacy.keyterms
 import textacy.text_utils
 from bs4 import BeautifulSoup
+from datasketch import MinHash
 
 
 class TextpipeMissingModelException(Exception):
@@ -376,3 +377,38 @@ class Doc:
         [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('amsterdam', 0.17543839772251532)]
         """
         return self.extract_keyterms()
+
+    @property
+    def minhash(self):
+        """
+        A cheap way to compute a hash for finding similarity of docs
+        Source: https://ekzhu.github.io/datasketch/minhash.html
+        >>> doc = Doc('Sentence for computing the minhash')
+        >>> doc.minhash[:5]
+        [407326892, 814360600, 1099082245, 1176349439, 1735256]
+        """
+        return self.find_minhash()
+
+    @functools.lru_cache()
+    def find_minhash(self, num_perm=128):
+        words = self.words
+        doc_hash = MinHash(num_perm=num_perm)
+        for word, _ in words:
+            doc_hash.update(word.encode('utf8'))
+        return list(doc_hash.digest())
+
+    def similarity(self, other_doc, metric='minhash'):
+        """
+        Computes similarity for two documents.
+        Only minhash Jaccard similarity is implemented.
+        >>> doc1 = Doc('Sentence for computing the minhash')
+        >>> doc2 = Doc('Sentence for computing the similarity')
+        >>> doc1.similarity(doc2)
+        0.7265625
+        """
+        if metric == 'minhash':
+            hash1 = MinHash(hashvalues=self.minhash)
+            hash2 = MinHash(hashvalues=other_doc.minhash)
+            return hash1.jaccard(hash2)
+        else:
+            raise NotImplementedError(f'Metric {metric} is not implemented as similarity metric')
