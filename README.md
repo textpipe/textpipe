@@ -48,6 +48,28 @@ metadata such as the number of words and named entities from the text.
 {'CleanText': 'Sample text!', 'NWords': 2}
 ```
 
+In order to extend the existing Textpipe operations with your own proprietary operations; 
+
+```python
+test_pipe = pipeline.Pipeline(['CleanText', 'NWords'])
+def custom_op(doc, context=None, settings=None, **kwargs):
+    return 1
+
+custom_argument = {'argument' :1 }
+test_pipe.register_operation("CUSTOM_STEP", custom_op)
+test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
+
+```
+
 
 ## Contributing
 See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
+
+## Changes
+
+0.7.0
+
+- change operation's registry from list to dict
+- global pipeline data is available across operations via the `context` kwarg
+- load custom operations using `register_operation` in pipeline
+- custom steps (operations) with arguments

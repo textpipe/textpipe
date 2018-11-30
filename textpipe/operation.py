@@ -15,7 +15,7 @@ class Operation:
     Base class for pipeline operations.
     """
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         raise NotImplementedError()
 
 
@@ -32,7 +32,7 @@ class Language(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.language
 
 
@@ -49,7 +49,7 @@ class CleanText(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.clean
 
 
@@ -66,7 +66,7 @@ class Raw(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.raw
 
 
@@ -83,7 +83,7 @@ class NWords(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.nwords
 
 
@@ -100,7 +100,7 @@ class Words(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.words
 
 
@@ -117,7 +117,7 @@ class WordCounts(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.word_counts
 
 
@@ -136,7 +136,7 @@ class Complexity(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.complexity
 
 
@@ -153,7 +153,7 @@ class Sentences(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.sents
 
 
@@ -170,7 +170,7 @@ class NSentences(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.nsents
 
 
@@ -188,7 +188,7 @@ class Entities(Operation):
         self.kwargs = kwargs
         self.model_mapping = model_mapping
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
         return doc.find_ents(self.model_mapping[lang]) if self.model_mapping else doc.ents
 
@@ -208,7 +208,7 @@ class Sentiment(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.sentiment
 
 
@@ -230,7 +230,7 @@ class Keyterms(Operation):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.extract_keyterms(**self.kwargs)
 
 
