@@ -11,3 +11,4 @@
 * Maya Sappelli (FDMG)
 * Jeroen Jansze (De Persgroep)
 * Bart de Goede
+* Joris Baan (UvA)
