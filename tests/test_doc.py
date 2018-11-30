@@ -123,3 +123,7 @@ def test_extract_keyterms():
 def test_missing_language_model():
     with pytest.raises(TextpipeMissingModelException):
         DOC_6.nwords
+
+
+def test_minhash_similarity():
+    assert DOC_1.similarity(DOC_2) == 0.0625

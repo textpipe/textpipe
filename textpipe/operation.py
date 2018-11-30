@@ -232,3 +232,21 @@ class Keyterms(Operation):
 
     def __call__(self, doc):
         return doc.extract_keyterms(**self.kwargs)
+
+
+class MinHash(Operation):
+    """
+    Returns a list with integers, which is the minhash of the document.
+    A minhash is a cheap way to compute a hash for finding similarity of documents.
+    Source: https://ekzhu.github.io/datasketch/minhash.html
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Sentence for computing the minhash')
+    >>> doc.minhash[:5]
+    [407326892, 814360600, 1099082245, 1176349439, 1735256]
+    """
+    def __init__(self, num_perm=128, **kwargs):
+        self.kwargs = kwargs
+        self.num_perm = num_perm
+
+    def __call__(self, doc):
+        return doc.find_minhash(num_perm=self.num_perm)
