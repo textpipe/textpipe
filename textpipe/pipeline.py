@@ -27,7 +27,6 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         hint_language: language you expect your text to be
         models: list of (model_name, lang, model_path)-tuples to load custom spacy language modules
         """
-        #self.operations = operations
         self.language = language
         self.hint_language = hint_language
         self._spacy_nlps = {}
@@ -145,5 +144,4 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         kwargs = dict_representation.pop('kwargs', None)
         if kwargs:
             dict_representation.update(**kwargs)
-        # print("====== %s" % dict_representation)
         return Pipeline(**dict_representation)
