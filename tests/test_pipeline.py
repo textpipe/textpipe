@@ -81,7 +81,7 @@ def test_register_operation():
     def custom_op(doc, **kwargs):
         return kwargs
 
-    test_pipe.register_operation("CUSTOM_STEP", custom_op)
+    test_pipe.register_operation('CUSTOM_STEP', custom_op)
     assert len(test_pipe._operations) == len(STEPS) + 1
 
 def test_register_op_with_extending_steps_works():
@@ -96,12 +96,12 @@ def test_register_op_with_extending_steps_works():
         return settings
 
     custom_argument = {'argument' :1 }
-    test_pipe.register_operation("CUSTOM_STEP", custom_op)
+    test_pipe.register_operation('CUSTOM_STEP', custom_op)
     test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
 
     results = test_pipe(TEXT)
 
-    assert results["CUSTOM_STEP"] == custom_argument
+    assert results['CUSTOM_STEP'] == custom_argument
 
 
 def test_context_data_passed_between_steps():
@@ -119,14 +119,13 @@ def test_context_data_passed_between_steps():
         return context
 
     custom_argument = {'argument' :1 }
-    test_pipe.register_operation("CUSTOM_STEP", custom_op)
-    test_pipe.register_operation("CUSTOM_STEP2", custom_op2)
+    test_pipe.register_operation('CUSTOM_STEP', custom_op)
+    test_pipe.register_operation('CUSTOM_STEP2', custom_op2)
     test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
     test_pipe.steps.append(('CUSTOM_STEP2', custom_argument))
 
     results = test_pipe(TEXT)
 
-    # assert results["CUSTOM_STEP"] == 1
     assert results['CUSTOM_STEP2']['CUSTOM_STEP'] ==  results["CUSTOM_STEP"]
 
 
@@ -139,7 +138,7 @@ def test_register_not_existing_step_should_throw_exception():
     """
     custom_steps = STEPS.copy()
 
-    custom_steps.append(("CUSTOM_STEP2", lambda x: None))
+    custom_steps.append(('CUSTOM_STEP2', lambda x: None))
 
     with pytest.raises(AttributeError) as ae:
         test_pipe = Pipeline(custom_steps, **PIPELINE_DEF_KWARGS)

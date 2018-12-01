@@ -135,7 +135,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
 
         Args:
         dict_representation: A dictionary used to instantiate a pipeline object
-        >>> d = {"steps": ['NSentences', ('CleanText', {'some': 'arg'})], 'language': 'it', 'hint_language': None, 'other': 'args'}
+        >>> d = {'steps': ['NSentences', ('CleanText', {'some': 'arg'})], 'language': 'it', 'hint_language': None, 'other': 'args'}
         >>> p = Pipeline.from_dict(d)
         >>> public_flds = dict(filter(lambda i: not i[0].startswith('_'), p.__dict__.items()))
         >>> sorted(public_flds.items())
