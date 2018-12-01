@@ -22,7 +22,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         Initialize a Pipeline instance
 
         Args:
-        operations: list with strings and/or (operation_name, operation_kwargs)-tuples
+        steps: list with strings and/or (operation_name, operation_kwargs)-tuples
         language: 2-letter code for the language of the text
         hint_language: language you expect your text to be
         models: list of (model_name, lang, model_path)-tuples to load custom spacy language modules
