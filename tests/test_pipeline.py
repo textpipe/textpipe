@@ -75,7 +75,7 @@ def test_register_operation():
         The most simple way to extend the pipeline operations is by passing a
         function with proper arguments.
         :return:
-        """
+    """
     test_pipe = Pipeline(STEPS, models=[('ents', 'nl', model_path_nl), ('other_identifier', 'en', model_path_en)])
 
     def custom_op(doc, **kwargs):
@@ -126,7 +126,7 @@ def test_context_data_passed_between_steps():
 
     results = test_pipe(TEXT)
 
-    assert results['CUSTOM_STEP2']['CUSTOM_STEP'] ==  results["CUSTOM_STEP"]
+    assert results['CUSTOM_STEP2']['CUSTOM_STEP'] ==  results['CUSTOM_STEP']
 
 
 def test_register_not_existing_step_should_throw_exception():
