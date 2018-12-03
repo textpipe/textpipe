@@ -128,7 +128,9 @@ class Doc:
         # Load default spacy model if necessary, if not loaded already
         if lang not in self._spacy_nlps or (model_name is None and
                                             model_name not in self._spacy_nlps[lang]):
-            self._set_default_nlp(lang)
+            if lang not in self._spacy_nlps:
+                self._spacy_nlps[lang] = {}
+            self._spacy_nlps[lang][None] = self._get_default_nlp(lang)
         if model_name not in self._spacy_nlps[lang] and model_name is not None:
             raise TextpipeMissingModelException(f'Custom model {model_name} '
                                                 f'is missing.')
@@ -299,17 +301,16 @@ class Doc:
             return 100
         return self._text_stats.flesch_reading_ease
 
-    def _set_default_nlp(self, lang):
+    @staticmethod
+    @functools.lru_cache()
+    def _get_default_nlp(lang):
         """
-        Loads the spacy default language module for the Doc's language into the _spacy_nlps object
+        Loads the spacy default language module for the Doc's language
         """
-        if lang not in self._spacy_nlps:
-            self._spacy_nlps[lang] = {}
         try:
-            model = spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
+            return spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
         except IOError:
             raise TextpipeMissingModelException(f'Default model for language "{lang}" is not available.')
-        self._spacy_nlps[lang][None] = model
 
     @property
     def sentiment(self):
