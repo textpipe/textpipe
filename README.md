@@ -3,7 +3,7 @@
 
 # textpipe: clean and extract metadata from text
 
-<img align="right" src="https://avatars0.githubusercontent.com/u/40492530?s=400&u=8722e691c6869fbba67418b64c04d1586edf5c14&v=4" height="140" width="140"/>
+<img align="right" src="https://avatars3.githubusercontent.com/u/40492530?s=400&u=c65c2c8274cbdcd05b1942d1963d7aa2800e6d7f&v=4" height="140" width="140"/>
 
 `textpipe` is a Python package for converting raw text in to clean, readable text and
 extracting metadata from that text. Its functionalities include transforming
