@@ -138,6 +138,17 @@ class Doc:
         doc = nlp(self.clean_text())
         return doc
 
+    @staticmethod
+    @functools.lru_cache()
+    def _get_default_nlp(lang):
+        """
+        Loads the spacy default language module for the Doc's language
+        """
+        try:
+            return spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
+        except IOError:
+            raise TextpipeMissingModelException(f'Default model for language "{lang}" is not available.')
+
     @property
     def clean(self):
         """
@@ -300,17 +311,6 @@ class Doc:
         if self._text_stats.n_syllables == 0:
             return 100
         return self._text_stats.flesch_reading_ease
-
-    @staticmethod
-    @functools.lru_cache()
-    def _get_default_nlp(lang):
-        """
-        Loads the spacy default language module for the Doc's language
-        """
-        try:
-            return spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
-        except IOError:
-            raise TextpipeMissingModelException(f'Default model for language "{lang}" is not available.')
 
     @property
     def sentiment(self):
