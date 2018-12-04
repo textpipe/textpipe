@@ -397,7 +397,7 @@ class Doc:
             doc_hash.update(word.encode('utf8'))
         return list(doc_hash.digest())
 
-    def similarity(self, other_doc, metric='minhash'):
+    def similarity(self, other_doc, metric='jaccard', hash_method='minhash'):
         """
         Computes similarity for two documents.
         Only minhash Jaccard similarity is implemented.
@@ -406,9 +406,10 @@ class Doc:
         >>> doc1.similarity(doc2)
         0.7265625
         """
-        if metric == 'minhash':
+        if hash_method == 'minhash' and metric == 'jaccard':
             hash1 = MinHash(hashvalues=self.minhash)
             hash2 = MinHash(hashvalues=other_doc.minhash)
             return hash1.jaccard(hash2)
         else:
-            raise NotImplementedError(f'Metric {metric} is not implemented as similarity metric')
+            raise NotImplementedError(f'Metric/hash method combination {metric}'
+                                      f'/{hash_method} is not implemented as similarity metric')
