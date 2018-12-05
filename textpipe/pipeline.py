@@ -74,7 +74,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         for oper, settings in self.steps:
             target_operation = self._operations[oper]
             assert callable(target_operation)
-            data[oper] = target_operation(doc, **{'context': data, 'settings': settings})
+            data[oper] = target_operation(doc, context=data, settings=settings)
 
         return data
 

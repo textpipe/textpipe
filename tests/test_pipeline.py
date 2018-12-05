@@ -15,9 +15,12 @@ model_path_nl = tempfile.mkdtemp()
 model_path_en = tempfile.mkdtemp()
 ents_model_nl.to_disk(model_path_nl)
 ents_model_en.to_disk(model_path_en)
+
 STEPS = [('Raw',), ('NWords',), ('Complexity',), ('CleanText',),
-            ('Entities', {'model_mapping': {'nl': 'ents', 'en': 'other_identifier'}})]
-PIPELINE_DEF_KWARGS = dict(models=[('ents', 'nl', model_path_nl), ('other_identifier', 'en', model_path_en)])
+         ('Entities', {'model_mapping': {'nl': 'ents', 'en': 'other_identifier'}})]
+
+PIPELINE_DEF_KWARGS = dict(models=[('ents', 'nl', model_path_nl),
+                                   ('other_identifier', 'en', model_path_en)])
 
 PIPE = Pipeline(STEPS, **PIPELINE_DEF_KWARGS)
 
@@ -72,9 +75,9 @@ def test_steps_definitions():
 
 def test_register_operation():
     """
-        The most simple way to extend the pipeline operations is by passing a
-        function with proper arguments.
-        :return:
+    The most simple way to extend the pipeline operations is by passing a
+    function with proper arguments.
+    :return:
     """
     test_pipe = Pipeline(STEPS, models=[('ents', 'nl', model_path_nl), ('other_identifier', 'en', model_path_en)])
 
@@ -95,9 +98,9 @@ def test_register_op_with_extending_steps_works():
     def custom_op(doc, context=None, settings=None, **kwargs):
         return settings
 
-    custom_argument = {'argument' :1 }
+    custom_argument = {'argument': 1}
     test_pipe.register_operation('CUSTOM_STEP', custom_op)
-    test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
+    test_pipe.steps.append(('CUSTOM_STEP', custom_argument))
 
     results = test_pipe(TEXT)
 
@@ -118,10 +121,10 @@ def test_context_data_passed_between_steps():
     def custom_op2(doc, context=None, settings=None, **kwargs):
         return context
 
-    custom_argument = {'argument' :1 }
+    custom_argument = {'argument': 1}
     test_pipe.register_operation('CUSTOM_STEP', custom_op)
     test_pipe.register_operation('CUSTOM_STEP2', custom_op2)
-    test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
+    test_pipe.steps.append(('CUSTOM_STEP', custom_argument))
     test_pipe.steps.append(('CUSTOM_STEP2', custom_argument))
 
     results = test_pipe(TEXT)
@@ -146,5 +149,3 @@ def test_register_not_existing_step_should_throw_exception():
         # somehow placing the following assert statement in the with statement
         # fails to assert, thus moved out of the context of the with
     assert "has no attribute 'CUSTOM_STEP2'" in str(ae.value)
-
-
