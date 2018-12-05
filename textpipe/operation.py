@@ -281,8 +281,8 @@ class DocumentVector(Operation):
 
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Sentence for vectorization')
-    >>> DocumentVector()(doc).shape
-    (384,)
+    >>> len(DocumentVector()(doc))
+    384
     """
     def __init__(self, **kwargs):
         self.kwargs = kwargs
