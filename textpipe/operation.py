@@ -239,6 +239,7 @@ class MinHash(Operation):
     Returns a list with integers, which is the minhash of the document.
     A minhash is a cheap way to compute a hash for finding similarity of documents.
     Source: https://ekzhu.github.io/datasketch/minhash.html
+
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Sentence for computing the minhash')
     >>> doc.minhash[:5]
@@ -250,3 +251,41 @@ class MinHash(Operation):
 
     def __call__(self, doc):
         return doc.find_minhash(num_perm=self.num_perm)
+
+
+class WordVectors(Operation):
+    """
+    Extract the vectors of the words in a document.
+
+    Returns a dict that maps each word to a dict with the following keys:
+        'has_vector': True if the word has a vector
+        'vector_norm': The vector norm of the word
+        'is_oov': True if the word is out of vocabulary
+        'vector': The vector corresponding to the word
+
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Sentence for vectorization')
+    >>> WordVectors()(doc)['Sentence']['has_vector']
+    True
+    """
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc):
+        return doc.word_vectors
+
+
+class DocumentVector(Operation):
+    """
+    Extract the vector of the document.
+
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Sentence for vectorization')
+    >>> DocumentVector()(doc).shape
+    (384,)
+    """
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc):
+        return doc.aggregate_word_vectors(**self.kwargs)
