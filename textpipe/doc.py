@@ -436,7 +436,7 @@ class Doc:
         >>> doc = Doc('Test sentence')
         >>> doc.word_vectors['Test']['is_oov']
         True
-        >>> doc.word_vectors['Test']['vector'].shape[-1]
+        >>> len(doc.word_vectors['Test']['vector'])
         384
         >>> doc.word_vectors['Test']['vector_norm'] == doc.word_vectors['sentence']['vector_norm']
         False
@@ -444,7 +444,7 @@ class Doc:
         return {token.text: {'has_vector': token.has_vector,
                              'vector_norm': token.vector_norm,
                              'is_oov': token.is_oov,
-                             'vector': token.vector}
+                             'vector': token.vector.tolist()}
                 for token in self._spacy_doc}
 
     @property
@@ -474,8 +474,8 @@ class Doc:
         >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='mean'), doc2.aggregate_word_vectors(aggregation='sum'))
         False
         >>> doc = Doc('sentence with an out of vector word lsseofn')
-        >>> doc.aggregate_word_vectors().shape
-        (384,)
+        >>> len(doc.aggregate_word_vectors())
+        384
         >>> numpy.array_equiv(doc.aggregate_word_vectors(exclude_oov=False), doc.aggregate_word_vectors(exclude_oov=True))
         False
         """
@@ -484,8 +484,8 @@ class Doc:
                    for token in tokens]
 
         if aggregation == 'mean':
-            return numpy.mean(vectors, axis=0)
+            return numpy.mean(vectors, axis=0).tolist()
         elif aggregation == 'sum':
-            return numpy.sum(vectors, axis=0)
+            return numpy.sum(vectors, axis=0).tolist()
         else:
             raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
