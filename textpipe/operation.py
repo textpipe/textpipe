@@ -268,12 +268,14 @@ class WordVectors(Operation):
     >>> WordVectors()(doc)['Sentence']['has_vector']
     True
     """
-    def __init__(self, **kwargs):
+    def __init__(self, model_mapping=None, **kwargs):
+        self.model_mapping = model_mapping
         self.kwargs = kwargs
 
     def __call__(self, doc):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return doc.generate_word_vectors(**self.kwargs)
+        return (doc.generate_word_vectors(self.model_mapping[lang])
+                if self.model_mapping else doc.word_vectors)
 
 
 class DocumentVector(Operation):
@@ -285,9 +287,11 @@ class DocumentVector(Operation):
     >>> len(DocumentVector()(doc))
     384
     """
-    def __init__(self, **kwargs):
+    def __init__(self, model_mapping=None, **kwargs):
+        self.model_mapping = model_mapping
         self.kwargs = kwargs
 
     def __call__(self, doc):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return doc.aggregate_word_vectors(**self.kwargs)
+        return (doc.aggregate_word_vectors(self.model_mapping[lang], **self.kwargs)
+                if self.model_mapping else doc.aggregate_word_vectors(**self.kwargs))
