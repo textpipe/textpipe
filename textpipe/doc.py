@@ -414,11 +414,11 @@ class Doc:
         else:
             raise NotImplementedError(f'Metric/hash method combination {metric}'
                                       f'/{hash_method} is not implemented as similarity metric')
-   
+
     @property
     def word_vectors(self):
         """
-        Returns word embeddings for the words in the document
+        Returns word embeddings for the words in the document.
         """
         return self.generate_word_vectors()
    
@@ -492,7 +492,7 @@ class Doc:
         tokens = [token for token in self._load_spacy_doc(lang, model_name) if not exclude_oov or not token.is_oov]
         vectors = [token.vector / token.vector_norm if normalize else token.vector
                    for token in tokens]
-                   
+
         if aggregation == 'mean':
             return numpy.mean(vectors, axis=0).tolist()
         elif aggregation == 'sum':
