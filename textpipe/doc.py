@@ -421,7 +421,7 @@ class Doc:
         Returns word embeddings for the words in the document.
         """
         return self.generate_word_vectors()
-   
+
     @functools.lru_cache()
     def generate_word_vectors(self, model_name=None):
         """
