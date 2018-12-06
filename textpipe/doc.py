@@ -7,6 +7,7 @@ import re
 from collections import Counter
 
 import cld2
+import numpy
 import spacy
 import spacy.matcher
 import textacy
@@ -15,12 +16,12 @@ import textacy.text_utils
 from bs4 import BeautifulSoup
 from datasketch import MinHash
 
+from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
+
 
 class TextpipeMissingModelException(Exception):
     """Raised when the requested model is missing"""
     pass
-
-from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
 
 
 class Doc:
@@ -413,3 +414,90 @@ class Doc:
         else:
             raise NotImplementedError(f'Metric/hash method combination {metric}'
                                       f'/{hash_method} is not implemented as similarity metric')
+
+    @property
+    def word_vectors(self):
+        """
+        Returns word embeddings for the words in the document.
+        """
+        return self.generate_word_vectors()
+
+    @functools.lru_cache()
+    def generate_word_vectors(self, model_name=None):
+        """
+        Returns word embeddings for the words in the document.
+        The default spacy models don't have "true" word vectors
+        but only context-sensitive tensors that are within the document.
+
+        Returns:
+        A dictionary mapping words from the document to a dict with the
+        corresponding values of the following variables:
+
+        has vector: Does the token have a vector representation?
+        vector norm: The L2 norm of the token's vector (the square root of the
+                    sum of the values squared)
+        OOV: Out-of-vocabulary (This variable always gets the value True since
+                                there are no vectors included in the model)
+        vector: The vector representation of the word
+
+        >>> doc = Doc('Test sentence')
+        >>> doc.word_vectors['Test']['is_oov']
+        True
+        >>> len(doc.word_vectors['Test']['vector'])
+        384
+        >>> doc.word_vectors['Test']['vector_norm'] == doc.word_vectors['sentence']['vector_norm']
+        False
+        """
+        lang = self.language if self.is_reliable_language else self.hint_language
+        return {token.text: {'has_vector': token.has_vector,
+                             'vector_norm': token.vector_norm,
+                             'is_oov': token.is_oov,
+                             'vector': token.vector.tolist()}
+                for token in self._load_spacy_doc(lang, model_name)}
+
+    @property
+    def doc_vector(self):
+        """
+        Returns document embeddings based on the words in the document.
+
+        >>> import numpy
+        >>> numpy.array_equiv(Doc('a b').doc_vector, Doc('a b').doc_vector)
+        True
+        >>> numpy.array_equiv(Doc('a b').doc_vector, Doc('a a b').doc_vector)
+        False
+        """
+        return self.aggregate_word_vectors()
+
+    @functools.lru_cache()
+    def aggregate_word_vectors(self, model_name=None, aggregation='mean', normalize=False, exclude_oov=False):
+        """
+        Returns document embeddings based on the words in the document.
+
+        >>> import numpy
+        >>> doc1 = Doc('a b')
+        >>> doc2 = Doc('a a b')
+        >>> numpy.array_equiv(doc1.aggregate_word_vectors(), doc1.aggregate_word_vectors())
+        True
+        >>> numpy.array_equiv(doc1.aggregate_word_vectors(), doc2.aggregate_word_vectors())
+        False
+        >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='mean'), doc2.aggregate_word_vectors(aggregation='sum'))
+        False
+        >>> doc = Doc('sentence with an out of vector word lsseofn')
+        >>> len(doc.aggregate_word_vectors())
+        384
+        >>> numpy.array_equiv(doc.aggregate_word_vectors(exclude_oov=False), doc.aggregate_word_vectors(exclude_oov=True))
+        False
+        """
+        lang = self.language if self.is_reliable_language else self.hint_language
+        tokens = [token for token in self._load_spacy_doc(lang, model_name) if not exclude_oov or not token.is_oov]
+        vectors = [token.vector / token.vector_norm if normalize else token.vector
+                   for token in tokens]
+
+        if aggregation == 'mean':
+            return numpy.mean(vectors, axis=0).tolist()
+        elif aggregation == 'sum':
+            return numpy.sum(vectors, axis=0).tolist()
+        elif aggregation == 'var':
+            return numpy.sum(vectors, axis=0).tolist()
+        else:
+            raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
