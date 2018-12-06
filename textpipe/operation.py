@@ -272,7 +272,8 @@ class WordVectors(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc):
-        return doc.word_vectors
+        lang = doc.language if doc.is_reliable_language else doc.hint_language
+        return doc.generate_word_vectors(**self.kwargs)
 
 
 class DocumentVector(Operation):
@@ -288,4 +289,5 @@ class DocumentVector(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc):
+        lang = doc.language if doc.is_reliable_language else doc.hint_language
         return doc.aggregate_word_vectors(**self.kwargs)
