@@ -56,7 +56,7 @@ def custom_op(doc, context=None, settings=None, **kwargs):
     return 1
 
 custom_argument = {'argument' :1 }
-test_pipe.register_operation("CUSTOM_STEP", custom_op)
+test_pipe.register_operation('CUSTOM_STEP', custom_op)
 test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
 
 ```
