@@ -414,12 +414,19 @@ class Doc:
         else:
             raise NotImplementedError(f'Metric/hash method combination {metric}'
                                       f'/{hash_method} is not implemented as similarity metric')
-
+   
     @property
     def word_vectors(self):
         """
+        Returns word embeddings for the words in the document
+        """
+        return self.generate_word_vectors()
+   
+    @functools.lru_cache()
+    def generate_word_vectors(self, model_name=None):
+        """
         Returns word embeddings for the words in the document.
-        The used spacy models don't have "true" word vectors
+        The default spacy models don't have "true" word vectors
         but only context-sensitive tensors that are within the document.
 
         Returns:
@@ -441,11 +448,12 @@ class Doc:
         >>> doc.word_vectors['Test']['vector_norm'] == doc.word_vectors['sentence']['vector_norm']
         False
         """
+        lang = self.language if self.is_reliable_language else self.hint_language
         return {token.text: {'has_vector': token.has_vector,
                              'vector_norm': token.vector_norm,
                              'is_oov': token.is_oov,
                              'vector': token.vector.tolist()}
-                for token in self._spacy_doc}
+                for token in self._load_spacy_doc(lang, model_name)}
 
     @property
     def doc_vector(self):
@@ -460,7 +468,8 @@ class Doc:
         """
         return self.aggregate_word_vectors()
 
-    def aggregate_word_vectors(self, aggregation='mean', normalize=False, exclude_oov=False):
+    @functools.lru_cache()
+    def aggregate_word_vectors(self, model_name=None, aggregation='mean', normalize=False, exclude_oov=False):
         """
         Returns document embeddings based on the words in the document.
 
@@ -479,13 +488,16 @@ class Doc:
         >>> numpy.array_equiv(doc.aggregate_word_vectors(exclude_oov=False), doc.aggregate_word_vectors(exclude_oov=True))
         False
         """
-        tokens = [token for token in self._spacy_doc if not exclude_oov or not token.is_oov]
+        lang = self.language if self.is_reliable_language else self.hint_language
+        tokens = [token for token in self._load_spacy_doc(lang, model_name) if not exclude_oov or not token.is_oov]
         vectors = [token.vector / token.vector_norm if normalize else token.vector
                    for token in tokens]
-
+                   
         if aggregation == 'mean':
             return numpy.mean(vectors, axis=0).tolist()
         elif aggregation == 'sum':
+            return numpy.sum(vectors, axis=0).tolist()
+        elif aggregation == 'var':
             return numpy.sum(vectors, axis=0).tolist()
         else:
             raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
