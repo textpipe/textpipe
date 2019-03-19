@@ -353,11 +353,11 @@ class Doc:
 
         >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
         >>> doc.extract_keyterms(n_terms=3)
-        [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('amsterdam', 0.17543839772251532)]
+        [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('Amsterdam', 0.17543839772251532)]
         >>> doc.extract_keyterms(ranker='sgrank')
-        [('awesome capital', 0.5638711013322963), ('netherlands', 0.22636566128805719), ('amsterdam', 0.20976323737964653)]
+        [('awesome capital', 0.5638711013322963), ('Netherlands', 0.22636566128805719), ('Amsterdam', 0.20976323737964653)]
         >>> doc.extract_keyterms(ranker='sgrank', ngrams=(1))
-        [('netherlands', 0.4020557546031188), ('capital', 0.29395103364295216), ('awesome', 0.18105611227666252), ('amsterdam', 0.12293709947726655)]
+        [('Netherlands', 0.4020557546031188), ('capital', 0.29395103364295216), ('awesome', 0.18105611227666252), ('Amsterdam', 0.12293709947726655)]
         """
         if self.nwords < 1:
             return []
@@ -375,7 +375,7 @@ class Doc:
 
         >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
         >>> doc.extract_keyterms(n_terms=3)
-        [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('amsterdam', 0.17543839772251532)]
+        [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('Amsterdam', 0.17543839772251532)]
         """
         return self.extract_keyterms()
 
@@ -444,7 +444,7 @@ class Doc:
         >>> doc.word_vectors['Test']['is_oov']
         True
         >>> len(doc.word_vectors['Test']['vector'])
-        384
+        96
         >>> doc.word_vectors['Test']['vector_norm'] == doc.word_vectors['sentence']['vector_norm']
         False
         """
@@ -484,7 +484,7 @@ class Doc:
         False
         >>> doc = Doc('sentence with an out of vector word lsseofn')
         >>> len(doc.aggregate_word_vectors())
-        384
+        96
         >>> numpy.array_equiv(doc.aggregate_word_vectors(exclude_oov=False), doc.aggregate_word_vectors(exclude_oov=True))
         False
         """
