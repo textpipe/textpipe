@@ -249,7 +249,7 @@ class MinHash(Operation):
         self.kwargs = kwargs
         self.num_perm = num_perm
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         return doc.find_minhash(num_perm=self.num_perm)
 
 
@@ -272,7 +272,7 @@ class WordVectors(Operation):
         self.model_mapping = model_mapping
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
         return (doc.generate_word_vectors(self.model_mapping[lang])
                 if self.model_mapping else doc.word_vectors)
@@ -291,7 +291,7 @@ class DocumentVector(Operation):
         self.model_mapping = model_mapping
         self.kwargs = kwargs
 
-    def __call__(self, doc):
+    def __call__(self, doc, **kwargs):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
         return (doc.aggregate_word_vectors(self.model_mapping[lang], **self.kwargs)
                 if self.model_mapping else doc.aggregate_word_vectors(**self.kwargs))
