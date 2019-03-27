@@ -67,6 +67,9 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
+0.7.1
+- Pins Spacy and Pattern versions (with pinned lxml)
+
 0.7.0
 
 - change operation's registry from list to dict
