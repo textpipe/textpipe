@@ -245,6 +245,7 @@ class MinHash(Operation):
     >>> doc.minhash[:5]
     [407326892, 814360600, 1099082245, 1176349439, 1735256]
     """
+
     def __init__(self, num_perm=128, **kwargs):
         self.kwargs = kwargs
         self.num_perm = num_perm
@@ -268,6 +269,7 @@ class WordVectors(Operation):
     >>> WordVectors()(doc)['Sentence']['has_vector']
     True
     """
+
     def __init__(self, model_mapping=None, **kwargs):
         self.model_mapping = model_mapping
         self.kwargs = kwargs
@@ -287,6 +289,7 @@ class DocumentVector(Operation):
     >>> len(DocumentVector()(doc))
     96
     """
+
     def __init__(self, model_mapping=None, **kwargs):
         self.model_mapping = model_mapping
         self.kwargs = kwargs
