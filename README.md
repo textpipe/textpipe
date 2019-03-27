@@ -67,6 +67,9 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
+0.8.1
+- Fixes bugs in several operations that didn't accept kwargs
+
 0.8.0
 - Bumps Spacy to 2.1
 
