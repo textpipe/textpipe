@@ -1,7 +1,7 @@
 beautifulsoup4~=4.7
 cld2_cffi~=0.1
-datasketch==1.4
+datasketch==1.4.0
 spacy~=2.1.0
 textacy~=0.6
 msgpack~=0.6 # Needed for textacy to catch up with https://github.com/explosion/spaCy/pull/3003.
-textpipe-pattern==3.6
+textpipe-pattern==3.6.1
