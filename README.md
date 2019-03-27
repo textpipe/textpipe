@@ -67,7 +67,7 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
-0.7.1
+0.7.2
 - Pins Spacy and Pattern versions (with pinned lxml)
 
 0.7.0
