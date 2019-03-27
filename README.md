@@ -67,6 +67,9 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
+0.8.0
+- Bumps Spacy to 2.1
+
 0.7.2
 - Pins Spacy and Pattern versions (with pinned lxml)
 

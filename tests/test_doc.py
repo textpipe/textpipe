@@ -36,12 +36,12 @@ this is a paragraph
 TEXT_5 = """Mark Zuckerberg is sinds de oprichting van Facebook de directeur van het bedrijf."""
 
 TEXT_6 = """
-မြန်မာဘာသာစကားသည် တိဘက်-ဗမာနွယ် ဘာသာစကားများ အုပ်စုတွင် ပါဝင်သည်။ 
-တိဘက်-ဗမာနွယ် ဘာသာစကားများ အုပ်စုသည် တရုတ်-တိဗက်နွယ် ဘာသာစကားများ 
+မြန်မာဘာသာစကားသည် တိဘက်-ဗမာနွယ် ဘာသာစကားများ အုပ်စုတွင် ပါဝင်သည်။
+တိဘက်-ဗမာနွယ် ဘာသာစကားများ အုပ်စုသည် တရုတ်-တိဗက်နွယ် ဘာသာစကားများ
 မိသားစု ထဲတွင် ပါသည်။ မြန်မာဘာသာသည် တက်ကျသံရှိသော
-၊နိမ့်မြင့်အမှတ်အသားရှိ ဖြစ်သော၊ ဧကဝဏ္ဏစကားလုံး အလွန်များသော ဘာသာစကား 
-ဖြစ်သည်။ ကတ္တား-ကံ-တြိယာ စကားလုံးအစီအစဉ်ဖြင့် ရေးသော သရုပ်ခွဲဘာသာစကား 
-လည်းဖြစ်သည်။ မြန်မာအက္ခရာများသည် ဗြာဟ္မီအက္ခရာ သို့မဟုတ် ဗြာဟ္မီအက္ခရာမှ 
+၊နိမ့်မြင့်အမှတ်အသားရှိ ဖြစ်သော၊ ဧကဝဏ္ဏစကားလုံး အလွန်များသော ဘာသာစကား
+ဖြစ်သည်။ ကတ္တား-ကံ-တြိယာ စကားလုံးအစီအစဉ်ဖြင့် ရေးသော သရုပ်ခွဲဘာသာစကား
+လည်းဖြစ်သည်။ မြန်မာအက္ခရာများသည် ဗြာဟ္မီအက္ခရာ သို့မဟုတ် ဗြာဟ္မီအက္ခရာမှ
 ဆက်ခံထားသောမွန်အက္ခရာတို့မှ ဆင်းသက်လာသည်။
 """
 
@@ -63,7 +63,7 @@ def test_load_custom_model():
     model_mapping = {'nl': 'ents'}
     lang = DOC_5.language if DOC_5.is_reliable_language else DOC_5.hint_language
     assert lang == 'nl'
-    assert sorted(DOC_5.find_ents()) == sorted([('Mark Zuckerberg', 'PER'), ('Facebook', 'MISC')])
+    assert sorted(DOC_5.find_ents()) == sorted([('Mark Zuckerberg', 'PER'), ('Facebook', 'PER')])
     assert DOC_5.find_ents(model_mapping[lang]) == []
 
 
@@ -78,8 +78,7 @@ def test_nwords_nsents():
 
 def test_entities():
     assert sorted(DOC_1.ents) == sorted([('Google', 'ORG')])
-    assert sorted(DOC_2.ents) == sorted([('Concreet', 'LOC'), ('Textmining', 'PER'),
-                                         ('Philips', 'ORG'), ('allerhandeICT', 'PER')])
+    assert sorted(DOC_2.ents) == sorted([('Philips', 'ORG')])
     assert DOC_3.ents == []
 
 

@@ -220,11 +220,11 @@ class Keyterms(Operation):
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
     >>> Keyterms()(doc)
-    [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('amsterdam', 0.17543839772251532), ('netherlands', 0.17543839772251532)]
+    [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('Amsterdam', 0.17543839772251532), ('Netherlands', 0.17543839772251532)]
     >>> Keyterms(n_terms=2)(doc)
     [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454)]
     >>> Keyterms(ranker='sgrank')(doc)
-    [('awesome capital', 0.5638711013322963), ('netherlands', 0.22636566128805719), ('amsterdam', 0.20976323737964653)]
+    [('awesome capital', 0.5638711013322963), ('Netherlands', 0.22636566128805719), ('Amsterdam', 0.20976323737964653)]
     """
 
     def __init__(self, **kwargs):
@@ -285,7 +285,7 @@ class DocumentVector(Operation):
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Sentence for vectorization')
     >>> len(DocumentVector()(doc))
-    384
+    96
     """
     def __init__(self, model_mapping=None, **kwargs):
         self.model_mapping = model_mapping
