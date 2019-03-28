@@ -47,7 +47,7 @@ metadata such as the number of words and named entities from the text.
 {'CleanText': 'Sample text!', 'NWords': 2}
 ```
 
-In order to extend the existing Textpipe operations with your own proprietary operations; 
+In order to extend the existing Textpipe operations with your own proprietary operations;
 
 ```python
 test_pipe = pipeline.Pipeline(['CleanText', 'NWords'])
@@ -65,6 +65,9 @@ test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
 See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
+
+0.8.2
+  - Fix copy-paste error in word vector aggregation ([#118](https://github.com/textpipe/textpipe/issues/118))
 
 0.8.1
   - Fixes bugs in several operations that didn't accept kwargs
