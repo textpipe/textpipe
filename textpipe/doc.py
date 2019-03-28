@@ -498,6 +498,6 @@ class Doc:
         elif aggregation == 'sum':
             return numpy.sum(vectors, axis=0).tolist()
         elif aggregation == 'var':
-            return numpy.sum(vectors, axis=0).tolist()
+            return numpy.var(vectors, axis=0).tolist()
         else:
             raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
