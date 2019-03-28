@@ -10,7 +10,7 @@ class PostInstallCommand(setuptools.command.install.install,
         try:
             import spacy
             return spacy.cli.validate()
-        except:
+        except ModuleNotFoundError:
             return
 
 with open(Path(__file__).resolve().parent.joinpath('README.md'), 'r') as fh:
