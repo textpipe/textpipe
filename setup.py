@@ -5,11 +5,12 @@ from pathlib import Path
 class PostInstallCommand(setuptools.command.install.install):
     """Post-installation command."""
     def run(self):
+        setuptools.command.install.install.run(self)
         try:
             import spacy
-            return spacy.cli.validate()
+            spacy.cli.validate()
         except ModuleNotFoundError:
-            return
+            pass
 
 
 with open(Path(__file__).resolve().parent.joinpath('README.md'), 'r') as fh:
