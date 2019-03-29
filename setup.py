@@ -1,17 +1,16 @@
 import setuptools
 import setuptools.command.install
-import setuptools.command.develop
 from pathlib import Path
 
-class PostInstallCommand(setuptools.command.install.install,
-                         setuptools.command.develop.develop):
-    """Post-installation for develop and installation mode."""
+class PostInstallCommand(setuptools.command.install.install):
+    """Post-installation command."""
     def run(self):
         try:
             import spacy
             return spacy.cli.validate()
         except ModuleNotFoundError:
             return
+
 
 with open(Path(__file__).resolve().parent.joinpath('README.md'), 'r') as fh:
     long_description = fh.read()
@@ -37,7 +36,6 @@ setuptools.setup(
     ],
     install_requires=requirements,
     cmdclass={
-        'develop': PostInstallCommand,
         'install': PostInstallCommand,
     },
 )
