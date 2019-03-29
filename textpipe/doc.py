@@ -482,6 +482,10 @@ class Doc:
         False
         >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='mean'), doc2.aggregate_word_vectors(aggregation='sum'))
         False
+        >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='mean'), doc2.aggregate_word_vectors(aggregation='var'))
+        False
+        >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='sum'), doc2.aggregate_word_vectors(aggregation='var'))
+        False
         >>> doc = Doc('sentence with an out of vector word lsseofn')
         >>> len(doc.aggregate_word_vectors())
         96
