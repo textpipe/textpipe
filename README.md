@@ -10,25 +10,24 @@ extracting metadata from that text. Its functionalities include transforming
 raw text into readable text by removing HTML tags and extracting
 metadata such as the number of words and named entities from the text.
 
-
 ## Vision: the zen of textpipe
 
-- Designed for use in production pipelines without adult supervision.
-- Rechargeable batteries included: provide sane defaults and clear examples to adapt.
-- A uniform interface with thin wrappers around state-of-the-art NLP packages.
-- As language-agnostic as possible.
-- Bring your own models.
+  - Designed for use in production pipelines without adult supervision.
+  - Rechargeable batteries included: provide sane defaults and clear examples to adapt.
+  - A uniform interface with thin wrappers around state-of-the-art NLP packages.
+  - As language-agnostic as possible.
+  - Bring your own models.
 
 ## Features
 
-- Clean raw text by removing `HTML` and other unreadable constructs
-- Identify the language of text
-- Extract the number of words, number of sentences, named entities from a text
-- Calculate the complexity of a text
-- Obtain text metadata by specifying a pipeline containing all desired elements
-- Obtain sentiment (polarity and a subjectivity score)
-- Generates word counts
-- Computes minhash for cheap similarity estimation of documents
+  - Clean raw text by removing `HTML` and other unreadable constructs
+  - Identify the language of text
+  - Extract the number of words, number of sentences, named entities from a text
+  - Calculate the complexity of a text
+  - Obtain text metadata by specifying a pipeline containing all desired elements
+  - Obtain sentiment (polarity and a subjectivity score)
+  - Generates word counts
+  - Computes minhash for cheap similarity estimation of documents
 
 ## Usage example
 
@@ -61,24 +60,23 @@ test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
 
 ```
 
-
 ## Contributing
+
 See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
 0.8.1
-- Fixes bugs in several operations that didn't accept kwargs
+  - Fixes bugs in several operations that didn't accept kwargs
 
 0.8.0
-- Bumps Spacy to 2.1
+  - Bumps Spacy to 2.1
 
 0.7.2
-- Pins Spacy and Pattern versions (with pinned lxml)
+  - Pins Spacy and Pattern versions (with pinned lxml)
 
 0.7.0
-
-- change operation's registry from list to dict
-- global pipeline data is available across operations via the `context` kwarg
-- load custom operations using `register_operation` in pipeline
-- custom steps (operations) with arguments
+  - change operation's registry from list to dict
+  - global pipeline data is available across operations via the `context` kwarg
+  - load custom operations using `register_operation` in pipeline
+  - custom steps (operations) with arguments

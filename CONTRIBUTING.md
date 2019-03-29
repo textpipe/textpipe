@@ -4,7 +4,7 @@ But please follow the guidelines below.
 
 ## Guidelines
 ### Code of conduct
-Please follow our [code our conduct](CODE_OF_CONDUCT.md).
+Please follow our [code our conduct](CODEOFCONDUCT.md).
 
 ### Coding Conventions
 All code (except for deployment scripts) is in Python 3.6.
@@ -15,7 +15,7 @@ We use Codacy to check Pull Requests (PRs). PRs need to pass checks before they 
 All (new) methods and functions have to be unittested using Python `doctests`. Integration tests can be added in the `tests` folder. Current tests use `pytest`.
 
 ### Branching Conventions
-We use the git flow convention: `feature/<id>/<small-description>`. 
+We use the git flow convention: `feature/<id>/<small-description>`.
 
 ### Reviewing
 All changes (not matter how minor) to master are made through Pull Requests (PRs).
@@ -38,49 +38,47 @@ The preferred workflow for contributing to textpipe is to clone the
 
 Steps:
 
-0. Create an issue of what you are going to do: https://github.com/textpipe/textpipe/issues
+  1. Create an issue of what you are going to do at [https://github.com/textpipe/textpipe/issues](https://github.com/textpipe/textpipe/issues).
 
-1. Clone the [repository](https://github.com/textpipe/textpipe)
-   ```bash
-   $ git clone git@github.com:textpipe/textpipe.git
-   $ cd textpipe
-   ```
+  2. Clone the [repository](https://github.com/textpipe/textpipe)
+     ```bash
+     $ git clone git@github.com:textpipe/textpipe.git
+     $ cd textpipe
+     ```
 
-2. Create a ``feature`` branch to hold your development changes:
+  3. Create a ``feature`` branch to hold your development changes:
 
-   ```bash
-   $ git checkout -b {feature|fix}/<issue-id>/<feature-name>
-   ```
+     ```bash
+     $ git checkout -b {feature|fix}/<issue-id>/<feature-name>
+     ```
 
-   Always use a ``feature`` branch. It's good practice to never work on the ``master`` branch!
+     Always use a ``feature`` branch. It's good practice to never work on the ``master`` branch!
 
-3. Develop the feature on your feature branch.
+  4. Develop the feature on your feature branch.
 
-4. Add yourself to the list of [contributors](CONTRIBUTORS.md).
+  5. Add yourself to the list of [contributors](CONTRIBUTORS.md).
 
-5. Add changed files using ``git add`` and then ``git commit`` files:
+  6. Add changed files using ``git add`` and then ``git commit`` files:
 
-   ```bash
-   $ git add modified_files
-   $ git commit
-   ```
-   to record your changes in Git, then push the changes to your GitHub account with:
+     ```bash
+     $ git add modified_files
+     $ git commit
+     ```
+     to record your changes in Git, then push the changes to your GitHub account with:
 
-   ```bash
-   $ git push -u origin {feature|fix}/<issue-id>/<feature-name>
-   ```
+     ```bash
+     $ git push -u origin {feature|fix}/<issue-id>/<feature-name>
+     ```
 
-   * **Be descriptive in your commit messages. Start with a verb in the present tense.**
-   * **Group commit changes that belong together.**
+       * **Be descriptive in your commit messages. Start with a verb in the present tense.**
+       * **Group commit changes that belong together.**
 
-6. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request. 
-   Make sure you add reviewers to your PR. Your code should be reviewed by at least 1 person and by everyone in the wider contributing team  you know could have an opinion on your change.
-   
-7. Optionally use [Slack](https://textpipe.slack.com/signup) to advertise your PR.
+  7. Browse to [https://github.com/textpipe/textpipe](https://github.com/textpipe/textpipe) and follow instructions to create Pull Request.
+     Make sure you add reviewers to your PR. Your code should be reviewed by at least 1 person and by everyone in the wider contributing team  you know could have an opinion on your change.
 
-8. Once your PR is approved and passes all tests, use the `rebase and merge` option.
+  8. Optionally use [Slack](https://textpipe.slack.com/signup) to advertise your PR.
 
-
+  9. Once your PR is approved and passes all tests, use the `rebase and merge` option.
 
 (If any of the above seems like magic to you, please look up the
 [Git documentation](https://git-scm.com/documentation) on the web, or ask a friend or another contributor for help.)
