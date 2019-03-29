@@ -66,6 +66,9 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
+0.8.4
+  - Fix broken install command
+
 0.8.3
   - Fix broken install command
 
