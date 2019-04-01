@@ -66,7 +66,7 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
-0.8.4
+0.8.5
   - Bump spaCy to 2.1.3
 
 0.8.4
