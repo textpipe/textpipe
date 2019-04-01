@@ -67,6 +67,9 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 ## Changes
 
 0.8.4
+  - Bump spaCy to 2.1.3
+
+0.8.4
   - Fix broken install command
 
 0.8.3
