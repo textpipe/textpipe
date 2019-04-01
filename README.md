@@ -66,6 +66,9 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
+0.8.6
+  - Removes non standard utf chars before detecting language
+
 0.8.5
   - Bump spaCy to 2.1.3
 
