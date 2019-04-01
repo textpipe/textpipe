@@ -45,6 +45,10 @@ TEXT_6 = """
 ဆက်ခံထားသောမွန်အက္ခရာတို့မှ ဆင်းသက်လာသည်။
 """
 
+TEXT_7 = u"""\nHi <<First Name>>\nthis is filler text \xa325 more filler.\nadditilnal 
+filler.\nyet more\xa0still more\xa0filler.\n\xa0\nmore\nfiller.\x03\n\t\t\t\t\t\t    
+almost there \n\\n\nthe end\n"""
+
 ents_model = spacy.blank('nl')
 custom_spacy_nlps = {'nl': {'ents': ents_model}}
 
@@ -54,6 +58,7 @@ DOC_3 = Doc(TEXT_3)
 DOC_4 = Doc(TEXT_4)
 DOC_5 = Doc(TEXT_5, spacy_nlps=custom_spacy_nlps)
 DOC_6 = Doc(TEXT_6)
+DOC_7 = Doc(TEXT_7)
 
 
 def test_load_custom_model():
@@ -108,7 +113,7 @@ def test_extract_keyterms():
     non_ranker = 'bulthaup'
     rankers = ['textrank', 'sgrank', 'singlerank']
     with pytest.raises(ValueError, message=f'algorithm "{non_ranker}" not '
-                                           f'available; use one of {rankers}'):
+    f'available; use one of {rankers}'):
         DOC_1.extract_keyterms(ranker=non_ranker)
     assert len(DOC_1.extract_keyterms()) == 10
     # limits number of keyterms
@@ -126,3 +131,7 @@ def test_missing_language_model():
 
 def test_minhash_similarity():
     assert DOC_1.similarity(DOC_2) == 0.0625
+
+
+def test_non_utf_chars():
+    assert DOC_7.language == 'en'
