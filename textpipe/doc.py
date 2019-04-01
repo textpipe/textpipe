@@ -102,7 +102,7 @@ class Doc:
         """
 
         none_utf_chars_removed = ''.join([l for l in self.clean
-                                          if unicodedata.category(l)[0] not in ('M', 'C')])
+                                          if unicodedata.category(l)[0] not in {'M', 'C'}])
         is_reliable, _, best_guesses = cld2.detect(none_utf_chars_removed,
                                                    hintLanguage=hint_language,
                                                    bestEffort=True)
