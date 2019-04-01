@@ -1,9 +1,9 @@
 """
 Clean text, make it readable and obtain metadata from it.
 """
-import unicodedata
 import functools
 import re
+import unicodedata
 from collections import Counter
 
 import cld2
