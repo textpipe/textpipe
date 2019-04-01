@@ -113,7 +113,7 @@ def test_extract_keyterms():
     non_ranker = 'bulthaup'
     rankers = ['textrank', 'sgrank', 'singlerank']
     with pytest.raises(ValueError, message=f'algorithm "{non_ranker}" not '
-    f'available; use one of {rankers}'):
+                                           f'available; use one of {rankers}'):
         DOC_1.extract_keyterms(ranker=non_ranker)
     assert len(DOC_1.extract_keyterms()) == 10
     # limits number of keyterms
