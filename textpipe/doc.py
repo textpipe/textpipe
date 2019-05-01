@@ -428,7 +428,7 @@ class Doc:
         return self.generate_word_vectors()
 
     @functools.lru_cache()
-    def generate_word_vectors(self, model_name=None):
+    def generate_word_vectors(self, model_name=None, vector_type='spacy'):
         """
         Returns word embeddings for the words in the document.
         The default spacy models don't have "true" word vectors
@@ -453,12 +453,26 @@ class Doc:
         >>> doc.word_vectors['Test']['vector_norm'] == doc.word_vectors['sentence']['vector_norm']
         False
         """
+        if vector_type not in ('spacy', 'blendle'):
+            raise TextpipeMissingModelException(f'Vector type {vector_type} is not supported.')
+
         lang = self.language if self.is_reliable_language else self.hint_language
-        return {token.text: {'has_vector': token.has_vector,
-                             'vector_norm': token.vector_norm,
-                             'is_oov': token.is_oov,
-                             'vector': token.vector.tolist()}
-                for token in self._load_spacy_doc(lang, model_name)}
+        if vector_type == 'spacy':
+            return {token.text: {'has_vector': token.has_vector,
+                                 'vector_norm': token.vector_norm,
+                                 'is_oov': token.is_oov,
+                                 'idf_weight': None,
+                                 'vector': token.vector.tolist()}
+                    for token in self._load_spacy_doc(lang, model_name)}
+        elif vector_type == 'blendle':
+            model = self._load_word2vec_model(model_name)
+            return {token: {'has_vector': token.lower() in model.vocab,
+                            'vector_norm': None,  # TODO
+                            'is_oov': token.lower() not in model.vocab,
+                            'idf_weight': model.vocab[token.lower()].count
+                            if token.lower() in model.vocab else None,
+                            'vector': model.get(token.lower())}
+                    for token, _ in self.words}
 
     @property
     def doc_vector(self):
@@ -498,7 +512,8 @@ class Doc:
         False
         """
         lang = self.language if self.is_reliable_language else self.hint_language
-        tokens = [token for token in self._load_spacy_doc(lang, model_name) if not exclude_oov or not token.is_oov]
+        tokens = [token for token in self._load_spacy_doc(lang, model_name)
+                  if token.has_vector and not exclude_oov or not token.is_oov]
         vectors = [token.vector / token.vector_norm if normalize else token.vector
                    for token in tokens]
 
@@ -512,30 +527,15 @@ class Doc:
             raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
 
     @functools.lru_cache()
-    def _load_word2vec_model(self, lang, model_name=None):
+    def _load_word2vec_model(self, model_name=None):
         """
         Loads pre-trained Gensim word2vec model
         WIP: needs exceptions etc
         """
-        print('1')
+        lang = self.language if self.is_reliable_language else self.hint_language
         if lang in self._word2vec_models:
             return self._word2vec_models[lang]
 
-        print('2')
         vectors = Word2Vec.load(model_name).wv
-        print('3')
         self._word2vec_models[lang] = vectors
-        print('4')
         return vectors
-
-    @property
-    def word2vec(self):
-        return self.compute_word2vec()
-
-    @functools.lru_cache()
-    def compute_word2vec(self):
-        model_name = '/Users/wees004/projects/blendle_word2vec/research-summarization/blendle_word2vec/nl/blendle_word2vec'
-        trained_vectors = self._load_word2vec_model(model_name)
-        # print(self.words)
-        # lang = self.language if self.is_reliable_language else self.hint_language
-        return [1, 2, 3]
