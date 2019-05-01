@@ -135,3 +135,9 @@ def test_minhash_similarity():
 
 def test_non_utf_chars():
     assert DOC_7.language == 'en'
+
+
+def test_word2vec():
+    print(DOC_1.word2vec)
+    # print(DOC_1.word2vec)
+    assert 1 == 2

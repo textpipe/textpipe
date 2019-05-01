@@ -73,6 +73,7 @@ def test_steps_definitions():
     assert test_pipe.steps[0] == ('Raw', {})
     assert test_pipe.steps[-1] == STEPS[-1]
 
+
 def test_register_operation():
     """
     The most simple way to extend the pipeline operations is by passing a
@@ -86,6 +87,7 @@ def test_register_operation():
 
     test_pipe.register_operation('CUSTOM_STEP', custom_op)
     assert len(test_pipe._operations) == len(STEPS) + 1
+
 
 def test_register_op_with_extending_steps_works():
     """

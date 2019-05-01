@@ -16,6 +16,7 @@ import textacy.keyterms
 import textacy.text_utils
 from bs4 import BeautifulSoup
 from datasketch import MinHash
+from gensim.models.word2vec import Word2Vec
 
 from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
 
@@ -46,7 +47,7 @@ class Doc:
         self.is_detected_language = language is None
         self._language = language
         self._is_reliable_language = True if language else None
-
+        self._word2vec_models = {}
         self._text_stats = {}
 
     @property
@@ -509,3 +510,32 @@ class Doc:
             return numpy.var(vectors, axis=0).tolist()
         else:
             raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
+
+    @functools.lru_cache()
+    def _load_word2vec_model(self, lang, model_name=None):
+        """
+        Loads pre-trained Gensim word2vec model
+        WIP: needs exceptions etc
+        """
+        print('1')
+        if lang in self._word2vec_models:
+            return self._word2vec_models[lang]
+
+        print('2')
+        vectors = Word2Vec.load(model_name).wv
+        print('3')
+        self._word2vec_models[lang] = vectors
+        print('4')
+        return vectors
+
+    @property
+    def word2vec(self):
+        return self.compute_word2vec()
+
+    @functools.lru_cache()
+    def compute_word2vec(self):
+        model_name = '/Users/wees004/projects/blendle_word2vec/research-summarization/blendle_word2vec/nl/blendle_word2vec'
+        trained_vectors = self._load_word2vec_model(model_name)
+        # print(self.words)
+        # lang = self.language if self.is_reliable_language else self.hint_language
+        return [1, 2, 3]
