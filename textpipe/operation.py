@@ -8,6 +8,7 @@ Pipeline['CleanText', 'my.org.package.OperationClass'])
 
 so that users do not have to put their Operation classes inside of this module.
 """
+from doc import TextpipeMissingModelException
 
 
 class Operation:
@@ -270,13 +271,14 @@ class WordVectors(Operation):
     True
     """
 
-    def __init__(self, model_mapping=None, **kwargs):
+    def __init__(self, model_mapping=None, vector_type='spacy', **kwargs):
         self.model_mapping = model_mapping
+        self.vector_type = vector_type
         self.kwargs = kwargs
 
     def __call__(self, doc, **kwargs):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return (doc.generate_word_vectors(self.model_mapping[lang])
+        return (doc.generate_word_vectors(self.model_mapping[lang], self.vector_type)
                 if self.model_mapping else doc.word_vectors)
 
 
