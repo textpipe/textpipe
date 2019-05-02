@@ -40,14 +40,14 @@ class Doc:
     _spacy_nlps: nested dictionary {lang: {model_id: model}} with loaded spacy language modules
     """
 
-    def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None):
+    def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None, gensim_vectors=None):
         self.raw = raw
         self.hint_language = hint_language
         self._spacy_nlps = spacy_nlps or dict()
+        self._gensim_vectors = gensim_vectors or dict()
         self.is_detected_language = language is None
         self._language = language
         self._is_reliable_language = True if language else None
-        self._word2vec_models = {}
         self._text_stats = {}
 
     @property
@@ -509,49 +509,45 @@ class Doc:
             raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
 
     @functools.lru_cache()
-    def _load_blendle_word2vec_model(self, model_file=None):
+    def _load_gensim_word2vec_model(self, model_file=None):
         """
-        Loads pre-trained Blendle word2vec model (trained with Gensim)
-        >>> doc = Doc('')
-        >>> model = doc._load_blendle_word2vec_model('tests/models/blendle_test.word2vec')
+        Loads pre-trained Gensim word2vec model, expects lower-cased training data
+        >>> model = Doc('')._load_gensim_word2vec_model('tests/models/gensim_test_nl.w2v')
         >>> type(model)
         <class 'gensim.models.keyedvectors.Word2VecKeyedVectors'>
         """
         lang = self.language if self.is_reliable_language else self.hint_language
-        if lang in self._word2vec_models:
-            return self._word2vec_models[lang]
-
-        vectors = Word2Vec.load(model_file).wv
-        self._word2vec_models[lang] = vectors
-        return vectors
+        if not self._gensim_vectors or lang not in self._gensim_vectors:
+            vectors = Word2Vec.load(model_file).wv
+            self._gensim_vectors[lang] = vectors
+        return self._gensim_vectors[lang]
 
     @functools.lru_cache()
-    def generate_blendle_embedding(self, model_file=None):
+    def generate_gensim_document_embedding(self, model_file=None):
         """
-        Returns document embeddings generated with Blendle word2vec model.
+        Returns document embeddings generated with Gensim word2vec model.
         >>> import numpy
         >>> doc1 = Doc('textmining is verwant aan tekstanalyse')
         >>> doc2 = Doc('textmining is verwant aan textmining')
         >>> doc3 = Doc('tekstanalyse is verwant aan textmining')
-        >>> test_model_file = 'tests/models/blendle_test.word2vec'
-        >>> numpy.allclose(doc1.generate_blendle_embedding(model_file=test_model_file), \
-                           doc2.generate_blendle_embedding(model_file=test_model_file))
+        >>> test_model_file = 'tests/models/gensim_test_nl.w2v'
+        >>> numpy.allclose(doc1.generate_gensim_document_embedding(model_file=test_model_file), \
+                           doc2.generate_gensim_document_embedding(model_file=test_model_file))
         False
-        >>> numpy.allclose(doc1.generate_blendle_embedding(model_file=test_model_file), \
-                           doc3.generate_blendle_embedding(model_file=test_model_file))
+        >>> numpy.allclose(doc1.generate_gensim_document_embedding(model_file=test_model_file), \
+                           doc3.generate_gensim_document_embedding(model_file=test_model_file))
         True
         """
-
         if not model_file:
-            raise TextpipeMissingModelException('No Blendle word2vec model file specified.')
+            raise TextpipeMissingModelException('No Gensim word2vec model file specified.')
         try:
-            model = self._load_blendle_word2vec_model(model_file)
+            model = self._load_gensim_word2vec_model(model_file)
         except FileNotFoundError:
-            raise TextpipeMissingModelException(f'Blendle model file {model_file} is not available.')
+            raise TextpipeMissingModelException(f'Gensim model file {model_file} is not available.')
 
         weighted_word_vectors = [model[word.lower()] * count / model.vocab[word.lower()].count
                                  for word, count in self.word_counts.items()
                                  if word.lower() in model.vocab]
 
         doc_vector = numpy.sum(weighted_word_vectors, axis=0)
-        return doc_vector
+        return list(doc_vector)

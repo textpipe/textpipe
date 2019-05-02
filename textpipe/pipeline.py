@@ -50,6 +50,9 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
             # initialize the target class with the given kwargs
             self._operations[oper_name] = oper_cls(**oper_kwargs)
 
+            if oper_name == 'GensimDocumentEmbedding':
+                self._gensim_vectors = {}
+
         # loop over model paths and load custom models into _spacy_nlp
         if models:
             for model_name, lang, model_path in models:

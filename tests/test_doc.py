@@ -139,32 +139,12 @@ def test_non_utf_chars():
 
 
 def test_blendle_word2vec():
-    expected_doc_2 = [
-        -0.14008188,
-        0.03602885,
-        -0.04570756,
-        0.00760475,
-        0.00783252,
-        0.069398,
-        -0.04922392,
-        -0.07091983,
-        0.05491541,
-        -0.04132243
-    ]
-    actual_doc_2 = DOC_2.generate_blendle_embedding(model_file='tests/models/blendle_test.word2vec')
+    expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
+                      -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
+    actual_doc_2 = DOC_2.generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.w2v')
     assert np.allclose(actual_doc_2, expected_doc_2)
 
-    expected_doc_5 = [
-        0.02665634,
-        -0.01226066,
-        0.00755386,
-        0.04390591,
-        -0.01421714,
-        0.00752533,
-        0.0033734,
-        0.01642812,
-        -0.00828735,
-        -0.00381044
-    ]
-    actual_doc_5 = DOC_5.generate_blendle_embedding(model_file='tests/models/blendle_test.word2vec')
+    expected_doc_5 = [0.04336167, -0.12551728, 0.121972464, -0.023885678, -0.0892916, 0.011041589,
+                      -0.022286428, 0.06333805, 0.07664292, 0.086685486]
+    actual_doc_5 = DOC_5.generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.w2v')
     assert np.allclose(actual_doc_5, expected_doc_5)
