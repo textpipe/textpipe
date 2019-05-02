@@ -428,23 +428,20 @@ class Doc:
         return self.generate_word_vectors()
 
     @functools.lru_cache()
-    def generate_word_vectors(self, model_name=None, vector_type='spacy'):
+    def generate_word_vectors(self, model_name=None):
         """
         Returns word embeddings for the words in the document.
         The default spacy models don't have "true" word vectors
         but only context-sensitive tensors that are within the document.
-
         Returns:
         A dictionary mapping words from the document to a dict with the
         corresponding values of the following variables:
-
         has vector: Does the token have a vector representation?
         vector norm: The L2 norm of the token's vector (the square root of the
                     sum of the values squared)
         OOV: Out-of-vocabulary (This variable always gets the value True since
                                 there are no vectors included in the model)
         vector: The vector representation of the word
-
         >>> doc = Doc('Test sentence')
         >>> doc.word_vectors['Test']['is_oov']
         True
@@ -453,32 +450,17 @@ class Doc:
         >>> doc.word_vectors['Test']['vector_norm'] == doc.word_vectors['sentence']['vector_norm']
         False
         """
-        if vector_type not in ('spacy', 'blendle'):
-            raise TextpipeMissingModelException(f'Vector type {vector_type} is not supported.')
-
         lang = self.language if self.is_reliable_language else self.hint_language
-        if vector_type == 'spacy':
-            return {token.text: {'has_vector': token.has_vector,
-                                 'vector_norm': token.vector_norm,
-                                 'is_oov': token.is_oov,
-                                 'idf_weight': None,
-                                 'vector': token.vector.tolist()}
-                    for token in self._load_spacy_doc(lang, model_name)}
-        elif vector_type == 'blendle':
-            model = self._load_word2vec_model(model_name)
-            return {token: {'has_vector': token.lower() in model.vocab,
-                            'vector_norm': None,  # TODO
-                            'is_oov': token.lower() not in model.vocab,
-                            'idf_weight': model.vocab[token.lower()].count
-                            if token.lower() in model.vocab else None,
-                            'vector': model.get(token.lower())}
-                    for token, _ in self.words}
+        return {token.text: {'has_vector': token.has_vector,
+                             'vector_norm': token.vector_norm,
+                             'is_oov': token.is_oov,
+                             'vector': token.vector.tolist()}
+                for token in self._load_spacy_doc(lang, model_name)}
 
     @property
     def doc_vector(self):
         """
         Returns document embeddings based on the words in the document.
-
         >>> import numpy
         >>> numpy.array_equiv(Doc('a b').doc_vector, Doc('a b').doc_vector)
         True
@@ -488,10 +470,10 @@ class Doc:
         return self.aggregate_word_vectors()
 
     @functools.lru_cache()
-    def aggregate_word_vectors(self, model_name=None, aggregation='mean', normalize=False, exclude_oov=False):
+    def aggregate_word_vectors(self, model_name=None, aggregation='mean', normalize=False,
+                               exclude_oov=False):
         """
         Returns document embeddings based on the words in the document.
-
         >>> import numpy
         >>> doc1 = Doc('a b')
         >>> doc2 = Doc('a a b')
@@ -512,8 +494,8 @@ class Doc:
         False
         """
         lang = self.language if self.is_reliable_language else self.hint_language
-        tokens = [token for token in self._load_spacy_doc(lang, model_name)
-                  if token.has_vector and not exclude_oov or not token.is_oov]
+        tokens = [token for token in self._load_spacy_doc(lang, model_name) if
+                  not exclude_oov or not token.is_oov]
         vectors = [token.vector / token.vector_norm if normalize else token.vector
                    for token in tokens]
 
@@ -527,7 +509,7 @@ class Doc:
             raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
 
     @functools.lru_cache()
-    def _load_word2vec_model(self, model_name=None):
+    def _load_blendle_word2vec_model(self, model_file=None):
         """
         Loads pre-trained Gensim word2vec model
         WIP: needs exceptions etc
@@ -536,6 +518,33 @@ class Doc:
         if lang in self._word2vec_models:
             return self._word2vec_models[lang]
 
-        vectors = Word2Vec.load(model_name).wv
+        vectors = Word2Vec.load(model_file).wv
         self._word2vec_models[lang] = vectors
         return vectors
+
+    @property
+    def blendle_embedding(self):
+        """
+        Returns document embeddings generated with Blendle word2vec model.
+        """
+        return self.generate_blendle_embedding()
+
+    @functools.lru_cache()
+    def generate_blendle_embedding(self, model_file=None):
+        """
+        Returns document embeddings generated with Blendle word2vec model.
+        """
+
+        if not model_file:
+            raise TextpipeMissingModelException('No Blendle word2vec model file specified.')
+        try:
+            model = self._load_blendle_word2vec_model(model_file)
+        except FileNotFoundError:
+            raise TextpipeMissingModelException(f'Blendle model file {model_file} is not available.')
+
+        weighted_word_vectors = [model[word.lower()] * count / model.vocab[word.lower()].count
+                                 for word, count in self.word_counts.items()
+                                 if word.lower() in model.vocab]
+
+        doc_vector = numpy.sum(weighted_word_vectors, axis=0)
+        return doc_vector
