@@ -8,7 +8,6 @@ Pipeline['CleanText', 'my.org.package.OperationClass'])
 
 so that users do not have to put their Operation classes inside of this module.
 """
-from doc import TextpipeMissingModelException
 
 
 class Operation:
@@ -302,22 +301,9 @@ class DocumentVector(Operation):
                 if self.model_mapping else doc.aggregate_word_vectors(**self.kwargs))
 
 
-class Word2Vec(Operation):
+class BlendleEmbedding(Operation):
     """
-    Extract a word2vec
-
-    """
-    def __init__(self, model_mapping=None, **kwargs):
-        self.model_mapping = model_mapping
-        self.kwargs = kwargs
-
-    def __call__(self, doc, **kwargs):
-        return doc.clean
-
-
-class Doc2Vec(Operation):
-    """
-    Extract a doc2vec embedding vector by adding word2vec embeddings?
+    Extract a doc2vec embedding vector derived from Blendle word embeddings
 
     """
     def __init__(self, model_mapping=None, **kwargs):
@@ -325,4 +311,6 @@ class Doc2Vec(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc, **kwargs):
-        return doc.clean
+        lang = doc.language if doc.is_reliable_language else doc.hint_language
+        return (doc.generate_blendle_embedding(self.model_mapping[lang], **self.kwargs)
+                if self.model_mapping else doc.generate_blendle_embedding(**self.kwargs))
