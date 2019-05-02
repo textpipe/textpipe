@@ -511,8 +511,11 @@ class Doc:
     @functools.lru_cache()
     def _load_blendle_word2vec_model(self, model_file=None):
         """
-        Loads pre-trained Gensim word2vec model
-        WIP: needs exceptions etc
+        Loads pre-trained Blendle word2vec model (trained with Gensim)
+        >>> doc = Doc('')
+        >>> model = doc._load_blendle_word2vec_model('tests/models/blendle_test.word2vec')
+        >>> type(model)
+        <class 'gensim.models.keyedvectors.Word2VecKeyedVectors'>
         """
         lang = self.language if self.is_reliable_language else self.hint_language
         if lang in self._word2vec_models:
