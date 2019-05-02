@@ -522,17 +522,21 @@ class Doc:
         self._word2vec_models[lang] = vectors
         return vectors
 
-    @property
-    def blendle_embedding(self):
-        """
-        Returns document embeddings generated with Blendle word2vec model.
-        """
-        return self.generate_blendle_embedding()
-
     @functools.lru_cache()
     def generate_blendle_embedding(self, model_file=None):
         """
         Returns document embeddings generated with Blendle word2vec model.
+        >>> import numpy
+        >>> doc1 = Doc('textmining is verwant aan tekstanalyse')
+        >>> doc2 = Doc('textmining is verwant aan textmining')
+        >>> doc3 = Doc('tekstanalyse is verwant aan textmining')
+        >>> test_model_file = 'tests/models/blendle_test.word2vec'
+        >>> numpy.allclose(doc1.generate_blendle_embedding(model_file=test_model_file), \
+                           doc2.generate_blendle_embedding(model_file=test_model_file))
+        False
+        >>> numpy.allclose(doc1.generate_blendle_embedding(model_file=test_model_file), \
+                           doc3.generate_blendle_embedding(model_file=test_model_file))
+        True
         """
 
         if not model_file:
