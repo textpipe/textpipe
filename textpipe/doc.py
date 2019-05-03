@@ -444,6 +444,7 @@ class Doc:
         OOV: Out-of-vocabulary (This variable always gets the value True since
                                 there are no vectors included in the model)
         vector: The vector representation of the word
+
         >>> doc = Doc('Test sentence')
         >>> doc.word_vectors['Test']['is_oov']
         True
@@ -452,7 +453,6 @@ class Doc:
         >>> doc.word_vectors['Test']['vector_norm'] == doc.word_vectors['sentence']['vector_norm']
         False
         """
-
         lang = self.language if self.is_reliable_language else self.hint_language
         return {token.text: {'has_vector': token.has_vector,
                              'vector_norm': token.vector_norm,
