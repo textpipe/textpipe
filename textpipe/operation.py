@@ -300,16 +300,15 @@ class DocumentVector(Operation):
                 if self.model_mapping else doc.aggregate_word_vectors(**self.kwargs))
 
 
-class BlendleDocumentEmbedding(Operation):
+class GensimDocumentEmbedding(Operation):
     """
-    Extract a document embedding vector derived from Blendle word embeddings
+    Extract a document embedding vector derived from Gensim word embeddings
     """
     def __init__(self, model_mapping=None, **kwargs):
         self.model_mapping = model_mapping
         self.kwargs = kwargs
-        self.vectors = ...
 
     def __call__(self, doc, **kwargs):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return (doc.generate_blendle_embedding(self.model_mapping[lang], **self.kwargs)
-                if self.model_mapping else doc.generate_blendle_embedding(**self.kwargs))
+        return (doc.generate_gensim_document_embedding(self.model_mapping[lang], **self.kwargs)
+                if self.model_mapping else doc.generate_gensim_document_embedding(**self.kwargs))
