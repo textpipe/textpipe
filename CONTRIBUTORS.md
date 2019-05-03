@@ -13,3 +13,4 @@
   * Bart de Goede
   * Joris Baan (UvA)
   * Rana Klein (RTL)
+  * Marlies van der Wees (De Persgroep)
