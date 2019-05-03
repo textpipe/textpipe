@@ -42,11 +42,11 @@ class Doc:
 
     def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None, gensim_vectors=None):
         self.raw = raw
+        self._language = language
         self.hint_language = hint_language
         self._spacy_nlps = spacy_nlps or dict()
         self._gensim_vectors = gensim_vectors or dict()
         self.is_detected_language = language is None
-        self._language = language
         self._is_reliable_language = True if language else None
         self._text_stats = {}
 
@@ -433,9 +433,11 @@ class Doc:
         Returns word embeddings for the words in the document.
         The default spacy models don't have "true" word vectors
         but only context-sensitive tensors that are within the document.
+
         Returns:
         A dictionary mapping words from the document to a dict with the
         corresponding values of the following variables:
+
         has vector: Does the token have a vector representation?
         vector norm: The L2 norm of the token's vector (the square root of the
                     sum of the values squared)
@@ -450,6 +452,7 @@ class Doc:
         >>> doc.word_vectors['Test']['vector_norm'] == doc.word_vectors['sentence']['vector_norm']
         False
         """
+
         lang = self.language if self.is_reliable_language else self.hint_language
         return {token.text: {'has_vector': token.has_vector,
                              'vector_norm': token.vector_norm,
@@ -461,6 +464,7 @@ class Doc:
     def doc_vector(self):
         """
         Returns document embeddings based on the words in the document.
+
         >>> import numpy
         >>> numpy.array_equiv(Doc('a b').doc_vector, Doc('a b').doc_vector)
         True
@@ -470,10 +474,10 @@ class Doc:
         return self.aggregate_word_vectors()
 
     @functools.lru_cache()
-    def aggregate_word_vectors(self, model_name=None, aggregation='mean', normalize=False,
-                               exclude_oov=False):
+    def aggregate_word_vectors(self, model_name=None, aggregation='mean', normalize=False, exclude_oov=False):
         """
         Returns document embeddings based on the words in the document.
+
         >>> import numpy
         >>> doc1 = Doc('a b')
         >>> doc2 = Doc('a a b')
@@ -494,8 +498,7 @@ class Doc:
         False
         """
         lang = self.language if self.is_reliable_language else self.hint_language
-        tokens = [token for token in self._load_spacy_doc(lang, model_name) if
-                  not exclude_oov or not token.is_oov]
+        tokens = [token for token in self._load_spacy_doc(lang, model_name) if not exclude_oov or not token.is_oov]
         vectors = [token.vector / token.vector_norm if normalize else token.vector
                    for token in tokens]
 
@@ -508,7 +511,6 @@ class Doc:
         else:
             raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
 
-    @functools.lru_cache()
     def _load_gensim_word2vec_model(self, model_file=None):
         """
         Loads pre-trained Gensim word2vec model, expects lower-cased training data
