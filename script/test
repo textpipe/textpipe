@@ -9,9 +9,9 @@ pip install --quiet --requirement test-requirements.txt
 
 
 # Run pylint, only locally
-#if [[ -z "$CI" ]]; then
-#    python -m pylint textpipe
-#fi
+if [[ -z "$CI" ]]; then
+    python -m pylint textpipe
+fi
 
 # Download languages needed for testing
 python -m spacy download nl > /dev/null
