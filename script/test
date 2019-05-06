@@ -9,13 +9,15 @@ pip install --quiet --requirement test-requirements.txt
 
 
 # Run pylint, only locally
-if [[ -z "$CI" ]]; then
-    python -m pylint textpipe
-fi
+#if [[ -z "$CI" ]]; then
+#    python -m pylint textpipe
+#fi
 
 # Download languages needed for testing
 python -m spacy download nl > /dev/null
 python -m spacy download en > /dev/null
+
+export BOTO_CONFIG=/dev/null
 
 # Run test with pytest, including doctests
 python -m pytest --doctest-modules --junit-xml=pytest.xml
