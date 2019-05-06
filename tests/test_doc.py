@@ -138,7 +138,7 @@ def test_non_utf_chars():
     assert DOC_7.language == 'en'
 
 
-def test_blendle_word2vec():
+def test_gensim_word2vec():
     expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
                       -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
     actual_doc_2 = DOC_2.generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.w2v')
