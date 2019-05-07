@@ -513,7 +513,7 @@ class Doc:
 
     def _load_gensim_word2vec_model(self, model_file=None):
         """
-        Loads pre-trained Gensim word2vec model, expects lower-cased training data
+        Loads pre-trained Gensim word2vec model
         >>> model = Doc('')._load_gensim_word2vec_model('tests/models/gensim_test_nl.w2v')
         >>> type(model)
         <class 'gensim.models.keyedvectors.Word2VecKeyedVectors'>
@@ -525,7 +525,7 @@ class Doc:
         return self._gensim_vectors[lang]
 
     @functools.lru_cache()
-    def generate_gensim_document_embedding(self, model_file=None):
+    def generate_gensim_document_embedding(self, model_file=None, lowercase=True):
         """
         Returns document embeddings generated with Gensim word2vec model.
         >>> import numpy
@@ -547,9 +547,11 @@ class Doc:
         except FileNotFoundError:
             raise TextpipeMissingModelException(f'Gensim model file {model_file} is not available.')
 
-        weighted_word_vectors = [model[word.lower()] * count / model.vocab[word.lower()].count
-                                 for word, count in self.word_counts.items()
-                                 if word.lower() in model.vocab]
+        weighted_word_vectors = []
+        for word, count in self.word_counts.items():
+            word = word.lower() if lowercase else word
+            if word in model.vocab:
+                weighted_word_vectors.append(model[word] * count / model.vocab[word].count)
 
         doc_vector = numpy.sum(weighted_word_vectors, axis=0)
         return list(doc_vector)

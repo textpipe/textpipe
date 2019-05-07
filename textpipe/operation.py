@@ -304,11 +304,14 @@ class GensimDocumentEmbedding(Operation):
     """
     Extract a document embedding vector derived from Gensim word embeddings
     """
-    def __init__(self, model_mapping=None, **kwargs):
+    def __init__(self, model_mapping=None, lowercase=True, **kwargs):
         self.model_mapping = model_mapping
+        self.lowercase = lowercase
         self.kwargs = kwargs
 
     def __call__(self, doc, **kwargs):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return (doc.generate_gensim_document_embedding(self.model_mapping[lang], **self.kwargs)
-                if self.model_mapping else doc.generate_gensim_document_embedding(**self.kwargs))
+        return (doc.generate_gensim_document_embedding(self.model_mapping[lang],
+                                                       self.lowercase,
+                                                       **self.kwargs)
+                if self.model_mapping else None)
