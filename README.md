@@ -65,6 +65,8 @@ test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
 See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
+0.9.0
+  - Adds functionality to compute document embeddings using a Gensim word2vec model 
 
 0.8.6
   - Removes non standard utf chars before detecting language
