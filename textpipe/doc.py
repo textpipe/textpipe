@@ -563,7 +563,9 @@ class Doc:
         """
         returns a textrank summary of the document (extractive summary) generated with gensim
         """
-        extracted_sentences = summarize(self._spacy_doc.text, ratio=ratio, split=True)
+        extracted_sentences = []
+        if self.nsents > 1:
+            extracted_sentences = summarize(self._spacy_doc.text, ratio=ratio, split=True)
         return extracted_sentences
 
 
@@ -585,6 +587,4 @@ class Doc:
         >>> document.summary
         []
         """
-        if self.nsents > 1:
-            return self.generate_textrank_summary()
-        return []
+        return self.generate_textrank_summary()
