@@ -17,6 +17,7 @@ import textacy.text_utils
 from bs4 import BeautifulSoup
 from datasketch import MinHash
 from gensim.models.word2vec import Word2Vec
+from gensim.summarization.summarizer import summarize
 
 from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
 
@@ -555,3 +556,30 @@ class Doc:
 
         doc_vector = numpy.sum(weighted_word_vectors, axis=0)
         return list(doc_vector)
+
+
+    @functools.lru_cache()
+    def generate_textrank_summary(self, ratio=0.2):
+        """
+        returns a textrank summary of the document (extractive summary) generated with gensim
+        """
+        extracted_sentences = summarize(self._spacy_doc.text, ratio=ratio, split=True)
+        return extracted_sentences
+
+
+    @property
+    def summary(self):
+        """
+        returns a textrank summary of the document (extractive summary)
+
+        >>> from textpipe.doc import Doc
+        >>> text = '''Rice Pudding - Poem by Alan Alexander Milne. What is the matter with Mary Jane?
+        ... She's crying with all her might and main, And she won't eat her dinner - rice pudding again -
+        ... What is the matter with Mary Jane? What is the matter with Mary Jane?
+        ... I've promised her dolls and a daisy-chain, And a book about animals - all in vain -
+        ... What is the matter with Mary Jane?'''
+        >>> document = Doc(text)
+        >>> document.summary
+        ["I've promised her dolls and a daisy-chain, And a book about animals - all in vain - What is the matter with Mary Jane?"]
+        """
+        return self.generate_textrank_summary()

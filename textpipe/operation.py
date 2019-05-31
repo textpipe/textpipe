@@ -315,3 +315,25 @@ class GensimDocumentEmbedding(Operation):
                                                        self.lowercase,
                                                        **self.kwargs)
                 if self.model_mapping else None)
+
+
+class GensimTextRank(Operation):
+    """
+    Extract a sentence-based summary for a document using TextRank implemented in Gensim
+
+    >>> from textpipe.doc import Doc
+    >>> text = '''Rice Pudding - Poem by Alan Alexander Milne. What is the matter with Mary Jane?
+    ... She's crying with all her might and main, And she won't eat her dinner - rice pudding again -
+    ... What is the matter with Mary Jane? What is the matter with Mary Jane?
+    ... I've promised her dolls and a daisy-chain, And a book about animals - all in vain -
+    ... What is the matter with Mary Jane?'''
+    >>> doc = Doc(text)
+    >>> GensimTextRank(ratio=0.2)(doc)
+    ["I've promised her dolls and a daisy-chain, And a book about animals - all in vain - What is the matter with Mary Jane?"]
+    """
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc, **kwargs):
+        return doc.generate_textrank_summary(**self.kwargs)
