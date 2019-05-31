@@ -1,6 +1,7 @@
 """
 Testing for textpipe doc.py
 """
+
 import pytest
 import random
 import spacy
@@ -46,8 +47,8 @@ TEXT_6 = """
 ဆက်ခံထားသောမွန်အက္ခရာတို့မှ ဆင်းသက်လာသည်။
 """
 
-TEXT_7 = u"""\nHi <<First Name>>\nthis is filler text \xa325 more filler.\nadditilnal 
-filler.\nyet more\xa0still more\xa0filler.\n\xa0\nmore\nfiller.\x03\n\t\t\t\t\t\t    
+TEXT_7 = u"""\nHi <<First Name>>\nthis is filler text \xa325 more filler.\nadditilnal
+filler.\nyet more\xa0still more\xa0filler.\n\xa0\nmore\nfiller.\x03\n\t\t\t\t\t\t
 almost there \n\\n\nthe end\n"""
 
 ents_model = spacy.blank('nl')
@@ -150,3 +151,8 @@ def test_gensim_word2vec():
     actual_doc_5 = DOC_5.generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.w2v')
     if not np.allclose(actual_doc_5, expected_doc_5):
         raise AssertionError
+
+
+def test_textrank_summary():
+    print()
+    assert len(DOC_1.generate_textrank_summary(ratio=0.5)) == 2
