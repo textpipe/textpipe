@@ -581,5 +581,10 @@ class Doc:
         >>> document = Doc(text)
         >>> document.summary
         ["I've promised her dolls and a daisy-chain, And a book about animals - all in vain - What is the matter with Mary Jane?"]
+        >>> document = Doc('just 1 sentence.')
+        >>> document.summary
+        []
         """
-        return self.generate_textrank_summary()
+        if self.nsents > 1:
+            return self.generate_textrank_summary()
+        return []
