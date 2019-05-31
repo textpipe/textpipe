@@ -229,6 +229,7 @@ class Doc:
         return [(self._spacy_doc[start:end].text, matcher.vocab.strings[match_id])
                 for match_id, start, end in matcher(self._spacy_doc)]
 
+
     @property
     def emojis(self):
         """
@@ -244,6 +245,7 @@ class Doc:
 
         return [(emoji, unicode_name, emoji2sentiment[emoji])
                 for emoji, unicode_name in self.match(matcher)]
+
 
     @property
     def nsents(self):
@@ -575,14 +577,30 @@ class Doc:
         returns a textrank summary of the document (extractive summary)
 
         >>> from textpipe.doc import Doc
-        >>> text = '''Rice Pudding - Poem by Alan Alexander Milne. What is the matter with Mary Jane?
-        ... She's crying with all her might and main, And she won't eat her dinner - rice pudding again -
-        ... What is the matter with Mary Jane? What is the matter with Mary Jane?
-        ... I've promised her dolls and a daisy-chain, And a book about animals - all in vain -
+        >>> text = '''Rice Pudding - Poem by Alan Alexander Milne
+        ... What is the matter with Mary Jane?
+        ... She's crying with all her might and main,
+        ... And she won't eat her dinner - rice pudding again -
+        ... What is the matter with Mary Jane?
+        ... What is the matter with Mary Jane?
+        ... I've promised her dolls and a daisy-chain,
+        ... And a book about animals - all in vain -
+        ... What is the matter with Mary Jane?
+        ... What is the matter with Mary Jane?
+        ... She's perfectly well, and she hasn't a pain;
+        ... But, look at her, now she's beginning again! -
+        ... What is the matter with Mary Jane?
+        ... What is the matter with Mary Jane?
+        ... I've promised her sweets and a ride in the train,
+        ... And I've begged her to stop for a bit and explain -
+        ... What is the matter with Mary Jane?
+        ... What is the matter with Mary Jane?
+        ... She's perfectly well and she hasn't a pain,
+        ... And it's lovely rice pudding for dinner again!
         ... What is the matter with Mary Jane?'''
         >>> document = Doc(text)
         >>> document.summary
-        ["I've promised her dolls and a daisy-chain, And a book about animals - all in vain - What is the matter with Mary Jane?"]
+        ["She's crying with all her might and main, And she won't eat her dinner - rice pudding again - What is the matter with Mary Jane?", "She's perfectly well and she hasn't a pain, And it's lovely rice pudding for dinner again!"]
         >>> document = Doc('just 1 sentence.')
         >>> document.summary
         []
