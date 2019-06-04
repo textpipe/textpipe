@@ -154,5 +154,4 @@ def test_gensim_word2vec():
 
 
 def test_textrank_summary():
-    print()
     assert len(DOC_1.generate_textrank_summary(ratio=0.5)) == 2
