@@ -564,11 +564,12 @@ class Doc:
     def generate_textrank_summary(self, ratio=0.2):
         """
         returns a textrank summary of the document (extractive summary) generated with gensim
+        returns an empty summary if the text could not be compressed
         """
-        extracted_sentences = []
-        if self.nsents > 1:
-            extracted_sentences = summarize(self._spacy_doc.text, ratio=ratio, split=True)
-        return extracted_sentences
+        try:
+            return summarize(self._spacy_doc.text, ratio=ratio, split=True)
+        except ValueError as e:
+            return []
 
 
     @property
