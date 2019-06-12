@@ -561,13 +561,14 @@ class Doc:
 
 
     @functools.lru_cache()
-    def generate_textrank_summary(self, ratio=0.2):
+    def generate_textrank_summary(self, ratio=0.2, word_count=None):
         """
         returns a textrank summary of the document (extractive summary) generated with gensim
         returns an empty summary if the text could not be compressed
+        if both ratio and word_count are provided, ratio is ignored
         """
         try:
-            return summarize(self._spacy_doc.text, ratio=ratio, split=True)
+            return summarize(self._spacy_doc.text, ratio=ratio, word_count=word_count, split=True)
         except ValueError as e:
             return []
 
