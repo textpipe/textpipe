@@ -569,7 +569,7 @@ class Doc:
         """
         try:
             return summarize(self._spacy_doc.text, ratio=ratio, word_count=word_count, split=True)
-        except ValueError as e:
+        except ValueError:
             return []
 
 
