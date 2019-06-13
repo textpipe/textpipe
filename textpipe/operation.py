@@ -359,7 +359,7 @@ class GensimTextRank(Operation):
         return doc.generate_textrank_summary(**self.kwargs)
 
 
-class LeadBaseline(Operation):
+class LeadSentences(Operation):
     """
     Extract the lead N sentences from a document
 
@@ -370,7 +370,7 @@ class LeadBaseline(Operation):
     ... And she won't eat her dinner - rice pudding again.
     ... What is the matter with Mary Jane? '''
     >>> doc = Doc(text)
-    >>> LeadBaseline(n=2)(doc)
+    >>> LeadSentences(n=2)(doc)
     ['Rice Pudding - Poem by Alan Alexander Milne.', 'What is the matter with Mary Jane?']
     """
 

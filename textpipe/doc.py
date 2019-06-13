@@ -605,16 +605,7 @@ class Doc:
         """
         return self.generate_textrank_summary()
 
-    @functools.lru_cache()
     def extract_lead(self, n=3):
-        """
-        returns the lead-N sentences (text only) of the document
-        if the text is smaller than the requested N, return full text
-        """
-        return [s[0] for s in self.sents[:n]]
-
-    @property
-    def lead3(self):
         """
         returns the lead-3 sentences (text only) of the document
         if the text is smaller than the requested N, return full text
@@ -625,7 +616,7 @@ class Doc:
         ... And she won't eat her dinner - rice pudding again.
         ... What is the matter with Mary Jane? '''
         >>> document = Doc(text)
-        >>> document.lead3
+        >>> document.extract_lead()
         ['Rice Pudding - Poem by Alan Alexander Milne.', 'What is the matter with Mary Jane?', "She's crying with all her might and main, And she won't eat her dinner - rice pudding again."]
         """
-        return self.extract_lead()
+        return [s[0] for s in self.sents[:n]]
