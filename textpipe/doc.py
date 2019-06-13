@@ -229,7 +229,6 @@ class Doc:
         return [(self._spacy_doc[start:end].text, matcher.vocab.strings[match_id])
                 for match_id, start, end in matcher(self._spacy_doc)]
 
-
     @property
     def emojis(self):
         """
@@ -245,7 +244,6 @@ class Doc:
 
         return [(emoji, unicode_name, emoji2sentiment[emoji])
                 for emoji, unicode_name in self.match(matcher)]
-
 
     @property
     def nsents(self):
@@ -559,7 +557,6 @@ class Doc:
         doc_vector = numpy.sum(weighted_word_vectors, axis=0)
         return list(doc_vector)
 
-
     @functools.lru_cache()
     def generate_textrank_summary(self, ratio=0.2, word_count=None):
         """
@@ -571,7 +568,6 @@ class Doc:
             return summarize(self._spacy_doc.text, ratio=ratio, word_count=word_count, split=True)
         except ValueError:
             return []
-
 
     @property
     def summary(self):
@@ -608,23 +604,21 @@ class Doc:
         []
         """
         return self.generate_textrank_summary()
-        
-                
+
     @functools.lru_cache()
     def extract_lead(self, n=3):
         """
-        returns the lead-N sentences (text only) of the document 
+        returns the lead-N sentences (text only) of the document
         if the text is smaller than the requested N, return full text
         """
         if n < len(self.sents):
             return [s[0] for s in self.sents[:n]]
         return [s[0] for s in self.sents]
 
-
     @property
     def lead3(self):
         """
-        returns the lead-3 sentences (text only) of the document 
+        returns the lead-3 sentences (text only) of the document
         if the text is smaller than the requested N, return full text
         >>> from textpipe.doc import Doc
         >>> text = '''Rice Pudding - Poem by Alan Alexander Milne.
@@ -637,4 +631,3 @@ class Doc:
         ['Rice Pudding - Poem by Alan Alexander Milne.', 'What is the matter with Mary Jane?', "She's crying with all her might and main, And she won't eat her dinner - rice pudding again."]
         """
         return self.extract_lead()
-        

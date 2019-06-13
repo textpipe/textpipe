@@ -357,8 +357,8 @@ class GensimTextRank(Operation):
 
     def __call__(self, doc, **kwargs):
         return doc.generate_textrank_summary(**self.kwargs)
-        
-        
+
+
 class LeadBaseline(Operation):
     """
     Extract the lead N sentences from a document
