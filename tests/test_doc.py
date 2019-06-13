@@ -1,7 +1,6 @@
 """
 Testing for textpipe doc.py
 """
-
 import pytest
 import random
 import spacy
@@ -155,3 +154,9 @@ def test_gensim_word2vec():
 
 def test_textrank_summary():
     assert len(DOC_1.generate_textrank_summary(ratio=0.5)) == 2
+        
+    
+def test_lead():
+    assert len(DOC_1.extract_lead(n=1)) == 1
+    assert len(DOC_1.extract_lead(n=2)) == 2
+    assert len(DOC_1.extract_lead(n=50)) == DOC_1.nsents
