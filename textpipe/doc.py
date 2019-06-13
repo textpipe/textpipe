@@ -611,9 +611,7 @@ class Doc:
         returns the lead-N sentences (text only) of the document
         if the text is smaller than the requested N, return full text
         """
-        if n < len(self.sents):
-            return [s[0] for s in self.sents[:n]]
-        return [s[0] for s in self.sents]
+        return [s[0] for s in self.sents[:n]]
 
     @property
     def lead3(self):
