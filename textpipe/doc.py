@@ -548,13 +548,12 @@ class Doc:
         except FileNotFoundError:
             raise TextpipeMissingModelException(f'Gensim keyed vector file {model_file} is not available.')
 
-        weighted_word_vectors = []
-        for word, count in self.word_counts.items():
-            word = word.lower() if lowercase else word
-            if word in model.vocab:
-                weighted_word_vectors.append(model[word] * count / model.vocab[word].count)
+        prepared_word_counts = [(word.lower() if lowercase else word, count)
+                                for word, count in self.word_counts.items()]
 
-        doc_vector = numpy.sum(weighted_word_vectors, axis=0)
+        doc_vector = sum([model[word] * (count / model.vocab[word].count)
+                          for word, count in prepared_word_counts if word in model])
+
         return list(doc_vector)
 
     @functools.lru_cache()
