@@ -16,7 +16,7 @@ import textacy.keyterms
 import textacy.text_utils
 from bs4 import BeautifulSoup
 from datasketch import MinHash
-from gensim.models.word2vec import Word2Vec
+from gensim.models.keyedvectors import KeyedVectors
 from gensim.summarization.summarizer import summarize
 
 from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
@@ -514,14 +514,14 @@ class Doc:
 
     def _load_gensim_word2vec_model(self, model_file=None):
         """
-        Loads pre-trained Gensim word2vec model
-        >>> model = Doc('')._load_gensim_word2vec_model('tests/models/gensim_test_nl.w2v')
+        Loads pre-trained Gensim word2vec keyed vector model
+        >>> model = Doc('')._load_gensim_word2vec_model('tests/models/gensim_test_nl.kv')
         >>> type(model)
         <class 'gensim.models.keyedvectors.Word2VecKeyedVectors'>
         """
         lang = self.language if self.is_reliable_language else self.hint_language
         if not self._gensim_vectors or lang not in self._gensim_vectors:
-            vectors = Word2Vec.load(model_file).wv
+            vectors = KeyedVectors.load(model_file, mmap='r')
             self._gensim_vectors[lang] = vectors
         return self._gensim_vectors[lang]
 
@@ -533,7 +533,7 @@ class Doc:
         >>> doc1 = Doc('textmining is verwant aan tekstanalyse')
         >>> doc2 = Doc('textmining is verwant aan textmining')
         >>> doc3 = Doc('tekstanalyse is verwant aan textmining')
-        >>> test_model_file = 'tests/models/gensim_test_nl.w2v'
+        >>> test_model_file = 'tests/models/gensim_test_nl.kv'
         >>> numpy.allclose(doc1.generate_gensim_document_embedding(model_file=test_model_file), \
                            doc2.generate_gensim_document_embedding(model_file=test_model_file))
         False
@@ -542,11 +542,11 @@ class Doc:
         True
         """
         if not model_file:
-            raise TextpipeMissingModelException('No Gensim word2vec model file specified.')
+            raise TextpipeMissingModelException('No Gensim keyed vector file specified.')
         try:
             model = self._load_gensim_word2vec_model(model_file)
         except FileNotFoundError:
-            raise TextpipeMissingModelException(f'Gensim model file {model_file} is not available.')
+            raise TextpipeMissingModelException(f'Gensim keyed vector file {model_file} is not available.')
 
         weighted_word_vectors = []
         for word, count in self.word_counts.items():
