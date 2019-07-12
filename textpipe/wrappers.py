@@ -5,7 +5,7 @@ Wrappers around classes of external libraries used in Doc class.
 import bz2
 import numpy as np
 import pickle
-import tqdm
+from tqdm import tqdm
 from functools import lru_cache
 
 from gensim.models.keyedvectors import KeyedVectors
@@ -25,7 +25,7 @@ class RedisKeyedVectors(KeyedVectors):
     Based on https://engineering.talentpair.com/serving-word-vectors-for-distributed-computations-c5065cbaa02f
     """
 
-    def __init__(self, host, port, db, key='', max_lru_cache_size=1024):
+    def __init__(self, host, port, db=0, key='', max_lru_cache_size=1024):
         # TODO: does this work?
         # TODO: use lang as prefix?
         # TODO: throw error if given model does not exist (instead of returning empty vectors)
@@ -90,7 +90,7 @@ class RedisKeyedVectors(KeyedVectors):
 
     def __contains__(self, word):
         """ build in method to quickly check whether a word is available in redis """
-        return self._redis_client.exists(word)
+        return self._redis.exists(word)
 
     def load_keyed_vectors_into_redis(self, model):
         """ This function loops over all available words in the loaded word2vec keyed vectors model
@@ -98,8 +98,9 @@ class RedisKeyedVectors(KeyedVectors):
         """
         try:
             for word in tqdm(list(model.vocab.keys())):
-                self._redis.set(f'{self.key}{word}', bz2.compress(pickle.dumps(model[word])))
+                idf_normalized_vector = model[word] / model.vocab[word].count
+                self._redis.set(f'{self.key}{word}',
+                                bz2.compress(pickle.dumps(idf_normalized_vector)))
         except RedisError as e:
             raise RedisKeyedVectorException(f'RedisError while trying to load model {model} '
                                             f'into redis: {e}')
-
