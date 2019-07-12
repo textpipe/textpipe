@@ -30,10 +30,9 @@ class RedisKeyedVectors(KeyedVectors):
         # TODO: use lang as prefix?
         # TODO: throw error if given model does not exist (instead of returning empty vectors)
         # TODO: add .vocab.count handling to wrapper
-        self._word_vec = lru_cache(maxsize=max_lru_cache_size)(self._word_vec)
+        self.word_vec = lru_cache(maxsize=max_lru_cache_size)(self.word_vec)
         self.syn0 = []
         self.syn0norm = None
-        self.check_vocab_len()
         self.index2word = []
 
         try:
@@ -56,7 +55,7 @@ class RedisKeyedVectors(KeyedVectors):
     def save_word2vec_format(self, **kwargs):
         raise NotImplementedError("You can't write back to Redis that way.")
 
-    def _word_vec(self, word):
+    def word_vec(self, word):
         """
         This method is mimicking the word_vec method from the Gensim KeyedVector class. Instead of
         looking it up from an in memory dict, it
@@ -86,8 +85,8 @@ class RedisKeyedVectors(KeyedVectors):
         returns numpy array for single word or vstack for multiple words
         """
         if isinstance(words, str):
-            return self._word_vec(words)
-        return np.vstack([self._word_vec(word) for word in words])
+            return self.word_vec(words)
+        return np.vstack([self.word_vec(word) for word in words])
 
     def __contains__(self, word):
         """ build in method to quickly check whether a word is available in redis """
