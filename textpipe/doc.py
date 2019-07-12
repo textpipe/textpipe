@@ -576,8 +576,14 @@ class Doc:
         prepared_word_counts = [(word.lower() if lowercase else word, count)
                                 for word, count in self.word_counts.items()]
 
-        doc_vector = sum([model[word] * (count / model.vocab[word].count)
-                          for word, count in prepared_word_counts if word in model])
+        if redis_host and redis_db:
+            # For redis, the word vectors are already divided by their
+            # train count (see RedisKeyedVectors.load_keyed_vectors_into_redis)
+            doc_vector = sum([model[word] * count for word, count
+                              in prepared_word_counts if word in model])
+        else:
+            doc_vector = sum([model[word] * (count / model.vocab[word].count)
+                              for word, count in prepared_word_counts if word in model])
 
         return list(doc_vector)
 
