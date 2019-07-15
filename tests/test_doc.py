@@ -176,6 +176,17 @@ def test_gensim_word2vec_with_redis():
                                                                   redis_db=0)
     if not np.allclose(actual_doc_5, expected_doc_5):
         raise AssertionError
+    kv._redis.flushall()
+
+
+@mock.patch('textpipe.wrappers.Redis', FakeRedis)
+def test_gensim_word2vec_with_redis_no_model():
+    with pytest.raises(TextpipeMissingModelException) as e:
+        Doc(TEXT_2).generate_gensim_document_embedding(redis_host='host',
+                                                       redis_port=1234,
+                                                       redis_db=0)
+    assert str(e.value) == 'Redis does not contain a model for language nl. The model' \
+                           ' needs to be loaded before use (see load_keyed_vectors_into_redis).'
 
 
 def test_textrank_summary():

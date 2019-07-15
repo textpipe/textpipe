@@ -26,20 +26,17 @@ class RedisKeyedVectors(KeyedVectors):
     """
 
     def __init__(self, host, port, db=0, key='', max_lru_cache_size=1024):
-        # TODO: throw error if given model does not exist (instead of returning empty vectors)
         self.word_vec = lru_cache(maxsize=max_lru_cache_size)(self.word_vec)
         self.syn0 = []
         self.syn0norm = None
         self.index2word = []
+        self.key = f'w2v_{key}'
 
         try:
             self._redis = Redis(host, port, db)
         except RedisError as e:
             raise RedisKeyedVectorException(f'The connection to Redis failed while trying to '
                                             f'initiate the client. Redis error message: {e}')
-
-        # Optional prefix key for redis entries; the Doc class assumes this to be the language code
-        self.key = key
 
     @classmethod
     def load_word2vec_format(cls, **kwargs):
@@ -67,7 +64,7 @@ class RedisKeyedVectors(KeyedVectors):
         """
 
         try:
-            cache_entry = self._redis.get(f'{self.key}_{word}')
+            cache_entry = self._redis.hget(self.key, word)
             if not cache_entry:
                 raise KeyError(f'Key {cache_entry} does not exist in cache')
             return pickle.loads(bz2.decompress(cache_entry))
@@ -87,7 +84,7 @@ class RedisKeyedVectors(KeyedVectors):
 
     def __contains__(self, word):
         """ build in method to quickly check whether a word is available in redis """
-        return self._redis.exists(f'{self.key}_{word}')
+        return self._redis.hexists(self.key, word)
 
     def load_keyed_vectors_into_redis(self, model_path):
         """ This function loops over all available words in the loaded word2vec keyed vectors model
@@ -97,9 +94,14 @@ class RedisKeyedVectors(KeyedVectors):
         try:
             for word in tqdm(list(model.vocab.keys())):
                 idf_normalized_vector = model[word] / model.vocab[word].count
-                self._redis.set(f'{self.key}_{word}',
-                                bz2.compress(pickle.dumps(idf_normalized_vector)))
+                self._redis.hset(self.key, word,
+                                 bz2.compress(pickle.dumps(idf_normalized_vector)))
+            self._redis.hset(self.key, '__EXISTS', '')
         except RedisError as e:
             raise RedisKeyedVectorException(f'RedisError while trying to load model {model} '
                                             f'into redis: {e}')
         del model
+
+    @property
+    def exists(self):
+        return bool(self._redis.hexists(self.key, '__EXISTS'))

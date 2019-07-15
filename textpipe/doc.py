@@ -533,6 +533,11 @@ class Doc:
                                             redis_db,
                                             lang,
                                             max_lru_cache_size)
+                if not vectors.exists:
+                    raise TextpipeMissingModelException(f'Redis does not contain a model '
+                                                        f'for language {lang}. The model '
+                                                        f'needs to be loaded before use '
+                                                        f'(see load_keyed_vectors_into_redis).')
             else:
                 try:
                     vectors = KeyedVectors.load(model_file, mmap='r')
