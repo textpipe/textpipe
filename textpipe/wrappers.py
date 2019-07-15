@@ -26,10 +26,7 @@ class RedisKeyedVectors(KeyedVectors):
     """
 
     def __init__(self, host, port, db=0, key='', max_lru_cache_size=1024):
-        # TODO: does this work?
-        # TODO: use lang as prefix?
         # TODO: throw error if given model does not exist (instead of returning empty vectors)
-        # TODO: add .vocab.count handling to wrapper
         self.word_vec = lru_cache(maxsize=max_lru_cache_size)(self.word_vec)
         self.syn0 = []
         self.syn0norm = None
@@ -70,9 +67,9 @@ class RedisKeyedVectors(KeyedVectors):
         """
 
         try:
-            cache_entry = self._redis.get(word)
+            cache_entry = self._redis.get(f'{self.key}_{word}')
             if not cache_entry:
-                return None
+                raise KeyError(f'Key {cache_entry} does not exist in cache')
             return pickle.loads(bz2.decompress(cache_entry))
         except RedisError as e:
             raise RedisKeyedVectorException(f'The connection to Redis failed while trying to '
@@ -90,17 +87,19 @@ class RedisKeyedVectors(KeyedVectors):
 
     def __contains__(self, word):
         """ build in method to quickly check whether a word is available in redis """
-        return self._redis.exists(word)
+        return self._redis.exists(f'{self.key}_{word}')
 
-    def load_keyed_vectors_into_redis(self, model):
+    def load_keyed_vectors_into_redis(self, model_path):
         """ This function loops over all available words in the loaded word2vec keyed vectors model
         and loads them into the redis instance.
         """
+        model = KeyedVectors.load(model_path, mmap='r')
         try:
             for word in tqdm(list(model.vocab.keys())):
                 idf_normalized_vector = model[word] / model.vocab[word].count
-                self._redis.set(f'{self.key}{word}',
+                self._redis.set(f'{self.key}_{word}',
                                 bz2.compress(pickle.dumps(idf_normalized_vector)))
         except RedisError as e:
             raise RedisKeyedVectorException(f'RedisError while trying to load model {model} '
                                             f'into redis: {e}')
+        del model
