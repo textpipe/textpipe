@@ -520,7 +520,7 @@ class Doc:
                                     redis_db=0,
                                     max_lru_cache_size=1024):
         """
-        Loads pre-trained Gensim word2vec keyed vector model
+        Loads pre-trained Gensim word2vec keyed vector model from either local or Redis
         >>> model = Doc('')._load_gensim_word2vec_model('tests/models/gensim_test_nl.kv')
         >>> type(model)
         <class 'gensim.models.keyedvectors.Word2VecKeyedVectors'>
@@ -573,19 +573,27 @@ class Doc:
                                                  redis_db=redis_db,
                                                  max_lru_cache_size=max_lru_cache_size)
 
-        prepared_word_counts = [(word.lower() if lowercase else word, count)
-                                for word, count in self.word_counts.items()]
+        if lowercase:
+            prepared_word_counts = [(word.lower(), count)
+                                    for word, count in self.word_counts.items()
+                                    if word.lower() in model]
+        else:
+            prepared_word_counts = [(word, count) for word, count in self.word_counts.items()
+                                    if word in model]
 
-        if redis_host and redis_db:
+        if not prepared_word_counts:
+            return []
+
+        if redis_host and redis_port:
             # For redis, the word vectors are already divided by their
             # train count (see RedisKeyedVectors.load_keyed_vectors_into_redis)
-            doc_vector = sum([model[word] * count for word, count
-                              in prepared_word_counts if word in model])
+            vectors = (model[word] * count
+                       for word, count in prepared_word_counts)
         else:
-            doc_vector = sum([model[word] * (count / model.vocab[word].count)
-                              for word, count in prepared_word_counts if word in model])
+            vectors = (model[word] * (count / model.vocab[word].count)
+                       for word, count in prepared_word_counts)
 
-        return list(doc_vector)
+        return list(sum(vectors))
 
     @functools.lru_cache()
     def generate_textrank_summary(self, ratio=0.2, word_count=None):

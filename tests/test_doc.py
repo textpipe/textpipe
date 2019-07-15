@@ -6,8 +6,10 @@ import random
 import spacy
 import numpy as np
 from fakeredis import FakeRedis
+from unittest import mock
 
 from textpipe.doc import Doc, TextpipeMissingModelException
+from textpipe.wrappers import RedisKeyedVectors
 
 TEXT_1 = """<p><b>Text mining</b>, also referred to as <i><b>text data mining</b></i>, roughly
 equivalent to <b>text analytics</b>, is the process of deriving high-quality <a href="/wiki/Information"
@@ -142,29 +144,36 @@ def test_non_utf_chars():
 def test_gensim_word2vec():
     expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
                       -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
-    actual_doc_2 = DOC_2.generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.kv')
+    actual_doc_2 = Doc(TEXT_2).generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.kv')
     if not np.allclose(actual_doc_2, expected_doc_2):
         raise AssertionError
 
     expected_doc_5 = [0.04336167, -0.12551728, 0.121972464, -0.023885678, -0.0892916, 0.011041589,
                       -0.022286428, 0.06333805, 0.07664292, 0.086685486]
-    actual_doc_5 = DOC_5.generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.kv')
+    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.kv')
     if not np.allclose(actual_doc_5, expected_doc_5):
         raise AssertionError
 
 
+@mock.patch('textpipe.wrappers.Redis', FakeRedis)
 def test_gensim_word2vec_with_redis():
-    # TODO: finish this test
-    fake_redis = FakeRedis()
+    # Load word2vec model into fake Redis
+    kv = RedisKeyedVectors('host', 1234, 0, 'nl')
+    kv.load_keyed_vectors_into_redis('tests/models/gensim_test_nl.kv')
+
     expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
                       -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
-    actual_doc_2 = DOC_2.generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.kv')
+    actual_doc_2 = Doc(TEXT_2).generate_gensim_document_embedding(redis_host='host',
+                                                                  redis_port=1234,
+                                                                  redis_db=0)
     if not np.allclose(actual_doc_2, expected_doc_2):
-        raise AssertionError
+        raise AssertionError(actual_doc_2)
 
     expected_doc_5 = [0.04336167, -0.12551728, 0.121972464, -0.023885678, -0.0892916, 0.011041589,
                       -0.022286428, 0.06333805, 0.07664292, 0.086685486]
-    actual_doc_5 = DOC_5.generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.kv')
+    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(redis_host='host',
+                                                                  redis_port=1234,
+                                                                  redis_db=0)
     if not np.allclose(actual_doc_5, expected_doc_5):
         raise AssertionError
 
