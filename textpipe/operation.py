@@ -386,7 +386,7 @@ class GensimTextRank(Operation):
 
 class LeadSentences(Operation):
     """
-    Extract the lead N sentences from a document
+    Extract the lead nsents sentences from a document
 
     >>> from textpipe.doc import Doc
     >>> text = '''Rice Pudding - Poem by Alan Alexander Milne.
@@ -395,7 +395,7 @@ class LeadSentences(Operation):
     ... And she won't eat her dinner - rice pudding again.
     ... What is the matter with Mary Jane? '''
     >>> doc = Doc(text)
-    >>> LeadSentences(n=2)(doc)
+    >>> LeadSentences(nsents=2)(doc)
     ['Rice Pudding - Poem by Alan Alexander Milne.', 'What is the matter with Mary Jane?']
     """
 
