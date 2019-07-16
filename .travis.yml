@@ -1,8 +1,6 @@
 language: python
 python:
 - '3.6'
-before_install:
-- sudo apt-get install snappy
 cache: pip
 script:
 - script/test
