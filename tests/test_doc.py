@@ -189,6 +189,6 @@ def test_textrank_summary():
 
 
 def test_lead():
-    assert len(DOC_1.extract_lead(n=1)) == 1
-    assert len(DOC_1.extract_lead(n=2)) == 2
-    assert len(DOC_1.extract_lead(n=50)) == DOC_1.nsents
+    assert len(DOC_1.extract_lead(nsents=1)) == 1
+    assert len(DOC_1.extract_lead(nsents=2)) == 2
+    assert len(DOC_1.extract_lead(nsents=50)) == DOC_1.nsents
