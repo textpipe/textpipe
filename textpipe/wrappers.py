@@ -2,15 +2,15 @@
 Wrappers around classes of external libraries used in Doc class.
 """
 
-import bz2
-import numpy as np
 import pickle
-from tqdm import tqdm
 from functools import lru_cache
 
+import numpy as np
+import snappy
 from gensim.models.keyedvectors import KeyedVectors
 from redis import Redis
 from redis.exceptions import RedisError
+from tqdm import tqdm
 
 
 class RedisKeyedVectorException(Exception):
@@ -67,7 +67,7 @@ class RedisKeyedVectors(KeyedVectors):
             cache_entry = self._redis.hget(self.key, word)
             if not cache_entry:
                 raise KeyError(f'Key {cache_entry} does not exist in cache')
-            return pickle.loads(bz2.decompress(cache_entry))
+            return pickle.loads(snappy.decompress(cache_entry))
         except RedisError as e:
             raise RedisKeyedVectorException(f'The connection to Redis failed while trying to '
                                             f'retrieve a word vector. Redis error message: {e}')
@@ -95,7 +95,7 @@ class RedisKeyedVectors(KeyedVectors):
             for word in tqdm(list(model.vocab.keys())):
                 idf_normalized_vector = model[word] / model.vocab[word].count
                 self._redis.hset(self.key, word,
-                                 bz2.compress(pickle.dumps(idf_normalized_vector)))
+                                 snappy.compress(pickle.dumps(idf_normalized_vector)))
             self._redis.hset(self.key, '__EXISTS', '')
         except RedisError as e:
             raise RedisKeyedVectorException(f'RedisError while trying to load model {model} '
