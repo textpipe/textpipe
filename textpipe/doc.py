@@ -538,12 +538,15 @@ class Doc:
                                                         f'for language {lang}. The model '
                                                         f'needs to be loaded before use '
                                                         f'(see load_keyed_vectors_into_redis).')
-            else:
+            elif model_file:
                 try:
                     vectors = KeyedVectors.load(model_file, mmap='r')
                 except FileNotFoundError:
                     raise TextpipeMissingModelException(
                         f'Gensim keyed vector file {model_file} is not available.')
+            else:
+                raise TextpipeMissingModelException(
+                    'Either specify model_file or redis information')
             self._gensim_vectors[lang] = vectors
         return self._gensim_vectors[lang]
 
