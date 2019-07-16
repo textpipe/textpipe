@@ -315,3 +315,67 @@ class GensimDocumentEmbedding(Operation):
                                                        self.lowercase,
                                                        **self.kwargs)
                 if self.model_mapping else None)
+
+
+class GensimTextRank(Operation):
+    """
+    Extract a sentence-based summary for a document using TextRank implemented in Gensim
+
+    >>> from textpipe.doc import Doc
+    >>> text = '''Rice Pudding - Poem by Alan Alexander Milne
+    ... What is the matter with Mary Jane?
+    ... She's crying with all her might and main,
+    ... And she won't eat her dinner - rice pudding again -
+    ... What is the matter with Mary Jane?
+    ... What is the matter with Mary Jane?
+    ... I've promised her dolls and a daisy-chain,
+    ... And a book about animals - all in vain -
+    ... What is the matter with Mary Jane?
+    ... What is the matter with Mary Jane?
+    ... She's perfectly well, and she hasn't a pain;
+    ... But, look at her, now she's beginning again! -
+    ... What is the matter with Mary Jane?
+    ... What is the matter with Mary Jane?
+    ... I've promised her sweets and a ride in the train,
+    ... And I've begged her to stop for a bit and explain -
+    ... What is the matter with Mary Jane?
+    ... What is the matter with Mary Jane?
+    ... She's perfectly well and she hasn't a pain,
+    ... And it's lovely rice pudding for dinner again!
+    ... What is the matter with Mary Jane?'''
+    >>> doc = Doc(text)
+    >>> GensimTextRank(ratio=0.2)(doc)
+    ["She's crying with all her might and main, And she won't eat her dinner - rice pudding again - What is the matter with Mary Jane?", "She's perfectly well and she hasn't a pain, And it's lovely rice pudding for dinner again!"]
+    >>> GensimTextRank(word_count=20)(doc)
+    ["She's crying with all her might and main, And she won't eat her dinner - rice pudding again - What is the matter with Mary Jane?"]
+    >>> GensimTextRank(word_count=10)(doc)
+    []
+    """
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc, **kwargs):
+        return doc.generate_textrank_summary(**self.kwargs)
+
+
+class LeadSentences(Operation):
+    """
+    Extract the lead N sentences from a document
+
+    >>> from textpipe.doc import Doc
+    >>> text = '''Rice Pudding - Poem by Alan Alexander Milne.
+    ... What is the matter with Mary Jane?
+    ... She's crying with all her might and main,
+    ... And she won't eat her dinner - rice pudding again.
+    ... What is the matter with Mary Jane? '''
+    >>> doc = Doc(text)
+    >>> LeadSentences(n=2)(doc)
+    ['Rice Pudding - Poem by Alan Alexander Milne.', 'What is the matter with Mary Jane?']
+    """
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, doc, **kwargs):
+        return doc.extract_lead(**self.kwargs)

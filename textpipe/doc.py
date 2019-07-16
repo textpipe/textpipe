@@ -16,7 +16,8 @@ import textacy.keyterms
 import textacy.text_utils
 from bs4 import BeautifulSoup
 from datasketch import MinHash
-from gensim.models.word2vec import Word2Vec
+from gensim.models.keyedvectors import KeyedVectors
+from gensim.summarization.summarizer import summarize
 
 from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
 
@@ -513,14 +514,14 @@ class Doc:
 
     def _load_gensim_word2vec_model(self, model_file=None):
         """
-        Loads pre-trained Gensim word2vec model
-        >>> model = Doc('')._load_gensim_word2vec_model('tests/models/gensim_test_nl.w2v')
+        Loads pre-trained Gensim word2vec keyed vector model
+        >>> model = Doc('')._load_gensim_word2vec_model('tests/models/gensim_test_nl.kv')
         >>> type(model)
         <class 'gensim.models.keyedvectors.Word2VecKeyedVectors'>
         """
         lang = self.language if self.is_reliable_language else self.hint_language
         if not self._gensim_vectors or lang not in self._gensim_vectors:
-            vectors = Word2Vec.load(model_file).wv
+            vectors = KeyedVectors.load(model_file, mmap='r')
             self._gensim_vectors[lang] = vectors
         return self._gensim_vectors[lang]
 
@@ -532,7 +533,7 @@ class Doc:
         >>> doc1 = Doc('textmining is verwant aan tekstanalyse')
         >>> doc2 = Doc('textmining is verwant aan textmining')
         >>> doc3 = Doc('tekstanalyse is verwant aan textmining')
-        >>> test_model_file = 'tests/models/gensim_test_nl.w2v'
+        >>> test_model_file = 'tests/models/gensim_test_nl.kv'
         >>> numpy.allclose(doc1.generate_gensim_document_embedding(model_file=test_model_file), \
                            doc2.generate_gensim_document_embedding(model_file=test_model_file))
         False
@@ -541,17 +542,80 @@ class Doc:
         True
         """
         if not model_file:
-            raise TextpipeMissingModelException('No Gensim word2vec model file specified.')
+            raise TextpipeMissingModelException('No Gensim keyed vector file specified.')
         try:
             model = self._load_gensim_word2vec_model(model_file)
         except FileNotFoundError:
-            raise TextpipeMissingModelException(f'Gensim model file {model_file} is not available.')
+            raise TextpipeMissingModelException(f'Gensim keyed vector file {model_file} is not available.')
 
-        weighted_word_vectors = []
-        for word, count in self.word_counts.items():
-            word = word.lower() if lowercase else word
-            if word in model.vocab:
-                weighted_word_vectors.append(model[word] * count / model.vocab[word].count)
+        prepared_word_counts = [(word.lower() if lowercase else word, count)
+                                for word, count in self.word_counts.items()]
 
-        doc_vector = numpy.sum(weighted_word_vectors, axis=0)
+        doc_vector = sum([model[word] * (count / model.vocab[word].count)
+                          for word, count in prepared_word_counts if word in model])
+
         return list(doc_vector)
+
+    @functools.lru_cache()
+    def generate_textrank_summary(self, ratio=0.2, word_count=None):
+        """
+        returns a textrank summary of the document (extractive summary) generated with gensim
+        returns an empty summary if the text could not be compressed
+        if both ratio and word_count are provided, ratio is ignored
+        """
+        try:
+            return summarize(self._spacy_doc.text, ratio=ratio, word_count=word_count, split=True)
+        except ValueError:
+            return []
+
+    @property
+    def summary(self):
+        """
+        returns a textrank summary of the document (extractive summary)
+
+        >>> from textpipe.doc import Doc
+        >>> text = '''Rice Pudding - Poem by Alan Alexander Milne
+        ... What is the matter with Mary Jane?
+        ... She's crying with all her might and main,
+        ... And she won't eat her dinner - rice pudding again -
+        ... What is the matter with Mary Jane?
+        ... What is the matter with Mary Jane?
+        ... I've promised her dolls and a daisy-chain,
+        ... And a book about animals - all in vain -
+        ... What is the matter with Mary Jane?
+        ... What is the matter with Mary Jane?
+        ... She's perfectly well, and she hasn't a pain;
+        ... But, look at her, now she's beginning again! -
+        ... What is the matter with Mary Jane?
+        ... What is the matter with Mary Jane?
+        ... I've promised her sweets and a ride in the train,
+        ... And I've begged her to stop for a bit and explain -
+        ... What is the matter with Mary Jane?
+        ... What is the matter with Mary Jane?
+        ... She's perfectly well and she hasn't a pain,
+        ... And it's lovely rice pudding for dinner again!
+        ... What is the matter with Mary Jane?'''
+        >>> document = Doc(text)
+        >>> document.summary
+        ["She's crying with all her might and main, And she won't eat her dinner - rice pudding again - What is the matter with Mary Jane?", "She's perfectly well and she hasn't a pain, And it's lovely rice pudding for dinner again!"]
+        >>> document = Doc('just 1 sentence.')
+        >>> document.summary
+        []
+        """
+        return self.generate_textrank_summary()
+
+    def extract_lead(self, n=3):
+        """
+        returns the lead-3 sentences (text only) of the document
+        if the text is smaller than the requested N, return full text
+        >>> from textpipe.doc import Doc
+        >>> text = '''Rice Pudding - Poem by Alan Alexander Milne.
+        ... What is the matter with Mary Jane?
+        ... She's crying with all her might and main,
+        ... And she won't eat her dinner - rice pudding again.
+        ... What is the matter with Mary Jane? '''
+        >>> document = Doc(text)
+        >>> document.extract_lead()
+        ['Rice Pudding - Poem by Alan Alexander Milne.', 'What is the matter with Mary Jane?', "She's crying with all her might and main, And she won't eat her dinner - rice pudding again."]
+        """
+        return [s[0] for s in self.sents[:n]]
