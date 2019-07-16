@@ -2,5 +2,7 @@
 
 set -e
 
+cd "$(dirname "$0")/.."
+
 # Install requirements
 pip install --quiet --requirement requirements.txt
