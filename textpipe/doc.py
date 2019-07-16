@@ -20,7 +20,7 @@ from datasketch import MinHash
 from gensim.models.keyedvectors import KeyedVectors
 from gensim.summarization.summarizer import summarize
 
-from textpipe.data.emoji import emoji2unicode_name, emoji2sentiment
+from textpipe.data.emoji import EMOJI_TO_UNICODE_NAME, EMOJI_TO_SENTIMENT
 from textpipe.wrappers import RedisKeyedVectors
 
 
@@ -261,10 +261,10 @@ class Doc:
          ('😋', 'FACE SAVOURING DELICIOUS FOOD', 0.6335149863760218)]
         """
         matcher = spacy.matcher.Matcher(self._spacy_doc.vocab)
-        for emoji, unicode_name in emoji2unicode_name.items():
+        for emoji, unicode_name in EMOJI_TO_UNICODE_NAME.items():
             matcher.add(unicode_name, None, ({'ORTH': emoji},))
 
-        return [(emoji, unicode_name, emoji2sentiment[emoji])
+        return [(emoji, unicode_name, EMOJI_TO_SENTIMENT[emoji])
                 for emoji, unicode_name in self.match(matcher)]
 
     @property

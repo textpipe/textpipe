@@ -5,7 +5,15 @@ This dataset is based on:
     http://hdl.handle.net/11356/1048.
 """
 
+# pylint: disable=too-many-lines
+
+import csv
+
+
 def rebuilt_emoji_dictionaries(filename):
+    """
+    Rebuilds emoji dictionaries, given a csv file with labeled emoji's.
+    """
     emoji2unicode_name, emoji2sentiment = {}, {}
     with open(filename) as csvin:
         for emoji in csv.DictReader(csvin):
@@ -16,13 +24,16 @@ def rebuilt_emoji_dictionaries(filename):
                     emoji[key] = float(value)
 
             emoji['Sentiment'] = (emoji['Positive'] - emoji['Negative']) / \
-                                max(100, (emoji['Positive'] + emoji['Neutral'] + emoji['Negative']))
+                                 max(100, (emoji['Positive'] +
+                                           emoji['Neutral'] +
+                                           emoji['Negative']))
             emoji2unicode_name[emoji['Emoji']] = emoji['Unicode name']
             emoji2sentiment[emoji['Emoji']] = emoji['Sentiment']
 
     return emoji2unicode_name, emoji2sentiment
 
-emoji2unicode_name = {
+
+EMOJI_TO_UNICODE_NAME = {
     '😂': 'FACE WITH TEARS OF JOY',
     '❤': 'HEAVY BLACK HEART',
     '♥': 'BLACK HEART SUIT',
@@ -994,7 +1005,7 @@ emoji2unicode_name = {
     '📔': 'NOTEBOOK WITH DECORATIVE COVER'
 }
 
-emoji2sentiment = {
+EMOJI_TO_SENTIMENT = {
     '😂': 0.22096840377513335,
     '❤': 0.7460869565217392,
     '♥': 0.6576147816349384,
