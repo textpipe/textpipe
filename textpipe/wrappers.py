@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 
 class RedisKeyedVectorException(Exception):
-    """ Raised when something while loading"""
+    """ Raised when RedisKeyedVectors class fails"""
     pass
 
 
