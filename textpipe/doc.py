@@ -26,7 +26,6 @@ from textpipe.wrappers import RedisKeyedVectors
 
 class TextpipeMissingModelException(Exception):
     """Raised when the requested model is missing"""
-    pass
 
 
 class Doc:
@@ -42,6 +41,10 @@ class Doc:
     hint_language: language you expect your text to be
     _spacy_nlps: nested dictionary {lang: {model_id: model}} with loaded spacy language modules
     """
+
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-public-methods
 
     def __init__(self,
                  raw,
@@ -118,7 +121,7 @@ class Doc:
                                                    hintLanguage=hint_language,
                                                    bestEffort=True)
 
-        if len(best_guesses) == 0 or len(best_guesses[0]) != 4 or best_guesses[0][1] == 'un':
+        if not best_guesses or len(best_guesses[0]) != 4 or best_guesses[0][1] == 'un':
             return False, 'un'
 
         return is_reliable, best_guesses[0][1]
@@ -372,13 +375,16 @@ class Doc:
         if self.language == 'en':
             from pattern.text.en import sentiment as sentiment_en
             return sentiment_en(self.clean)
-        elif self.language == 'nl':
+
+        if self.language == 'nl':
             from pattern.text.nl import sentiment as sentiment_nl
             return sentiment_nl(self.clean)
-        elif self.language == 'fr':
+
+        if self.language == 'fr':
             from pattern.text.fr import sentiment as sentiment_fr
             return sentiment_fr(self.clean)
-        elif self.language == 'it':
+
+        if self.language == 'it':
             from pattern.text.it import sentiment as sentiment_it
             return sentiment_it(self.clean)
 
@@ -450,6 +456,9 @@ class Doc:
 
     @functools.lru_cache()
     def find_minhash(self, num_perm=128):
+        """
+        Compute minhash, cached.
+        """
         words = self.words
         doc_hash = MinHash(num_perm=num_perm)
         for word, _ in words:
@@ -471,9 +480,9 @@ class Doc:
             hash1 = MinHash(hashvalues=self.minhash)
             hash2 = MinHash(hashvalues=other_doc.minhash)
             return hash1.jaccard(hash2)
-        else:
-            raise NotImplementedError(f'Metric/hash method combination {metric}'
-                                      f'/{hash_method} is not implemented as similarity metric')
+
+        raise NotImplementedError(f'Metric/hash method combination {metric}'
+                                  f'/{hash_method} is not implemented as similarity metric')
 
     @property
     def word_vectors(self):
@@ -571,12 +580,14 @@ class Doc:
 
         if aggregation == 'mean':
             return numpy.mean(vectors, axis=0).tolist()
-        elif aggregation == 'sum':
+
+        if aggregation == 'sum':
             return numpy.sum(vectors, axis=0).tolist()
-        elif aggregation == 'var':
+
+        if aggregation == 'var':
             return numpy.var(vectors, axis=0).tolist()
-        else:
-            raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
+
+        raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
 
     def _load_gensim_word2vec_model(self,
                                     model_uri=None,
@@ -713,7 +724,7 @@ class Doc:
         """
         return self.generate_textrank_summary()
 
-    def extract_lead(self, n=3):
+    def extract_lead(self, nsents=3):
         """
         returns the lead-3 sentences (text only) of the document
         if the text is smaller than the requested N, return full text
@@ -732,4 +743,4 @@ class Doc:
          "She's crying with all her might and main, And she won't eat her dinner - "
          'rice pudding again.']
         """
-        return [s[0] for s in self.sents[:n]]
+        return [s[0] for s in self.sents[:nsents]]
