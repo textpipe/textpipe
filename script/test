@@ -2,16 +2,15 @@
 
 set -e
 
+cd "$(dirname "$0")/.."
+
 script/bootstrap
 
 # Install test requirements
-pip install --quiet --requirement test-requirements.txt
+pip install -r test-requirements.txt
 
-
-# Run pylint, only locally
-if [[ -z "$CI" ]]; then
-    python -m pylint textpipe
-fi
+# Run pylint
+pylint textpipe --rcfile=pylintrc
 
 # Download languages needed for testing
 python -m spacy download nl > /dev/null
