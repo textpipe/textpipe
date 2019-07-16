@@ -108,10 +108,18 @@ class WordCounts(Operation):
     """
     Extract words with their counts
 
+    >>> from pprint import pprint
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Test sentence for testing vectorisation of a sentence.')
-    >>> WordCounts()(doc)
-    {'Test': 1, 'sentence': 2, 'for': 1, 'testing': 1, 'vectorisation': 1, 'of': 1, 'a': 1, '.': 1}
+    >>> pprint(WordCounts()(doc), indent=2)
+    { '.': 1,
+      'Test': 1,
+      'a': 1,
+      'for': 1,
+      'of': 1,
+      'sentence': 2,
+      'testing': 1,
+      'vectorisation': 1}
     """
 
     def __init__(self, **kwargs):
@@ -144,10 +152,14 @@ class Sentences(Operation):
     """
     Extract sentences from text
 
+    >>> from pprint import pprint
     >>> from textpipe.doc import Doc
-    >>> doc = Doc('Test sentence for testing text. And another one with, some, punctuation! And stuff.')
-    >>> Sentences()(doc)
-    [('Test sentence for testing text.', 0), ('And another one with, some, punctuation!', 32), ('And stuff.', 73)]
+    >>> doc = Doc('Test sentence for testing text. '
+    ...           'And another one with, some, punctuation! And stuff.')
+    >>> pprint(Sentences()(doc))
+    [('Test sentence for testing text.', 0),
+     ('And another one with, some, punctuation!', 32),
+     ('And stuff.', 73)]
     """
 
     def __init__(self, **kwargs):
@@ -217,14 +229,20 @@ class Keyterms(Operation):
     Returns a list of up to 10 key terms extracted from the document. This
     works on any language the Doc can tokenize.
 
+    >>> from pprint import pprint
     >>> from textpipe.doc import Doc
     >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
-    >>> Keyterms()(doc)
-    [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('Amsterdam', 0.17543839772251532), ('Netherlands', 0.17543839772251532)]
-    >>> Keyterms(n_terms=2)(doc)
+    >>> pprint(Keyterms()(doc))
+    [('awesome', 0.32456160227748454),
+     ('capital', 0.32456160227748454),
+     ('Amsterdam', 0.17543839772251532),
+     ('Netherlands', 0.17543839772251532)]
+    >>> pprint(Keyterms(n_terms=2)(doc))
     [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454)]
-    >>> Keyterms(ranker='sgrank')(doc)
-    [('awesome capital', 0.5638711013322963), ('Netherlands', 0.22636566128805719), ('Amsterdam', 0.20976323737964653)]
+    >>> pprint(Keyterms(ranker='sgrank')(doc))
+    [('awesome capital', 0.5638711013322963),
+     ('Netherlands', 0.22636566128805719),
+     ('Amsterdam', 0.20976323737964653)]
     """
 
     def __init__(self, **kwargs):
@@ -323,6 +341,7 @@ class GensimTextRank(Operation):
     """
     Extract a sentence-based summary for a document using TextRank implemented in Gensim
 
+    >>> from pprint import pprint
     >>> from textpipe.doc import Doc
     >>> text = '''Rice Pudding - Poem by Alan Alexander Milne
     ... What is the matter with Mary Jane?
@@ -346,10 +365,14 @@ class GensimTextRank(Operation):
     ... And it's lovely rice pudding for dinner again!
     ... What is the matter with Mary Jane?'''
     >>> doc = Doc(text)
-    >>> GensimTextRank(ratio=0.2)(doc)
-    ["She's crying with all her might and main, And she won't eat her dinner - rice pudding again - What is the matter with Mary Jane?", "She's perfectly well and she hasn't a pain, And it's lovely rice pudding for dinner again!"]
-    >>> GensimTextRank(word_count=20)(doc)
-    ["She's crying with all her might and main, And she won't eat her dinner - rice pudding again - What is the matter with Mary Jane?"]
+    >>> pprint(GensimTextRank(ratio=0.2)(doc))
+    ["She's crying with all her might and main, And she won't eat her dinner - "
+     'rice pudding again - What is the matter with Mary Jane?',
+     "She's perfectly well and she hasn't a pain, And it's lovely rice pudding for "
+     'dinner again!']
+    >>> pprint(GensimTextRank(word_count=20)(doc))
+    ["She's crying with all her might and main, And she won't eat her dinner - "
+     'rice pudding again - What is the matter with Mary Jane?']
     >>> GensimTextRank(word_count=10)(doc)
     []
     """
