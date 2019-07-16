@@ -43,7 +43,12 @@ class Doc:
     _spacy_nlps: nested dictionary {lang: {model_id: model}} with loaded spacy language modules
     """
 
-    def __init__(self, raw, language=None, hint_language='en', spacy_nlps=None, gensim_vectors=None):
+    def __init__(self,
+                 raw,
+                 language=None,
+                 hint_language='en',
+                 spacy_nlps=None,
+                 gensim_vectors=None):
         self.raw = raw
         self._language = language
         self.hint_language = hint_language
@@ -75,6 +80,7 @@ class Doc:
         """
         True if the language was specified or if was it reliably detected
 
+        >>> from textpipe.doc import Doc
         >>> Doc('...').is_reliable_language
         False
         >>> Doc('Test', hint_language='nl').is_reliable_language
@@ -122,6 +128,7 @@ class Doc:
         """
         Loads the default spacy doc or creates one if necessary
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Test sentence for testing text')
         >>> type(doc._spacy_doc)
         <class 'spacy.tokens.doc.Doc'>
@@ -157,13 +164,15 @@ class Doc:
         try:
             return spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
         except IOError:
-            raise TextpipeMissingModelException(f'Default model for language "{lang}" is not available.')
+            raise TextpipeMissingModelException(f'Default model for language "{lang}" '
+                                                f'is not available.')
 
     @property
     def clean(self):
         """
         Cleaned text with sensible defaults.
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('“Please clean this piece… of text</b>„')
         >>> doc.clean
         '"Please clean this piece... of text"'
@@ -176,6 +185,7 @@ class Doc:
         """
         Clean HTML and normalise punctuation.
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('“Please clean this piece… of text</b>„')
         >>> doc.clean_text(False, False, False, False) == doc.raw
         True
@@ -201,6 +211,7 @@ class Doc:
         """
         A list of the named entities with sensible defaults.
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Sentence for testing Google text')
         >>> doc.ents
         [('Google', 'ORG')]
@@ -211,6 +222,8 @@ class Doc:
     def find_ents(self, model_name=None):
         """
         Extract a list of the named entities in text, with the possibility of using a custom model.
+
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Sentence for testing Google text')
         >>> doc.find_ents()
         [('Google', 'ORG')]
@@ -223,6 +236,7 @@ class Doc:
         Run a SpaCy matcher over the cleaned content
 
         >>> import spacy.matcher
+        >>> from textpipe.doc import Doc
         >>> matcher = spacy.matcher.Matcher(spacy.lang.en.English().vocab)
         >>> matcher.add('HASHTAG', None, [{'ORTH': '#'}, {'IS_ASCII': True}])
         >>> Doc('Test with #hashtag').match(matcher)
@@ -237,8 +251,11 @@ class Doc:
         Emojis detected using SpaCy matcher over the cleaned content, with unicode name and
         sentiment score.
 
-        >>> Doc('Test with emoji 😀 😋 ').emojis
-        [('😀', 'GRINNING FACE', 0.571753986332574), ('😋', 'FACE SAVOURING DELICIOUS FOOD', 0.6335149863760218)]
+        >>> from pprint import pprint
+        >>> from textpipe.doc import Doc
+        >>> pprint(Doc('Test with emoji 😀 😋 ').emojis)
+        [('😀', 'GRINNING FACE', 0.571753986332574),
+         ('😋', 'FACE SAVOURING DELICIOUS FOOD', 0.6335149863760218)]
         """
         matcher = spacy.matcher.Matcher(self._spacy_doc.vocab)
         for emoji, unicode_name in emoji2unicode_name.items():
@@ -252,6 +269,7 @@ class Doc:
         """
         Extract the number of sentences from text
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Test sentence for testing text. And another sentence for testing!')
         >>> doc.nsents
         2
@@ -263,9 +281,14 @@ class Doc:
         """
         Extract the text and character offset (begin) of sentences from text
 
-        >>> doc = Doc('Test sentence for testing text. And another one with, some, punctuation! And stuff.')
-        >>> doc.sents
-        [('Test sentence for testing text.', 0), ('And another one with, some, punctuation!', 32), ('And stuff.', 73)]
+        >>> from pprint import pprint
+        >>> from textpipe.doc import Doc
+        >>> doc = Doc('Test sentence for testing text. '
+        ...           'And another one with, some, punctuation! And stuff.')
+        >>> pprint(doc.sents)
+        [('Test sentence for testing text.', 0),
+         ('And another one with, some, punctuation!', 32),
+         ('And stuff.', 73)]
         """
 
         return [(span.text, span.start_char) for span in self._spacy_doc.sents]
@@ -275,6 +298,7 @@ class Doc:
         """
         Extract the number of words from text
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Test sentence for testing text')
         >>> doc.nwords
         5
@@ -286,6 +310,7 @@ class Doc:
         """
         Extract the text and character offset (begin) of words from text
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Test sentence for testing text.')
         >>> doc.words
         [('Test', 0), ('sentence', 5), ('for', 14), ('testing', 18), ('text', 26), ('.', 30)]
@@ -298,9 +323,17 @@ class Doc:
         """
         Extract words with their counts
 
-        >>> doc = Doc('Test sentence for testing vectorisation of a sentence.')
-        >>> doc.word_counts
-        {'Test': 1, 'sentence': 2, 'for': 1, 'testing': 1, 'vectorisation': 1, 'of': 1, 'a': 1, '.': 1}
+        >>> from pprint import pprint
+        >>> from textpipe.doc import Doc
+        >>> pprint(Doc('Test sentence for testing vectorisation of a sentence.').word_counts)
+        {'.': 1,
+         'Test': 1,
+         'a': 1,
+         'for': 1,
+         'of': 1,
+         'sentence': 2,
+         'testing': 1,
+         'vectorisation': 1}
         """
 
         return dict(Counter(word for word, _ in self.words))
@@ -312,6 +345,7 @@ class Doc:
         reading ease test ranging from 0.0 - 100.0 with 0.0
         being the most difficult to read.
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Test sentence for testing text')
         >>> doc.complexity
         83.32000000000004
@@ -329,6 +363,7 @@ class Doc:
 
         Currently only English, Dutch, French and Italian supported
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Dit is een leuke zin.')
         >>> doc.sentiment
         (0.6, 0.9666666666666667)
@@ -359,13 +394,22 @@ class Doc:
         Available rankers are TextRank (textrank), SingleRank (singlerank) and
         SGRank ('sgrank').
 
+        >>> from pprint import pprint
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
-        >>> doc.extract_keyterms(n_terms=3)
-        [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('Amsterdam', 0.17543839772251532)]
-        >>> doc.extract_keyterms(ranker='sgrank')
-        [('awesome capital', 0.5638711013322963), ('Netherlands', 0.22636566128805719), ('Amsterdam', 0.20976323737964653)]
-        >>> doc.extract_keyterms(ranker='sgrank', ngrams=(1))
-        [('Netherlands', 0.4020557546031188), ('capital', 0.29395103364295216), ('awesome', 0.18105611227666252), ('Amsterdam', 0.12293709947726655)]
+        >>> pprint(doc.extract_keyterms(n_terms=3))
+        [('awesome', 0.32456160227748454),
+         ('capital', 0.32456160227748454),
+         ('Amsterdam', 0.17543839772251532)]
+        >>> pprint(doc.extract_keyterms(ranker='sgrank'))
+        [('awesome capital', 0.5638711013322963),
+         ('Netherlands', 0.22636566128805719),
+         ('Amsterdam', 0.20976323737964653)]
+        >>> pprint(doc.extract_keyterms(ranker='sgrank', ngrams=(1)))
+        [('Netherlands', 0.4020557546031188),
+         ('capital', 0.29395103364295216),
+         ('awesome', 0.18105611227666252),
+         ('Amsterdam', 0.12293709947726655)]
         """
         if self.nwords < 1:
             return []
@@ -381,9 +425,13 @@ class Doc:
         """
         Return textranked keyterms for the document.
 
+        >>> from pprint import pprint
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
-        >>> doc.extract_keyterms(n_terms=3)
-        [('awesome', 0.32456160227748454), ('capital', 0.32456160227748454), ('Amsterdam', 0.17543839772251532)]
+        >>> pprint(doc.extract_keyterms(n_terms=3))
+        [('awesome', 0.32456160227748454),
+         ('capital', 0.32456160227748454),
+         ('Amsterdam', 0.17543839772251532)]
         """
         return self.extract_keyterms()
 
@@ -392,6 +440,8 @@ class Doc:
         """
         A cheap way to compute a hash for finding similarity of docs
         Source: https://ekzhu.github.io/datasketch/minhash.html
+
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Sentence for computing the minhash')
         >>> doc.minhash[:5]
         [407326892, 814360600, 1099082245, 1176349439, 1735256]
@@ -410,6 +460,8 @@ class Doc:
         """
         Computes similarity for two documents.
         Only minhash Jaccard similarity is implemented.
+
+        >>> from textpipe.doc import Doc
         >>> doc1 = Doc('Sentence for computing the minhash')
         >>> doc2 = Doc('Sentence for computing the similarity')
         >>> doc1.similarity(doc2)
@@ -448,6 +500,7 @@ class Doc:
                                 there are no vectors included in the model)
         vector: The vector representation of the word
 
+        >>> from textpipe.doc import Doc
         >>> doc = Doc('Test sentence')
         >>> doc.word_vectors['Test']['is_oov']
         True
@@ -469,6 +522,7 @@ class Doc:
         Returns document embeddings based on the words in the document.
 
         >>> import numpy
+        >>> from textpipe.doc import Doc
         >>> numpy.array_equiv(Doc('a b').doc_vector, Doc('a b').doc_vector)
         True
         >>> numpy.array_equiv(Doc('a b').doc_vector, Doc('a a b').doc_vector)
@@ -477,31 +531,41 @@ class Doc:
         return self.aggregate_word_vectors()
 
     @functools.lru_cache()
-    def aggregate_word_vectors(self, model_name=None, aggregation='mean', normalize=False, exclude_oov=False):
+    def aggregate_word_vectors(self,
+                               model_name=None,
+                               aggregation='mean',
+                               normalize=False,
+                               exclude_oov=False):
         """
         Returns document embeddings based on the words in the document.
 
         >>> import numpy
+        >>> from textpipe.doc import Doc
         >>> doc1 = Doc('a b')
         >>> doc2 = Doc('a a b')
         >>> numpy.array_equiv(doc1.aggregate_word_vectors(), doc1.aggregate_word_vectors())
         True
         >>> numpy.array_equiv(doc1.aggregate_word_vectors(), doc2.aggregate_word_vectors())
         False
-        >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='mean'), doc2.aggregate_word_vectors(aggregation='sum'))
+        >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='mean'),
+        ...                   doc2.aggregate_word_vectors(aggregation='sum'))
         False
-        >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='mean'), doc2.aggregate_word_vectors(aggregation='var'))
+        >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='mean'),
+        ...                   doc2.aggregate_word_vectors(aggregation='var'))
         False
-        >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='sum'), doc2.aggregate_word_vectors(aggregation='var'))
+        >>> numpy.array_equiv(doc1.aggregate_word_vectors(aggregation='sum'),
+        ...                   doc2.aggregate_word_vectors(aggregation='var'))
         False
         >>> doc = Doc('sentence with an out of vector word lsseofn')
         >>> len(doc.aggregate_word_vectors())
         96
-        >>> numpy.array_equiv(doc.aggregate_word_vectors(exclude_oov=False), doc.aggregate_word_vectors(exclude_oov=True))
+        >>> numpy.array_equiv(doc.aggregate_word_vectors(exclude_oov=False),
+        ...                   doc.aggregate_word_vectors(exclude_oov=True))
         False
         """
         lang = self.language if self.is_reliable_language else self.hint_language
-        tokens = [token for token in self._load_spacy_doc(lang, model_name) if not exclude_oov or not token.is_oov]
+        tokens = [token for token in self._load_spacy_doc(lang, model_name)
+                  if not exclude_oov or not token.is_oov]
         vectors = [token.vector / token.vector_norm if normalize else token.vector
                    for token in tokens]
 
@@ -519,6 +583,8 @@ class Doc:
                                     max_lru_cache_size=1024):
         """
         Loads pre-trained Gensim word2vec keyed vector model from either local or Redis
+
+        >>> from textpipe.doc import Doc
         >>> model = Doc('')._load_gensim_word2vec_model('tests/models/gensim_test_nl.kv')
         >>> type(model)
         <class 'gensim.models.keyedvectors.Word2VecKeyedVectors'>
@@ -553,7 +619,9 @@ class Doc:
                                            max_lru_cache_size=1024):
         """
         Returns document embeddings generated with Gensim word2vec model.
+
         >>> import numpy
+        >>> from textpipe.doc import Doc
         >>> doc1 = Doc('textmining is verwant aan tekstanalyse')
         >>> doc2 = Doc('textmining is verwant aan textmining')
         >>> doc3 = Doc('tekstanalyse is verwant aan textmining')
@@ -610,6 +678,7 @@ class Doc:
         """
         returns a textrank summary of the document (extractive summary)
 
+        >>> from pprint import pprint
         >>> from textpipe.doc import Doc
         >>> text = '''Rice Pudding - Poem by Alan Alexander Milne
         ... What is the matter with Mary Jane?
@@ -633,8 +702,11 @@ class Doc:
         ... And it's lovely rice pudding for dinner again!
         ... What is the matter with Mary Jane?'''
         >>> document = Doc(text)
-        >>> document.summary
-        ["She's crying with all her might and main, And she won't eat her dinner - rice pudding again - What is the matter with Mary Jane?", "She's perfectly well and she hasn't a pain, And it's lovely rice pudding for dinner again!"]
+        >>> pprint(document.summary)
+        ["She's crying with all her might and main, And she won't eat her dinner - "
+         'rice pudding again - What is the matter with Mary Jane?',
+         "She's perfectly well and she hasn't a pain, And it's lovely rice pudding for "
+         'dinner again!']
         >>> document = Doc('just 1 sentence.')
         >>> document.summary
         []
@@ -645,6 +717,8 @@ class Doc:
         """
         returns the lead-3 sentences (text only) of the document
         if the text is smaller than the requested N, return full text
+
+        >>> from pprint import pprint
         >>> from textpipe.doc import Doc
         >>> text = '''Rice Pudding - Poem by Alan Alexander Milne.
         ... What is the matter with Mary Jane?
@@ -652,7 +726,10 @@ class Doc:
         ... And she won't eat her dinner - rice pudding again.
         ... What is the matter with Mary Jane? '''
         >>> document = Doc(text)
-        >>> document.extract_lead()
-        ['Rice Pudding - Poem by Alan Alexander Milne.', 'What is the matter with Mary Jane?', "She's crying with all her might and main, And she won't eat her dinner - rice pudding again."]
+        >>> pprint(document.extract_lead())
+        ['Rice Pudding - Poem by Alan Alexander Milne.',
+         'What is the matter with Mary Jane?',
+         "She's crying with all her might and main, And she won't eat her dinner - "
+         'rice pudding again.']
         """
         return [s[0] for s in self.sents[:n]]
