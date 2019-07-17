@@ -2,7 +2,6 @@
 Wrappers around classes of external libraries used in Doc class.
 """
 
-import bz2
 import pickle
 from functools import lru_cache
 from urllib.parse import urlparse
@@ -69,7 +68,7 @@ class RedisKeyedVectors(KeyedVectors):
             cache_entry = self._redis.hget(self.key, word)
             if not cache_entry:
                 raise KeyError(f'Key {cache_entry} does not exist in cache')
-            return pickle.loads(bz2.decompress(cache_entry))
+            return pickle.loads(cache_entry)
         except RedisError as e:
             raise RedisKeyedVectorException(f'The connection to Redis failed while trying to '
                                             f'retrieve a word vector. Redis error message: {e}')
@@ -96,9 +95,7 @@ class RedisKeyedVectors(KeyedVectors):
         try:
             for word in tqdm(list(model.vocab.keys())):
                 idf_normalized_vector = model[word] / model.vocab[word].count
-                self._redis.hset(self.key, word,
-                                 bz2.compress(pickle.dumps(idf_normalized_vector)))
-            self._redis.hset(self.key, '__EXISTS', '')
+                self._redis.hset(self.key, word, pickle.dumps(idf_normalized_vector))
         except RedisError as e:
             raise RedisKeyedVectorException(f'RedisError while trying to load model {model} '
                                             f'into redis: {e}')
@@ -106,7 +103,7 @@ class RedisKeyedVectors(KeyedVectors):
 
     @property
     def exists(self):
-        return bool(self._redis.hexists(self.key, '__EXISTS'))
+        return bool(self._redis.exists(self.key))
 
     @staticmethod
     def _parse_uri(uri):
