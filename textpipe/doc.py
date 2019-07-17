@@ -558,11 +558,11 @@ class Doc:
         >>> doc2 = Doc('textmining is verwant aan textmining')
         >>> doc3 = Doc('tekstanalyse is verwant aan textmining')
         >>> test_model_file = 'tests/models/gensim_test_nl.kv'
-        >>> numpy.allclose(doc1.generate_gensim_document_embedding(model_file=test_model_file), \
-                           doc2.generate_gensim_document_embedding(model_file=test_model_file))
+        >>> numpy.allclose(doc1.generate_gensim_document_embedding(model_uri=test_model_file), \
+                           doc2.generate_gensim_document_embedding(model_uri=test_model_file))
         False
-        >>> numpy.allclose(doc1.generate_gensim_document_embedding(model_file=test_model_file), \
-                           doc3.generate_gensim_document_embedding(model_file=test_model_file))
+        >>> numpy.allclose(doc1.generate_gensim_document_embedding(model_uri=test_model_file), \
+                           doc3.generate_gensim_document_embedding(model_uri=test_model_file))
         True
         """
         if not model_uri:
