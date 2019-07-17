@@ -18,7 +18,7 @@ class RedisKeyedVectorException(Exception):
     pass
 
 
-class RedisKeyedVectors(KeyedVectors):
+class RedisKeyedVectors:
     """
     Class to imitate gensim's KeyedVectors, but instead getting the vectors from the memory,
     the vectors will be retrieved from a redis db.
@@ -27,9 +27,6 @@ class RedisKeyedVectors(KeyedVectors):
 
     def __init__(self, uri, key='', max_lru_cache_size=1024):
         self.word_vec = lru_cache(maxsize=max_lru_cache_size)(self.word_vec)
-        self.syn0 = []
-        self.syn0norm = None
-        self.index2word = []
         self.key = f'w2v_{key}'
 
         try:
@@ -38,17 +35,6 @@ class RedisKeyedVectors(KeyedVectors):
         except RedisError as e:
             raise RedisKeyedVectorException(f'The connection to Redis failed while trying to '
                                             f'initiate the client. Redis error message: {e}')
-
-    @classmethod
-    def load_word2vec_format(cls, **kwargs):
-        raise NotImplementedError(
-            "You can't load a word model that way. It needs to pre-loaded into redis")
-
-    def save(self, *args, **kwargs):
-        raise NotImplementedError("You can't write back to Redis that way.")
-
-    def save_word2vec_format(self, **kwargs):
-        raise NotImplementedError("You can't write back to Redis that way.")
 
     def word_vec(self, word):
         """
