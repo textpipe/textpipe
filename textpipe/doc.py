@@ -6,6 +6,7 @@ import functools
 import re
 import unicodedata
 from collections import Counter
+from urllib.parse import urlparse
 
 import cld2
 import numpy
@@ -514,10 +515,7 @@ class Doc:
             raise NotImplementedError(f'Aggregation method {aggregation} is not implemented.')
 
     def _load_gensim_word2vec_model(self,
-                                    model_file=None,
-                                    redis_host=None,
-                                    redis_port=None,
-                                    redis_db=0,
+                                    model_uri=None,
                                     max_lru_cache_size=1024):
         """
         Loads pre-trained Gensim word2vec keyed vector model from either local or Redis
@@ -527,10 +525,8 @@ class Doc:
         """
         lang = self.language if self.is_reliable_language else self.hint_language
         if not self._gensim_vectors or lang not in self._gensim_vectors:
-            if redis_host and redis_port:
-                vectors = RedisKeyedVectors(redis_host,
-                                            redis_port,
-                                            redis_db,
+            if urlparse(model_uri).scheme == 'redis':
+                vectors = RedisKeyedVectors(model_uri,
                                             lang,
                                             max_lru_cache_size)
                 if not vectors.exists:
@@ -538,12 +534,12 @@ class Doc:
                                                         f'for language {lang}. The model '
                                                         f'needs to be loaded before use '
                                                         f'(see load_keyed_vectors_into_redis).')
-            elif model_file:
+            elif model_uri:
                 try:
-                    vectors = KeyedVectors.load(model_file, mmap='r')
+                    vectors = KeyedVectors.load(model_uri, mmap='r')
                 except FileNotFoundError:
                     raise TextpipeMissingModelException(
-                        f'Gensim keyed vector file {model_file} is not available.')
+                        f'Gensim keyed vector file {model_uri} is not available.')
             else:
                 raise TextpipeMissingModelException(
                     'Either specify model_file or redis information')
@@ -552,11 +548,8 @@ class Doc:
 
     @functools.lru_cache()
     def generate_gensim_document_embedding(self,
-                                           model_file=None,
+                                           model_uri=None,
                                            lowercase=True,
-                                           redis_host=None,
-                                           redis_port=None,
-                                           redis_db=0,
                                            max_lru_cache_size=1024):
         """
         Returns document embeddings generated with Gensim word2vec model.
@@ -572,14 +565,11 @@ class Doc:
                            doc3.generate_gensim_document_embedding(model_file=test_model_file))
         True
         """
-        if not model_file and not (redis_host and redis_port):
+        if not model_uri:
             raise TextpipeMissingModelException('No Gensim keyed vector location specified.')
 
-        model = self._load_gensim_word2vec_model(model_file,
-                                                 redis_host=redis_host,
-                                                 redis_port=redis_port,
-                                                 redis_db=redis_db,
-                                                 max_lru_cache_size=max_lru_cache_size)
+        model = self._load_gensim_word2vec_model(model_uri,
+                                                 max_lru_cache_size)
 
         if lowercase:
             prepared_word_counts = [(word.lower(), count)
@@ -592,14 +582,14 @@ class Doc:
         if not prepared_word_counts:
             return []
 
-        if redis_host and redis_port:
+        if isinstance(model, RedisKeyedVectors):
             # For redis, the word vectors are already divided by their
             # train count (see RedisKeyedVectors.load_keyed_vectors_into_redis)
-            vectors = (model[word] * count
-                       for word, count in prepared_word_counts)
+            vectors = [model[word] * count
+                       for word, count in prepared_word_counts]
         else:
-            vectors = (model[word] * (count / model.vocab[word].count)
-                       for word, count in prepared_word_counts)
+            vectors = [model[word] * (count / model.vocab[word].count)
+                       for word, count in prepared_word_counts]
 
         return list(sum(vectors))
 

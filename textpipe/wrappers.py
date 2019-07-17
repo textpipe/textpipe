@@ -5,6 +5,7 @@ Wrappers around classes of external libraries used in Doc class.
 import bz2
 import pickle
 from functools import lru_cache
+from urllib.parse import urlparse
 
 import numpy as np
 from gensim.models.keyedvectors import KeyedVectors
@@ -25,7 +26,7 @@ class RedisKeyedVectors(KeyedVectors):
     Based on https://engineering.talentpair.com/serving-word-vectors-for-distributed-computations-c5065cbaa02f
     """
 
-    def __init__(self, host, port, db=0, key='', max_lru_cache_size=1024):
+    def __init__(self, uri, key='', max_lru_cache_size=1024):
         self.word_vec = lru_cache(maxsize=max_lru_cache_size)(self.word_vec)
         self.syn0 = []
         self.syn0norm = None
@@ -33,6 +34,7 @@ class RedisKeyedVectors(KeyedVectors):
         self.key = f'w2v_{key}'
 
         try:
+            host, port, db = self._parse_uri(uri)
             self._redis = Redis(host, port, db)
         except RedisError as e:
             raise RedisKeyedVectorException(f'The connection to Redis failed while trying to '
@@ -105,3 +107,14 @@ class RedisKeyedVectors(KeyedVectors):
     @property
     def exists(self):
         return bool(self._redis.hexists(self.key, '__EXISTS'))
+
+    @staticmethod
+    def _parse_uri(uri):
+        parsed = urlparse(uri)
+        try:
+            host = parsed.hostname
+            port = parsed.port
+            db = int(parsed.path.replace('/', '')) or 0
+        except (AttributeError, ValueError):
+            raise RedisKeyedVectorException(f'Invalid redis URI: {uri}')
+        return host, port, db

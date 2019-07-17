@@ -144,13 +144,13 @@ def test_non_utf_chars():
 def test_gensim_word2vec():
     expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
                       -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
-    actual_doc_2 = Doc(TEXT_2).generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.kv')
+    actual_doc_2 = Doc(TEXT_2).generate_gensim_document_embedding(model_uri='tests/models/gensim_test_nl.kv')
     if not np.allclose(actual_doc_2, expected_doc_2):
         raise AssertionError
 
     expected_doc_5 = [0.04336167, -0.12551728, 0.121972464, -0.023885678, -0.0892916, 0.011041589,
                       -0.022286428, 0.06333805, 0.07664292, 0.086685486]
-    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(model_file='tests/models/gensim_test_nl.kv')
+    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(model_uri='tests/models/gensim_test_nl.kv')
     if not np.allclose(actual_doc_5, expected_doc_5):
         raise AssertionError
 
@@ -158,22 +158,19 @@ def test_gensim_word2vec():
 @mock.patch('textpipe.wrappers.Redis', FakeRedis)
 def test_gensim_word2vec_with_redis():
     # Load word2vec model into fake Redis
-    kv = RedisKeyedVectors('host', 1234, 0, 'nl')
+    kv = RedisKeyedVectors('redis://host:1234/0', 'nl')
     kv.load_keyed_vectors_into_redis('tests/models/gensim_test_nl.kv')
 
     expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
                       -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
-    actual_doc_2 = Doc(TEXT_2).generate_gensim_document_embedding(redis_host='host',
-                                                                  redis_port=1234,
-                                                                  redis_db=0)
+    actual_doc_2 = Doc(TEXT_2, gensim_vectors={'nl': kv}).generate_gensim_document_embedding(
+        model_uri='redis://host:1234/0')
     if not np.allclose(actual_doc_2, expected_doc_2):
         raise AssertionError(actual_doc_2)
 
     expected_doc_5 = [0.04336167, -0.12551728, 0.121972464, -0.023885678, -0.0892916, 0.011041589,
                       -0.022286428, 0.06333805, 0.07664292, 0.086685486]
-    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(redis_host='host',
-                                                                  redis_port=1234,
-                                                                  redis_db=0)
+    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(model_uri='redis://host:1234/0')
     if not np.allclose(actual_doc_5, expected_doc_5):
         raise AssertionError
     kv._redis.flushall()
@@ -182,9 +179,7 @@ def test_gensim_word2vec_with_redis():
 @mock.patch('textpipe.wrappers.Redis', FakeRedis)
 def test_gensim_word2vec_with_redis_no_model():
     with pytest.raises(TextpipeMissingModelException) as e:
-        Doc(TEXT_2).generate_gensim_document_embedding(redis_host='host',
-                                                       redis_port=1234,
-                                                       redis_db=0)
+        Doc(TEXT_2).generate_gensim_document_embedding(model_uri='redis://host:1234/0')
     assert str(e.value) == 'Redis does not contain a model for language nl. The model' \
                            ' needs to be loaded before use (see load_keyed_vectors_into_redis).'
 
