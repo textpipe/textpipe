@@ -67,7 +67,7 @@ class RedisKeyedVectors(KeyedVectors):
         try:
             cache_entry = self._redis.hget(self.key, word)
             if not cache_entry:
-                raise KeyError(f'Key {cache_entry} does not exist in cache')
+                raise KeyError(f'Key {word} does not exist in cache')
             return pickle.loads(cache_entry)
         except RedisError as e:
             raise RedisKeyedVectorException(f'The connection to Redis failed while trying to '
