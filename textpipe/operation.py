@@ -305,13 +305,9 @@ class GensimDocumentEmbedding(Operation):
     Extract a document embedding vector derived from Gensim word embeddings
     """
     def __init__(self, model_mapping=None, lowercase=True,
-                 redis_host=None, redis_port=None, redis_db=0,
                  max_lru_cache_size=1024, **kwargs):
         self.model_mapping = model_mapping
         self.lowercase = lowercase
-        self.redis_host = redis_host
-        self.redis_port = redis_port
-        self.redis_db = redis_db
         self.max_lru_cache_size = max_lru_cache_size
         self.kwargs = kwargs
 
@@ -319,9 +315,6 @@ class GensimDocumentEmbedding(Operation):
         lang = doc.language if doc.is_reliable_language else doc.hint_language
         return doc.generate_gensim_document_embedding(self.model_mapping[lang],
                                                       self.lowercase,
-                                                      self.redis_host,
-                                                      self.redis_port,
-                                                      self.redis_db,
                                                       self.max_lru_cache_size,
                                                       **self.kwargs)
 
