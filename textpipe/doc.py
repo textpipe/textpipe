@@ -542,7 +542,7 @@ class Doc:
                         f'Gensim keyed vector file {model_uri} is not available.')
             else:
                 raise TextpipeMissingModelException(
-                    'Either specify model_file or redis information')
+                    'Either specify model filename or redis URI')
             self._gensim_vectors[lang] = vectors
         return self._gensim_vectors[lang]
 
