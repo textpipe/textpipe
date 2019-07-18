@@ -66,6 +66,9 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
+0.11.0
+  - Adds wrapper around Gensim keyed vectors to construct document embeddings from Redis cache
+
 0.8.6
   - Removes non standard utf chars before detecting language
 
