@@ -68,6 +68,9 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 0.9.0
   - Adds functionality to compute document embeddings using a Gensim word2vec model 
 
+0.11.0
+  - Adds wrapper around Gensim keyed vectors to construct document embeddings from Redis cache
+
 0.8.6
   - Removes non standard utf chars before detecting language
 
