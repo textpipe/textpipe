@@ -1,4 +1,4 @@
-beautifulsoup4~=4.7
+beautifulsoup4~=4.8
 cld2_cffi~=0.1
 datasketch~=1.5.0
 gensim~=3.8.1
