@@ -65,6 +65,9 @@ test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
 See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
+0.11.5
+  - Raise TextpipeMissingModelException instead of KeyError
+  
 0.11.4
   - Bumps spaCy and datasketch dependencies
 

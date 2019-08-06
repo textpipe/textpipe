@@ -8,15 +8,28 @@ Pipeline['CleanText', 'my.org.package.OperationClass'])
 
 so that users do not have to put their Operation classes inside of this module.
 """
+from textpipe.doc import TextpipeMissingModelException
 
 
 class Operation:
     """
     Base class for pipeline operations.
     """
+    model_mapping = {}
 
     def __call__(self, doc, **kwargs):
         raise NotImplementedError()
+
+    def get_model(self, doc):
+        """
+        Gets model for the language of a given document.
+        """
+        lang = doc.language if doc.is_reliable_language else doc.hint_language
+        try:
+            model = self.model_mapping[lang]
+        except KeyError:
+            raise TextpipeMissingModelException(f'No model for language "{lang}".')
+        return model
 
 
 class Language(Operation):
@@ -201,8 +214,10 @@ class Entities(Operation):
         self.model_mapping = model_mapping
 
     def __call__(self, doc, **kwargs):
-        lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return doc.find_ents(self.model_mapping[lang]) if self.model_mapping else doc.ents
+        if not self.model_mapping:
+            return doc.ents
+
+        return doc.find_ents(self.get_model(doc))
 
 
 class Sentiment(Operation):
@@ -293,9 +308,10 @@ class WordVectors(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc, **kwargs):
-        lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return (doc.generate_word_vectors(self.model_mapping[lang])
-                if self.model_mapping else doc.word_vectors)
+        if not self.model_mapping:
+            return doc.word_vectors
+
+        return doc.generate_word_vectors(self.get_model(doc))
 
 
 class DocumentVector(Operation):
@@ -313,9 +329,10 @@ class DocumentVector(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc, **kwargs):
-        lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return (doc.aggregate_word_vectors(self.model_mapping[lang], **self.kwargs)
-                if self.model_mapping else doc.aggregate_word_vectors(**self.kwargs))
+        if not self.model_mapping:
+            return doc.aggregate_word_vectors(**self.kwargs)
+
+        return doc.aggregate_word_vectors(self.get_model(doc), **self.kwargs)
 
 
 class GensimDocumentEmbedding(Operation):
@@ -330,8 +347,7 @@ class GensimDocumentEmbedding(Operation):
         self.kwargs = kwargs
 
     def __call__(self, doc, **kwargs):
-        lang = doc.language if doc.is_reliable_language else doc.hint_language
-        return doc.generate_gensim_document_embedding(self.model_mapping[lang],
+        return doc.generate_gensim_document_embedding(self.get_model(doc),
                                                       self.lowercase,
                                                       self.max_lru_cache_size,
                                                       **self.kwargs)
