@@ -1,4 +1,4 @@
-fakeredis==0.16.0
+fakeredis==1.0.4
 nosexcover~=1.0
 pylint~=2.3
 pytest~=4.3
