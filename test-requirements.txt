@@ -1,4 +1,4 @@
 fakeredis==0.16.0
 nosexcover~=1.0
-pylint~=2.3
+pylint~=2.4
 pytest~=4.3
