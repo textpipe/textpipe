@@ -74,13 +74,13 @@ def test_load_custom_model():
     model_mapping = {'nl': 'ents'}
     lang = DOC_5.language if DOC_5.is_reliable_language else DOC_5.hint_language
     assert lang == 'nl'
-    assert sorted(DOC_5.find_ents()) == sorted([('Mark Zuckerberg', 'PER'), ('Facebook', 'PER')])
+    assert sorted(DOC_5.find_ents()) == sorted([('Zuckerberg', 'LOC'), ('Facebook', 'NORP')])
     assert DOC_5.find_ents(model_mapping[lang]) == []
 
 
 def test_nwords_nsents():
     assert DOC_1.nwords == 112
-    assert DOC_2.nwords == 65
+    assert DOC_2.nwords == 63
     assert DOC_3.nwords == 0
     assert DOC_1.nsents == 4
     assert DOC_2.nsents == 4
@@ -89,13 +89,13 @@ def test_nwords_nsents():
 
 def test_entities():
     assert sorted(DOC_1.ents) == sorted([('Google', 'ORG')])
-    assert sorted(DOC_2.ents) == sorted([('Philips', 'ORG')])
+    assert sorted(DOC_2.ents) == sorted([('Philips', 'ORG'), ('allerhandeICT-technieken', 'NORP')])
     assert DOC_3.ents == []
 
 
 def test_complexity():
     assert DOC_1.complexity == 30.464548969072155
-    assert DOC_2.complexity == 17.652500000000003
+    assert DOC_2.complexity == 13.192407407407416
     assert DOC_3.complexity == 100
 
 
@@ -134,7 +134,7 @@ def test_missing_language_model():
 
 
 def test_minhash_similarity():
-    assert DOC_1.similarity(DOC_2) == 0.0625
+    assert DOC_1.similarity(DOC_2) == 0.0546875
 
 
 def test_non_utf_chars():
