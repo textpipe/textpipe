@@ -8,8 +8,6 @@ import numpy as np
 from fakeredis import FakeRedis
 from unittest import mock
 
-import sys
-sys.path.append('.')
 from textpipe.doc import Doc, TextpipeMissingModelException
 from textpipe.wrappers import RedisKeyedVectors
 
