@@ -265,12 +265,15 @@ class Doc:
         [('😀', 'GRINNING FACE', 0.571753986332574),
          ('😋', 'FACE SAVOURING DELICIOUS FOOD', 0.6335149863760218)]
         """
+        detected_emojis = []
         matcher = spacy.matcher.Matcher(self._spacy_doc.vocab)
         for emoji, unicode_name in EMOJI_TO_UNICODE_NAME.items():
             matcher.add(unicode_name, None, ({'ORTH': emoji},))
 
-        return [(emoji, unicode_name, EMOJI_TO_SENTIMENT[emoji])
-                for emoji, unicode_name in self.match(matcher)]
+        for emoji, unicode_name in self.match(matcher):
+            detected_emojis.append((emoji, unicode_name, EMOJI_TO_SENTIMENT[emoji]))
+
+        return detected_emojis
 
     @property
     def nsents(self):
