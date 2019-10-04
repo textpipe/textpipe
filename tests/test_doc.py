@@ -73,7 +73,6 @@ def test_load_custom_model():
     lang = DOC_5.language if DOC_5.is_reliable_language else DOC_5.hint_language
     assert lang == 'nl'
     assert sorted(DOC_5.find_ents()) == sorted([('Zuckerberg', 'LOC'), ('Facebook', 'NORP')])
-    print(sorted(DOC_5.find_ents()))
     assert DOC_5.find_ents(model_mapping[lang]) == []
 
 
