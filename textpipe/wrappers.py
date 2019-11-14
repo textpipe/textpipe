@@ -86,10 +86,13 @@ class RedisKeyedVectors:
         nr_train_tokens = sum(token_vocab.count for token_vocab in model.vocab.values())
         try:
             for word in tqdm(list(model.vocab.keys())):
-                if idf_weighting == 'log':
+                if idf_weighting == 'naive':
+                    idf = model.vocab[word].count
+                elif idf_weighting == 'log':
                     idf = np.log(nr_train_tokens / (model.vocab[word].count + 1)) + 1
                 else:
-                    idf = model.vocab[word].count
+                    raise ValueError(f'idf_weighting "{idf_weighting}" not available; use '
+                                     f'\'naive\' or \'log\'')
                 idf_normalized_vector = model[word] / idf
                 self._redis.hset(self.key, word, pickle.dumps(idf_normalized_vector))
         except RedisError as exception:

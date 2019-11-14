@@ -674,10 +674,14 @@ class Doc:
         else:
             vectors = []
             for word, count in prepared_word_counts:
-                if idf_weighting == 'log':
+                if idf_weighting == 'naive':
+                    idf = model.vocab[word].count
+                elif idf_weighting == 'log':
                     idf = (numpy.log(self.nr_train_tokens / (model.vocab[word].count + 1)) + 1)
                 else:
-                    idf = model.vocab[word].count
+                    raise ValueError(f'idf_weighting "{idf_weighting}" not available; use '
+                                     f'\'naive\' or \'log\'')
+
                 vectors.append(model[word] * (count / idf))
         return list(sum(vectors))
 
