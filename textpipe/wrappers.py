@@ -77,15 +77,20 @@ class RedisKeyedVectors:
         """
         return self._redis.hexists(self.key, word)
 
-    def load_keyed_vectors_into_redis(self, model_path):
+    def load_keyed_vectors_into_redis(self, model_path, idf_weighting='naive'):
         """
         This function loops over all available words in the loaded word2vec keyed vectors model
         and loads them into the redis instance.
         """
         model = KeyedVectors.load(model_path, mmap='r')
+        nr_train_tokens = sum(token_vocab.count for token_vocab in model.vocab.values())
         try:
             for word in tqdm(list(model.vocab.keys())):
-                idf_normalized_vector = model[word] / model.vocab[word].count
+                if idf_weighting == 'log':
+                    idf = np.log(nr_train_tokens / (model.vocab[word].count + 1)) + 1
+                else:
+                    idf = model.vocab[word].count
+                idf_normalized_vector = model[word] / idf
                 self._redis.hset(self.key, word, pickle.dumps(idf_normalized_vector))
         except RedisError as exception:
             raise RedisKeyedVectorException(f'RedisError while trying to load model {model} '

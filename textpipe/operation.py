@@ -340,16 +340,18 @@ class GensimDocumentEmbedding(Operation):
     Extract a document embedding vector derived from Gensim word embeddings
     """
     def __init__(self, model_mapping=None, lowercase=True,
-                 max_lru_cache_size=1024, **kwargs):
+                 max_lru_cache_size=1024, idf_weighting='naive', **kwargs):
         self.model_mapping = model_mapping
         self.lowercase = lowercase
         self.max_lru_cache_size = max_lru_cache_size
+        self.idf_weighting = idf_weighting
         self.kwargs = kwargs
 
     def __call__(self, doc, **kwargs):
         return doc.generate_gensim_document_embedding(self.get_model(doc),
                                                       self.lowercase,
                                                       self.max_lru_cache_size,
+                                                      self.idf_weighting,
                                                       **self.kwargs)
 
 
