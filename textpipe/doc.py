@@ -60,6 +60,7 @@ class Doc:
         self.is_detected_language = language is None
         self._is_reliable_language = True if language else None
         self._text_stats = {}
+        self.nr_train_tokens = 0
 
     @property
     def language(self):
@@ -373,19 +374,19 @@ class Doc:
         """
 
         if self.language == 'en':
-            from pattern.text.en import sentiment as sentiment_en
+            from pattern.text.en import sentiment as sentiment_en  # pylint: disable=import-outside-toplevel
             return sentiment_en(self.clean)
 
         if self.language == 'nl':
-            from pattern.text.nl import sentiment as sentiment_nl
+            from pattern.text.nl import sentiment as sentiment_nl  # pylint: disable=import-outside-toplevel
             return sentiment_nl(self.clean)
 
         if self.language == 'fr':
-            from pattern.text.fr import sentiment as sentiment_fr
+            from pattern.text.fr import sentiment as sentiment_fr  # pylint: disable=import-outside-toplevel
             return sentiment_fr(self.clean)
 
         if self.language == 'it':
-            from pattern.text.it import sentiment as sentiment_it
+            from pattern.text.it import sentiment as sentiment_it  # pylint: disable=import-outside-toplevel
             return sentiment_it(self.clean)
 
         raise TextpipeMissingModelException(f'No sentiment model for {self.language}')
@@ -614,6 +615,8 @@ class Doc:
             elif model_uri:
                 try:
                     vectors = KeyedVectors.load(model_uri, mmap='r')
+                    self.nr_train_tokens = sum(token_vocab.count for token_vocab in
+                                               vectors.vocab.values())
                 except FileNotFoundError:
                     raise TextpipeMissingModelException(
                         f'Gensim keyed vector file {model_uri} is not available.')
@@ -627,9 +630,11 @@ class Doc:
     def generate_gensim_document_embedding(self,
                                            model_uri=None,
                                            lowercase=True,
-                                           max_lru_cache_size=1024):
+                                           max_lru_cache_size=1024,
+                                           idf_weighting='naive'):
         """
         Returns document embeddings generated with Gensim word2vec model.
+        idf_weighting scheme can be 'naive' or 'log'
 
         >>> import numpy
         >>> from textpipe.doc import Doc
@@ -667,9 +672,13 @@ class Doc:
             vectors = [model[word] * count
                        for word, count in prepared_word_counts]
         else:
-            vectors = [model[word] * (count / model.vocab[word].count)
-                       for word, count in prepared_word_counts]
-
+            vectors = []
+            for word, count in prepared_word_counts:
+                if idf_weighting == 'log':
+                    idf = (numpy.log(self.nr_train_tokens / (model.vocab[word].count + 1)) + 1)
+                else:
+                    idf = model.vocab[word].count
+                vectors.append(model[word] * (count / idf))
         return list(sum(vectors))
 
     @functools.lru_cache()
