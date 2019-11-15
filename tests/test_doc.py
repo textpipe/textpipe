@@ -145,8 +145,7 @@ def test_gensim_word2vec():
     expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
                       -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
     actual_doc_2 = Doc(TEXT_2).generate_gensim_document_embedding(
-        model_uri='tests/models/gensim_test_nl.kv',
-        idf_weighting='naive')
+        model_uri='tests/models/gensim_test_nl.kv')
     if not np.allclose(actual_doc_2, expected_doc_2):
         raise AssertionError
 
@@ -176,7 +175,7 @@ def test_gensim_word2vec_with_redis():
     expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
                       -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
     actual_doc_2 = Doc(TEXT_2, gensim_vectors={'nl': kv}). \
-        generate_gensim_document_embedding(model_uri='redis://host:1234/0', idf_weighting='naive')
+        generate_gensim_document_embedding(model_uri='redis://host:1234/0')
     if not np.allclose(actual_doc_2, expected_doc_2):
         raise AssertionError(actual_doc_2)
 
