@@ -8,7 +8,7 @@ import numpy as np
 from fakeredis import FakeRedis
 from unittest import mock
 
-from textpipe.doc import Doc, TextpipeMissingModelException
+from textpipe.doc import Doc, TextpipeMissingModelException, RedisIDFWeightingMismatchException
 from textpipe.wrappers import RedisKeyedVectors
 
 TEXT_1 = """<p><b>Text mining</b>, also referred to as <i><b>text data mining</b></i>, roughly
@@ -144,13 +144,25 @@ def test_non_utf_chars():
 def test_gensim_word2vec():
     expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
                       -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
-    actual_doc_2 = Doc(TEXT_2).generate_gensim_document_embedding(model_uri='tests/models/gensim_test_nl.kv')
+    actual_doc_2 = Doc(TEXT_2).generate_gensim_document_embedding(
+        model_uri='tests/models/gensim_test_nl.kv',
+        idf_weighting='naive')
     if not np.allclose(actual_doc_2, expected_doc_2):
         raise AssertionError
 
     expected_doc_5 = [0.04336167, -0.12551728, 0.121972464, -0.023885678, -0.0892916, 0.011041589,
                       -0.022286428, 0.06333805, 0.07664292, 0.086685486]
-    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(model_uri='tests/models/gensim_test_nl.kv')
+    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(
+        model_uri='tests/models/gensim_test_nl.kv',
+        idf_weighting='naive')
+    if not np.allclose(actual_doc_5, expected_doc_5):
+        raise AssertionError
+
+    expected_doc_5 = [0.021136083, -0.035798773, 0.032576967, 0.0048801005, -0.028301004,
+                      -0.0059328717, -0.010782357, 0.025319293, 0.018113682, 0.028851084]
+    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(
+        model_uri='tests/models/gensim_test_nl.kv',
+        idf_weighting='log')
     if not np.allclose(actual_doc_5, expected_doc_5):
         raise AssertionError
 
@@ -163,14 +175,31 @@ def test_gensim_word2vec_with_redis():
 
     expected_doc_2 = [0.0076740906, -0.051765148, -0.008963874, -0.16817021, -0.12640671,
                       -0.28199115, -0.1418166, -0.08547635, -0.1489038, 0.049820565]
-    actual_doc_2 = Doc(TEXT_2, gensim_vectors={'nl': kv}).generate_gensim_document_embedding(
-        model_uri='redis://host:1234/0')
+    actual_doc_2 = Doc(TEXT_2, gensim_vectors={'nl': kv}). \
+        generate_gensim_document_embedding(model_uri='redis://host:1234/0', idf_weighting='naive')
     if not np.allclose(actual_doc_2, expected_doc_2):
         raise AssertionError(actual_doc_2)
 
     expected_doc_5 = [0.04336167, -0.12551728, 0.121972464, -0.023885678, -0.0892916, 0.011041589,
                       -0.022286428, 0.06333805, 0.07664292, 0.086685486]
-    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(model_uri='redis://host:1234/0')
+    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(model_uri='redis://host:1234/0',
+                                                                  idf_weighting='naive')
+    if not np.allclose(actual_doc_5, expected_doc_5):
+        raise AssertionError
+
+    with pytest.raises(RedisIDFWeightingMismatchException) as e:
+        Doc(TEXT_5).generate_gensim_document_embedding(model_uri='redis://host:1234/0',
+                                                       idf_weighting='log')
+    assert str(e.value) == 'The specified document embedding idf weighting "log" does not match ' \
+                           'weighting in RedisKeyedVector "naive"'
+
+    kv = RedisKeyedVectors('redis://host:1234/0', 'nl')
+    kv.load_keyed_vectors_into_redis('tests/models/gensim_test_nl.kv', idf_weighting='log')
+    expected_doc_5 = [0.02113608, -0.035798773, 0.032576967, 0.0048801005, -0.028301004,
+                      -0.005932871, -0.010782358, 0.025319293, 0.018113682, 0.028851084]
+    actual_doc_5 = Doc(TEXT_5, gensim_vectors={'nl': kv}).\
+        generate_gensim_document_embedding(model_uri='redis://host:1234/0', idf_weighting='log')
+
     if not np.allclose(actual_doc_5, expected_doc_5):
         raise AssertionError
     kv._redis.flushall()

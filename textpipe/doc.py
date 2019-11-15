@@ -27,6 +27,10 @@ from textpipe.wrappers import RedisKeyedVectors
 class TextpipeMissingModelException(Exception):
     """Raised when the requested model is missing"""
 
+class RedisIDFWeightingMismatchException(Exception):
+    """Raised when an idf weighting scheme is specified that does not match the specified weighting
+    scheme in RedisKeyedVector"""
+
 
 class Doc:
     """
@@ -667,8 +671,13 @@ class Doc:
             return []
 
         if isinstance(model, RedisKeyedVectors):
-            # For redis, the word vectors are already divided by their
-            # train count (see RedisKeyedVectors.load_keyed_vectors_into_redis)
+            # For redis, the word vectors are already divided by the idf when a word2vec model
+            # was loaded (see RedisKeyedVectors.load_keyed_vectors_into_redis)
+            if model.idf_weighting != idf_weighting:
+                raise RedisIDFWeightingMismatchException(f'The specified document embedding idf '
+                                                         f'weighting "{idf_weighting}" does not '
+                                                         f'match weighting in RedisKeyedVector "'
+                                                         f'{model.idf_weighting}"')
             vectors = [model[word] * count
                        for word, count in prepared_word_counts]
         else:
@@ -680,7 +689,7 @@ class Doc:
                     idf = (numpy.log(self.nr_train_tokens / (model.vocab[word].count + 1)) + 1)
                 else:
                     raise ValueError(f'idf_weighting "{idf_weighting}" not available; use '
-                                     f'\'naive\' or \'log\'')
+                                     f'"naive" or "log"')
 
                 vectors.append(model[word] * (count / idf))
         return list(sum(vectors))
