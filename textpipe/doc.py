@@ -59,8 +59,8 @@ class Doc:
         self.raw = raw
         self._language = language
         self.hint_language = hint_language
-        self._spacy_nlps = spacy_nlps or dict()
-        self._gensim_vectors = gensim_vectors or dict()
+        self._spacy_nlps = spacy_nlps if spacy_nlps is not None else dict()
+        self._gensim_vectors = gensim_vectors if gensim_vectors is not None else dict()
         self.is_detected_language = language is None
         self._is_reliable_language = True if language else None
         self._text_stats = {}
