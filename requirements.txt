@@ -3,7 +3,7 @@ cld2_cffi~=0.1
 datasketch~=1.4.7
 gensim~=3.8.0
 msgpack~=0.6 # Needed for textacy to catch up with https://github.com/explosion/spaCy/pull/3003.
-numpy~=1.16.4
+numpy~=1.17.4
 redis==3.2.1
 spacy~=2.1.6
 textacy~=0.8.0
