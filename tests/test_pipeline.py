@@ -151,3 +151,22 @@ def test_register_not_existing_step_should_throw_exception():
         # somehow placing the following assert statement in the with statement
         # fails to assert, thus moved out of the context of the with
     assert "has no attribute 'CUSTOM_STEP2'" in str(ae.value)
+
+
+def test_gensim_model_caching_in_pipeline():
+    """
+    Checking whether the pipeline caches the loading of gensim models after a first
+    Doc instance requires it.
+    """
+    custom_steps = STEPS.copy()
+    custom_steps.append(('GensimDocumentEmbedding', {
+        'model_mapping': {
+            'nl': 'tests/models/gensim_test_nl.kv',
+            'en': 'tests/models/gensim_test_en.kv'
+        }
+    }))
+
+    test_pipe = Pipeline(custom_steps, **PIPELINE_DEF_KWARGS)
+    test_pipe(TEXT)
+    # Assert that something is in the gensim vectors attribute
+    assert len(test_pipe._gensim_vectors) == 1

@@ -30,6 +30,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         self.language = language
         self.hint_language = hint_language
         self._spacy_nlps = {}
+        self._gensim_vectors = {}
         self.kwargs = kwargs
         self._operations = {}
         self.steps = []
@@ -50,9 +51,6 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
             # initialize the target class with the given kwargs
             self._operations[oper_name] = oper_cls(**oper_kwargs)
 
-            if oper_name == 'GensimDocumentEmbedding':
-                self._gensim_vectors = {}
-
         # loop over model paths and load custom models into _spacy_nlp
         if models:
             for model_name, lang, model_path in models:
@@ -70,7 +68,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
         raw: incoming, unedited text
         """
         doc = Doc(raw, language=self.language, hint_language=self.hint_language,
-                  spacy_nlps=self._spacy_nlps)
+                  spacy_nlps=self._spacy_nlps, gensim_vectors=self._gensim_vectors)
 
         data = {}
 
