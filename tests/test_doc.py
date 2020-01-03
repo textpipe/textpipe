@@ -2,13 +2,12 @@
 Testing for textpipe doc.py
 """
 import re
+from unittest import mock
 
 import pytest
-import random
 import spacy
 import numpy as np
 from fakeredis import FakeRedis
-from unittest import mock
 
 from textpipe.doc import Doc, TextpipeMissingModelException, RedisIDFWeightingMismatchException
 from textpipe.wrappers import RedisKeyedVectors
