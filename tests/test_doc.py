@@ -1,6 +1,8 @@
 """
 Testing for textpipe doc.py
 """
+import re
+
 import pytest
 import random
 import spacy
@@ -49,8 +51,8 @@ TEXT_6 = """
 ဆက်ခံထားသောမွန်အက္ခရာတို့မှ ဆင်းသက်လာသည်။
 """
 
-TEXT_7 = u"""\nHi <<First Name>>\nthis is filler text \xa325 more filler.\nadditilnal 
-filler.\nyet more\xa0still more\xa0filler.\n\xa0\nmore\nfiller.\x03\n\t\t\t\t\t\t    
+TEXT_7 = u"""\nHi <<First Name>>\nthis is filler text \xa325 more filler.\nadditilnal
+filler.\nyet more\xa0still more\xa0filler.\n\xa0\nmore\nfiller.\x03\n\t\t\t\t\t\t
 almost there \n\\n\nthe end\n"""
 
 ents_model = spacy.blank('nl')
@@ -114,18 +116,16 @@ def test_language():
 
 
 def test_extract_keyterms():
-    non_ranker = 'bulthaup'
-    rankers = ['textrank', 'sgrank', 'singlerank']
-    with pytest.raises(ValueError, message=f'algorithm "{non_ranker}" not '
-                                           f'available; use one of {rankers}'):
-        DOC_1.extract_keyterms(ranker=non_ranker)
+    message = 'ranker "bulthaup" not available; use one of [\'textrank\', \'sgrank\', \'singlerank\']'
+    with pytest.raises(ValueError, match=re.escape(message)):
+        DOC_1.extract_keyterms(ranker='bulthaup')
     assert len(DOC_1.extract_keyterms()) == 10
     # limits number of keyterms
     assert len(DOC_1.extract_keyterms(n_terms=2)) == 2
     # works with empty documents
     assert DOC_3.extract_keyterms() == []
     # works with other rankers
-    assert isinstance(DOC_2.extract_keyterms(ranker=random.choice(rankers)), list)
+    assert isinstance(DOC_2.extract_keyterms(ranker='textrank'), list)
 
 
 def test_missing_language_model():
