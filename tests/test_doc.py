@@ -73,7 +73,7 @@ def test_load_custom_model():
     model_mapping = {'nl': 'ents'}
     lang = DOC_5.language if DOC_5.is_reliable_language else DOC_5.hint_language
     assert lang == 'nl'
-    assert sorted(DOC_5.find_ents()) == sorted([('Zuckerberg', 'LOC'), ('Facebook', 'NORP')])
+    assert sorted(DOC_5.find_ents()) == sorted([('Mark Zuckerberg', 'PERSON')])
     assert DOC_5.find_ents(model_mapping[lang]) == []
 
 
@@ -88,7 +88,7 @@ def test_nwords_nsents():
 
 def test_entities():
     assert sorted(DOC_1.ents) == sorted([('Google', 'ORG')])
-    assert sorted(DOC_2.ents) == sorted([('Philips', 'ORG'), ('allerhandeICT-technieken', 'NORP')])
+    assert sorted(DOC_2.ents) == sorted([('Philips', 'ORG'), ('Philips', 'PERSON')])
     assert DOC_3.ents == []
 
 
