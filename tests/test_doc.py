@@ -179,24 +179,42 @@ def test_gensim_word2vec_with_redis():
     if not np.allclose(actual_doc_2, expected_doc_2):
         raise AssertionError(actual_doc_2)
 
+
+@mock.patch('textpipe.wrappers.Redis', FakeRedis)
+def test_gensim_word2vec_with_redis_5():
+    # Load word2vec model into fake Redis
+    kv = RedisKeyedVectors('redis://host:1234/0', 'nl')
+    kv.load_keyed_vectors_into_redis('tests/models/gensim_test_nl.kv')
+
     expected_doc_5 = [0.04336167, -0.12551728, 0.121972464, -0.023885678, -0.0892916, 0.011041589,
                       -0.022286428, 0.06333805, 0.07664292, 0.086685486]
-    actual_doc_5 = Doc(TEXT_5).generate_gensim_document_embedding(model_uri='redis://host:1234/0',
-                                                                  idf_weighting='naive')
+    actual_doc_5 = Doc(TEXT_5, gensim_vectors={'nl': kv}). \
+        generate_gensim_document_embedding(model_uri='redis://host:1234/0')
     if not np.allclose(actual_doc_5, expected_doc_5):
         raise AssertionError
 
+
+@mock.patch('textpipe.wrappers.Redis', FakeRedis)
+def test_gensim_word2vec_with_redis_weighting_mismatch():
+    # Load word2vec model into fake Redis
+    kv = RedisKeyedVectors('redis://host:1234/0', 'nl')
+    kv.load_keyed_vectors_into_redis('tests/models/gensim_test_nl.kv')
+
     with pytest.raises(RedisIDFWeightingMismatchException) as e:
-        Doc(TEXT_5).generate_gensim_document_embedding(model_uri='redis://host:1234/0',
+        Doc(TEXT_5, gensim_vectors={'nl': kv}).generate_gensim_document_embedding(model_uri='redis://host:1234/0',
                                                        idf_weighting='log')
     assert str(e.value) == 'The specified document embedding idf weighting "log" does not match ' \
                            'weighting in RedisKeyedVector "naive"'
 
+
+@mock.patch('textpipe.wrappers.Redis', FakeRedis)
+def test_gensim_word2vec_with_redis_weighting_log():
+    # Load word2vec model into fake Redis
     kv = RedisKeyedVectors('redis://host:1234/0', 'nl')
     kv.load_keyed_vectors_into_redis('tests/models/gensim_test_nl.kv', idf_weighting='log')
     expected_doc_5 = [0.02113608, -0.035798773, 0.032576967, 0.0048801005, -0.028301004,
                       -0.005932871, -0.010782358, 0.025319293, 0.018113682, 0.028851084]
-    actual_doc_5 = Doc(TEXT_5, gensim_vectors={'nl': kv}).\
+    actual_doc_5 = Doc(TEXT_5, gensim_vectors={'nl': kv}). \
         generate_gensim_document_embedding(model_uri='redis://host:1234/0', idf_weighting='log')
 
     if not np.allclose(actual_doc_5, expected_doc_5):
