@@ -64,6 +64,9 @@ test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
 See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
+0.11.7
+  - Bumps spaCy and redis versions
+  
 0.11.6
   - Fixes bug where gensim model is not cached in pipeline
 
