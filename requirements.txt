@@ -4,7 +4,7 @@ datasketch~=1.5.0
 gensim~=3.8.1
 msgpack~=0.6 # Needed for textacy to catch up with https://github.com/explosion/spaCy/pull/3003.
 numpy~=1.18.0
-redis==3.2.1
+redis==3.4.1
 spacy~=2.2.3
 textacy~=0.9.1
 textpipe-pattern==3.6.1
