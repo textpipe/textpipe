@@ -219,3 +219,8 @@ def test_lead():
     assert len(DOC_1.extract_lead(nsents=1)) == 1
     assert len(DOC_1.extract_lead(nsents=2)) == 2
     assert len(DOC_1.extract_lead(nsents=50)) == DOC_1.nsents
+
+
+def test_cats():
+    assert isinstance(DOC_1.cats, dict)
+    assert DOC_1.cats == {}

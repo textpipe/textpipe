@@ -422,3 +422,24 @@ class LeadSentences(Operation):
 
     def __call__(self, doc, **kwargs):
         return doc.extract_lead(**self.kwargs)
+
+
+class Categories(Operation):
+    """
+    Extract the category probabilities of the document.
+
+    >>> from textpipe.doc import Doc
+    >>> doc = Doc('Sentence for categorization')
+    >>> Categories()(doc)
+    {}
+    """
+
+    def __init__(self, model_mapping=None, **kwargs):
+        self.model_mapping = model_mapping
+        self.kwargs = kwargs
+
+    def __call__(self, doc, **kwargs):
+        if not self.model_mapping:
+            return doc.cats
+
+        return doc.get_cats(self.get_model(doc), **self.kwargs)
