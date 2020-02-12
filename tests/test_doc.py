@@ -55,7 +55,14 @@ filler.\nyet more\xa0still more\xa0filler.\n\xa0\nmore\nfiller.\x03\n\t\t\t\t\t\
 almost there \n\\n\nthe end\n"""
 
 ents_model = spacy.blank('nl')
-custom_spacy_nlps = {'nl': {'ents': ents_model}}
+cats_model = spacy.blank('nl')
+textcat = cats_model.create_pipe("textcat", config={"exclusive_classes": True,
+                                                     "architecture": "simple_cnn"})
+cats_model.add_pipe(textcat, last=True)
+textcat.add_label("POSITIVE")
+cats_model.begin_training()
+
+custom_spacy_nlps = {'nl': {'ents': ents_model, 'cats': cats_model}}
 
 DOC_1 = Doc(TEXT_1)
 DOC_2 = Doc(TEXT_2)
@@ -222,5 +229,4 @@ def test_lead():
 
 
 def test_cats():
-    assert isinstance(DOC_1.cats, dict)
-    assert DOC_1.cats == {}
+    assert DOC_5.get_cats('cats') == {'POSITIVE': 1.0}
