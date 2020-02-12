@@ -769,3 +769,29 @@ class Doc:
          'rice pudding again.']
         """
         return [s[0] for s in self.sents[:nsents]]
+
+    @property
+    def cats(self):
+        """
+        A dict of categories and their probability in the text.
+
+        >>> from textpipe.doc import Doc
+        >>> doc = Doc('Sentence for testing text categorization')
+        >>> doc.cats
+        {}
+        """
+        return self.get_cats()
+
+    @functools.lru_cache()
+    def get_cats(self, model_name=None):
+        """
+        Extract a dict of categories and their probability in the text, with the possibility
+        of using a custom model.
+
+        >>> from textpipe.doc import Doc
+        >>> doc = Doc('Sentence for testing text categorization')
+        >>> doc.get_cats()
+        {}
+        """
+        lang = self.language if self.is_reliable_language else self.hint_language
+        return self._load_spacy_doc(lang, model_name).cats

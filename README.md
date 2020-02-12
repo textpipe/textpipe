@@ -64,6 +64,9 @@ test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
 See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
+0.11.8
+  - Exposes SpaCy's `cats` attribute
+
 0.11.7
   - Bumps spaCy and redis versions
   
