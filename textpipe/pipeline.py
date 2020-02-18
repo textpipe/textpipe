@@ -56,7 +56,7 @@ class Pipeline:  # pylint: disable=too-many-instance-attributes,too-many-argumen
             for model_name, lang, model_path in models:
                 if lang not in self._spacy_nlps:
                     self._spacy_nlps[lang] = {}
-                model = spacy.blank(lang).from_disk(model_path)
+                model = spacy.load(model_path)
                 self._spacy_nlps[lang][model_name] = model
 
     def __call__(self, raw):
