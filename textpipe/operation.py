@@ -209,15 +209,18 @@ class Entities(Operation):
     [('Google', 'ORG')]
     """
 
-    def __init__(self, model_mapping=None, **kwargs):
+    def __init__(self, model_mapping=None, ent_attributes=('text', 'label_'), **kwargs):
         self.kwargs = kwargs
         self.model_mapping = model_mapping
+        self.ent_attributes = ent_attributes
 
     def __call__(self, doc, **kwargs):
         if not self.model_mapping:
-            return doc.ents
+            if not self.ent_attributes:
+                return doc.ents
+            return doc.find_ents(ent_attributes=self.ent_attributes)
 
-        return doc.find_ents(self.get_model(doc))
+        return doc.find_ents(model_name=self.get_model(doc), ent_attributes=self.ent_attributes)
 
 
 class Sentiment(Operation):

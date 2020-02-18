@@ -227,7 +227,7 @@ class Doc:
         return self.find_ents()
 
     @functools.lru_cache()
-    def find_ents(self, model_name=None):
+    def find_ents(self, model_name=None, ent_attributes=('text', 'label_')):
         """
         Extract a list of the named entities in text, with the possibility of using a custom model.
 
@@ -237,7 +237,8 @@ class Doc:
         [('Google', 'ORG')]
         """
         lang = self.language if self.is_reliable_language else self.hint_language
-        return list({(ent.text, ent.label_) for ent in self._load_spacy_doc(lang, model_name).ents})
+        return list({tuple(getattr(ent, attr, None) for attr in ent_attributes)
+                     for ent in self._load_spacy_doc(lang, model_name).ents})
 
     def match(self, matcher):
         """

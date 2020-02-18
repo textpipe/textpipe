@@ -82,6 +82,7 @@ def test_load_custom_model():
     assert lang == 'nl'
     assert sorted(DOC_5.find_ents()) == sorted([('Mark Zuckerberg', 'PERSON')])
     assert DOC_5.find_ents(model_mapping[lang]) == []
+    assert DOC_5.find_ents(ent_attributes=('end_char', 'text')) == [(15, 'Mark Zuckerberg')]
 
 
 def test_nwords_nsents():
