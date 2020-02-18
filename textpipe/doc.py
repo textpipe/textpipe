@@ -22,10 +22,12 @@ from gensim.summarization.summarizer import summarize
 
 from textpipe.data.emoji import EMOJI_TO_UNICODE_NAME, EMOJI_TO_SENTIMENT
 from textpipe.wrappers import RedisKeyedVectors
+from textpipe.util import getattr_
 
 
 class TextpipeMissingModelException(Exception):
     """Raised when the requested model is missing"""
+
 
 class RedisIDFWeightingMismatchException(Exception):
     """Raised when an idf weighting scheme is specified that does not match the specified weighting
@@ -237,7 +239,7 @@ class Doc:
         [('Google', 'ORG')]
         """
         lang = self.language if self.is_reliable_language else self.hint_language
-        return list({tuple(getattr(ent, attr, None) for attr in ent_attributes)
+        return list({tuple(getattr_(ent, attr) for attr in ent_attributes)
                      for ent in self._load_spacy_doc(lang, model_name).ents})
 
     def match(self, matcher):
