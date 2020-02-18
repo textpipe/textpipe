@@ -64,6 +64,9 @@ test_pipe.steps.append(('CUSTOM_STEP', custom_argument ))
 See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
+0.11.9
+  - Exposes arbitrary SpaCy `ents` properties
+
 0.11.8
   - Exposes SpaCy's `cats` attribute
 
