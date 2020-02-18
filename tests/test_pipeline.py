@@ -33,6 +33,16 @@ def test_load_custom_model():
     assert PIPE._spacy_nlps['en']['other_identifier'].lang == 'en'
 
 
+def test_load_custom_entity_attributes():
+    """
+    The custom entity attirbutes should be correctly configured in the pipeline.
+    """
+    custom_attr_steps = [('Entities',
+                          {'ent_attributes': ('start_char', 'end_char', 'label_')})]
+    custom_attr_pipe = Pipeline(custom_attr_steps)
+    assert custom_attr_pipe('Donald Trump is weird')['Entities'] == [(0, 12, 'PERSON')]
+
+
 def test_return_dict():
     """
     The returned dictionary should have the same length as the pipeline
