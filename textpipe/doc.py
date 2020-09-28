@@ -174,6 +174,7 @@ class Doc:
         try:
             return spacy.load('{}_core_{}_sm'.format(lang, 'web' if lang == 'en' else 'news'))
         except IOError:
+            # pylint: disable=raise-missing-from
             raise TextpipeMissingModelException(f'Default model for language "{lang}" '
                                                 f'is not available.')
 
@@ -628,6 +629,7 @@ class Doc:
                     self.nr_train_tokens = sum(token_vocab.count for token_vocab in
                                                vectors.vocab.values())
                 except FileNotFoundError:
+                    # pylint: disable=raise-missing-from
                     raise TextpipeMissingModelException(
                         f'Gensim keyed vector file {model_uri} is not available.')
             else:
