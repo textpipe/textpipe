@@ -2,7 +2,7 @@ beautifulsoup4~=4.9
 cld2_cffi~=0.1
 datasketch~=1.5.1
 gensim~=3.8.1
-msgpack~=0.6 # Needed for textacy to catch up with https://github.com/explosion/spaCy/pull/3003.
+msgpack~=1.0 # Needed for textacy to catch up with https://github.com/explosion/spaCy/pull/3003.
 numpy~=1.19.2
 redis==3.4.1
 spacy~=2.2.3
