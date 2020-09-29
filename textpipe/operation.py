@@ -28,6 +28,7 @@ class Operation:
         try:
             model = self.model_mapping[lang]
         except KeyError:
+            # pylint: disable=raise-missing-from
             raise TextpipeMissingModelException(f'No model for language "{lang}".')
         return model
 

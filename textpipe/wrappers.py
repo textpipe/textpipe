@@ -34,6 +34,7 @@ class RedisKeyedVectors:
             host, port, database = self._parse_uri(uri)
             self._redis = Redis(host, port, database)
         except RedisError as exception:
+            # pylint: disable=raise-missing-from
             raise RedisKeyedVectorException(f'The connection to Redis failed while trying to '
                                             f'initiate the client. Redis error message: '
                                             f'{exception}')
@@ -58,6 +59,7 @@ class RedisKeyedVectors:
                 raise KeyError(f'Key {word} does not exist in cache')
             return pickle.loads(cache_entry)
         except RedisError as exception:
+            # pylint: disable=raise-missing-from
             raise RedisKeyedVectorException(f'The connection to Redis failed while trying to '
                                             f'retrieve a word vector. Redis error message: '
                                             f'{exception}')
@@ -98,6 +100,7 @@ class RedisKeyedVectors:
                 idf_normalized_vector = model[word] / idf
                 self._redis.hset(self.key, word, pickle.dumps(idf_normalized_vector))
         except RedisError as exception:
+            # pylint: disable=raise-missing-from
             raise RedisKeyedVectorException(f'RedisError while trying to load model {model} '
                                             f'into redis: {exception}')
         del model
@@ -117,5 +120,6 @@ class RedisKeyedVectors:
             port = parsed.port
             database = int(parsed.path.replace('/', '')) or 0
         except (AttributeError, ValueError):
+            # pylint: disable=raise-missing-from
             raise RedisKeyedVectorException(f'Invalid redis URI: {uri}')
         return host, port, database
