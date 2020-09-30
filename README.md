@@ -105,6 +105,10 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines for contributors.
 
 ## Changes
 
+0.12.0
+
+- Bumps versions of many dependencies including textacy. Results for keyterm extraction changed.
+
 0.11.9
 
 - Exposes arbitrary SpaCy `ents` properties
