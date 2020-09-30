@@ -447,9 +447,9 @@ class Doc:
         >>> from textpipe.doc import Doc
         >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
         >>> pprint(doc.extract_keyterms(n_terms=3))
-        [('awesome', 0.32456160227748454),
-         ('capital', 0.32456160227748454),
-         ('Amsterdam', 0.17543839772251532)]
+        [('awesome capital', 0.2384595585785324),
+         ('Netherlands', 0.1312376837867799),
+         ('Amsterdam', 0.07452637881734389)]
         """
         return self.extract_keyterms()
 
