@@ -13,7 +13,7 @@ import numpy
 import spacy
 import spacy.matcher
 import textacy
-import textacy.keyterms
+import textacy.ke
 import textacy.text_utils
 from bs4 import BeautifulSoup
 from datasketch import MinHash
@@ -416,27 +416,27 @@ class Doc:
         >>> from textpipe.doc import Doc
         >>> doc = Doc('Amsterdam is the awesome capital of the Netherlands.')
         >>> pprint(doc.extract_keyterms(n_terms=3))
-        [('awesome', 0.32456160227748454),
-         ('capital', 0.32456160227748454),
-         ('Amsterdam', 0.17543839772251532)]
+        [('awesome capital', 0.2384595585785324),
+         ('Netherlands', 0.1312376837867799),
+         ('Amsterdam', 0.07452637881734389)]
         >>> pprint(doc.extract_keyterms(ranker='sgrank'))
         [('awesome capital', 0.5638711013322963),
          ('Netherlands', 0.22636566128805719),
          ('Amsterdam', 0.20976323737964653)]
-        >>> pprint(doc.extract_keyterms(ranker='sgrank', ngrams=(1)))
-        [('Netherlands', 0.4020557546031188),
-         ('capital', 0.29395103364295216),
-         ('awesome', 0.18105611227666252),
-         ('Amsterdam', 0.12293709947726655)]
+        >>> pprint(doc.extract_keyterms(ranker='sgrank', ngrams=(1, )))
+        [('Netherlands', 0.40349153868348353),
+         ('capital', 0.29176091721189235),
+         ('awesome', 0.18150539145949696),
+         ('Amsterdam', 0.12324215264512725)]
         """
         if self.nwords < 1:
             return []
-        rankers = ['textrank', 'sgrank', 'singlerank']
+        rankers = ['textrank', 'sgrank', 'scake', 'yake']
         if ranker not in rankers:
             raise ValueError(f'ranker "{ranker}" not available; use one '
                              f'of {rankers}')
-        ranking_fn = getattr(textacy.keyterms, ranker)
-        return ranking_fn(self._spacy_doc, n_keyterms=n_terms, **kwargs)
+        ranking_fn = getattr(textacy.ke, ranker)
+        return ranking_fn(self._spacy_doc, topn=n_terms, **kwargs)
 
     @property
     def keyterms(self):
