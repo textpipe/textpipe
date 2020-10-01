@@ -102,7 +102,7 @@ def test_entities():
 
 def test_complexity():
     assert DOC_1.complexity == 30.464548969072155
-    assert DOC_2.complexity == 13.192407407407416
+    assert DOC_2.complexity == 13.18740740740742
     assert DOC_3.complexity == 100
 
 
@@ -123,7 +123,7 @@ def test_language():
 
 
 def test_extract_keyterms():
-    message = 'ranker "bulthaup" not available; use one of [\'textrank\', \'sgrank\', \'singlerank\']'
+    message = 'ranker "bulthaup" not available; use one of [\'textrank\', \'sgrank\', \'scake\', \'yake\']'
     with pytest.raises(ValueError, match=re.escape(message)):
         DOC_1.extract_keyterms(ranker='bulthaup')
     assert len(DOC_1.extract_keyterms()) == 10
