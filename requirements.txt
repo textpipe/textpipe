@@ -1,7 +1,7 @@
 beautifulsoup4~=4.9
 cld2_cffi~=0.1
 datasketch~=1.5.1
-gensim~=3.8.1
+gensim~=3.8.3
 msgpack~=1.0
 numpy~=1.19.2
 redis==3.5.3
