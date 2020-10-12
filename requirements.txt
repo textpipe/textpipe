@@ -5,7 +5,7 @@ gensim~=3.8.1
 msgpack~=1.0
 numpy~=1.19.2
 redis==3.5.3
-spacy~=2.2.3
+spacy~=2.3.2
 textacy~=0.10.1
 textpipe-pattern==3.6.1
 tqdm~=4.50.2
