@@ -1,6 +1,6 @@
 beautifulsoup4~=4.9
 cld2_cffi~=0.1
-datasketch~=1.5.1
+datasketch~=1.5.3
 gensim~=3.8.1
 msgpack~=1.0
 numpy~=1.19.2
