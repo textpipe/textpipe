@@ -3,7 +3,7 @@ cld2_cffi~=0.1
 datasketch~=1.5.3
 gensim==3.8.3
 msgpack~=1.0
-numpy~=1.19.5
+numpy~=1.20.0
 redis==3.5.3
 spacy~=2.3.5
 textacy~=0.10.1
