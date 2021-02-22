@@ -8,4 +8,4 @@ redis==3.5.3
 spacy~=2.3.5
 textacy~=0.10.1
 textpipe-pattern==3.6.1
-tqdm~=4.56.0
+tqdm~=4.57.0
