@@ -1,3 +1,5 @@
+*THIS REPOSITORY IS NO LONGER MAINTAINED*
+
 # textpipe: clean and extract metadata from text
 
 [![Build Status](https://travis-ci.com/textpipe/textpipe.svg?branch=master)](https://travis-ci.com/textpipe/textpipe)
