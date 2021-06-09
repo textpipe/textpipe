@@ -1,4 +1,4 @@
 fakeredis==0.16.0
 nosexcover~=1.0
 pylint~=2.6
-pytest~=6.1
+pytest~=6.2
